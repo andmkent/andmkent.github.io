@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <title>Dependently Typed Quicksort</title>
+    <meta name="description" content="Coq's support for dependent types mean that type checking not only catches trivial errors like passing an integer to a function expecting a string, but it can also check and verify types which represent properties regarding the functional behavior of the ...">
+    <meta name="author"      content="The Unknown Author">
+    <meta name="keywords"    content="Dependent Types, Coq">
+    <meta name="viewport"    content="width=device-width, initial-scale=1.0">
+    <link rel="icon"      href="/favicon.ico">
+    <link rel="canonical" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/">
+    <link rel="next" href="/blog/2014/03/24/c-to-racket-examples/">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/pygments.css">
+    <link rel="stylesheet" type="text/css" href="/css/scribble.css">
+    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+    <!-- Feeds -->
+    <link ref="alternate" type="application/atom+xml"
+          href="/feeds/all.atom.xml" title="Atom Feed">
+    <link ref="alternate" type="application/rss+xml"
+          href="/feeds/all.rss.xml" title="RSS Feed">
+    <!-- JS -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-xxxxx']);
+      _gaq.push(['_setDomainName', 'example.com']);
+      _gaq.push(['_trackPageview']);
+      setTimeout(function(){_gaq.push(['_trackEvent', '30_seconds', 'read'])}, 30000); // http://drawingablank.me/blog/fix-your-bounce-rate.html
+      (function() {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- A standard Twitter Bootstrap nav bar -->
+    <header class="navbar navbar-default navbar-inverse"
+            role="banner">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button"
+                  class="navbar-toggle"
+                  data-toggle="collapse"
+                  data-target=".our-nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="/index.html" class="navbar-brand">Andrew M. Kent</a>
+        </div>
+        <div class="collapse navbar-collapse our-nav-collapse"
+             role="navigation">
+          <ul class="nav navbar-nav">
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Tags <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/index.html">All Posts</a></li>
+
+<li><a href="/tags/C.html">C</a></li>
+
+<li><a href="/tags/Coq.html">Coq</a></li>
+
+<li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
+
+<li><a href="/tags/Program-Verification.html">Program Verification</a></li>
+
+<li><a href="/tags/Racket.html">Racket</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="/About.html">About Me</a>
+            </li> 
+            <li><a href="/feeds/all.atom.xml">Atom</a></li>
+            <li><a href="/feeds/all.rss.xml">RSS</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+
+        <!-- Main column -->
+        <div id="content" class="col-md-12">
+
+
+
+
+
+          <article>
+  <header>
+    <h1>Dependently Typed Quicksort</h1>
+    <p class='date-and-tags'>
+<time datetime="2014-11-10" pubdate="true">2014-11-10</time> :: <span class="tags"><a href="/tags/Dependent-Types.html">Dependent Types</a>, <a href="/tags/Coq.html">Coq</a></span></p>
+  </header>
+
+<p>Coq&rsquo;s support for dependent types mean that type checking not only
+catches trivial errors like passing an integer to a function expecting
+a string, but it can also check and verify types which represent
+properties regarding the functional behavior of the a program.</p>
+
+<p>I thought it would be edifying to use this capability to write a
+verified version of quicksort (i.e. a quicksort with types that
+specify its behavior), and it was!</p>
+<!--more-->
+
+<h1><a name="(part._.Basic_.Quicksort)"></a>Basic Quicksort</h1>
+
+<p>So first let&rsquo;s just write quicksort, and then we&rsquo;ll see
+what dependent types can add.</p>
+
+<h2><a name="(part._.A_.First_.Attempt)"></a>A First Attempt</h2>
+
+<p>This was my initial attempt at writing quicksort in Coq (first w/o the
+more complex types):</p>
+
+<div class="brush: coq">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre>1
+2
+3
+4
+5
+6
+7</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="kn">Fixpoint</span> <span class="n">quicksort</span> <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="n">nat</span><span class="o">)</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">:=</span>
+<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="n">nil</span> <span class="o">=&gt;</span> <span class="n">nil</span>
+  <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=&gt;</span>
+      <span class="k">let</span> <span class="o">(</span><span class="n">lhs</span><span class="o">,</span> <span class="n">rhs</span><span class="o">)</span> <span class="o">:=</span> <span class="n">partition</span> <span class="o">(</span><span class="n">gtb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">in</span>
+      <span class="o">(</span><span class="n">quicksort</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">++</span> <span class="n">x</span> <span class="o">::</span> <span class="o">(</span><span class="n">quicksort</span> <span class="n">rhs</span><span class="o">)</span>
+<span class="k">end</span><span class="o">.</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>Looked pretty good, I thought! It was nice and simple... until I tried
+to compile it:</p>
+
+<div class="brush: coq">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="nc">Error</span><span class="o">:</span>
+<span class="nc">Recursive</span> <span class="n">definition</span> <span class="k">of</span> <span class="n">quicksort</span> <span class="k">is</span> <span class="n">ill</span><span class="o">-</span><span class="n">formed</span><span class="o">.</span>
+<span class="nc">In</span> <span class="n">environment</span>
+<span class="n">quicksort</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">-&gt;</span> <span class="kt">list</span> <span class="n">nat</span>
+<span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
+<span class="n">x</span> <span class="o">:</span> <span class="n">nat</span>
+<span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
+<span class="n">rhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
+<span class="n">lhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
+<span class="nc">Recursive</span> <span class="n">call</span> <span class="n">to</span> <span class="n">quicksort</span> <span class="n">has</span> <span class="n">principal</span> <span class="n">argument</span>
+<span class="n">equal</span> <span class="n">to</span> <span class="s2">"lhs"</span> <span class="n">instead</span> <span class="k">of</span> <span class="s2">"xs"</span><span class="o">...</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>Of course - my recursive calls are not structurally recursive
+(i.e. they&rsquo;re not on the structural pieces that make up the input),
+so Coq isn&rsquo;t convinced our recursive calls will terminate.</p>
+
+<blockquote class="refpara">
+ <blockquote class="refcolumn">
+  <blockquote class="refcontent">
+   <p>Coq requires all programs to be total and deterministic
+to ensure its logic is sound.</p></blockquote></blockquote></blockquote>
+
+<h2><a name="(part._.Guaranteeing_.Termination)"></a>Guaranteeing Termination</h2>
+
+<p>Doing a little digging, I discover that one way to write
+functions which Coq cannot infer termination for is
+using the keywords "Program" and "measure":</p>
+
+<div class="brush: coq">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="nc">Program</span> <span class="kn">Fixpoint</span> <span class="n">quicksort</span>
+      <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="n">nat</span><span class="o">)</span>
+      <span class="o">{</span><span class="n">measure</span> <span class="o">(</span><span class="n">length</span> <span class="n">l</span><span class="o">)}</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">:=</span>
+<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+<span class="o">|</span> <span class="n">nil</span> <span class="o">=&gt;</span> <span class="n">nil</span>
+<span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=&gt;</span>
+    <span class="k">match</span> <span class="n">partition</span> <span class="o">(</span><span class="n">leb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="o">(</span><span class="n">rhs</span><span class="o">,</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">=&gt;</span>
+      <span class="o">(</span><span class="n">quicksort</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">++</span> <span class="n">x</span> <span class="o">::</span> <span class="o">(</span><span class="n">quicksort</span> <span class="n">rhs</span><span class="o">)</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="o">.</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>Now Coq knows that the decreasing argument to be measured is the
+length of the input (from {measure (length l)}), and it knows that I
+am... "Program"-ing... err... I mean it may also generate
+<span style="font-style: italic">proof obligations</span> from this fixpoint definition (which is what
+Program specifies).</p>
+
+<p>Okay, so I compiled it and then I got some new messages (woohoo!).</p>
+
+<div class="brush: coq">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="n">quicksort</span> <span class="n">has</span> <span class="n">type</span><span class="o">-</span><span class="n">checked</span><span class="o">,</span> <span class="n">generating</span> <span class="mi">3</span> <span class="n">obligation</span><span class="o">(</span><span class="n">s</span><span class="o">)</span>
+<span class="nc">Solving</span> <span class="n">obligations</span> <span class="n">automatically</span><span class="o">...</span>
+<span class="n">quicksort_obligation_3</span> <span class="k">is</span> <span class="n">defined</span>
+<span class="mi">2</span> <span class="n">obligations</span> <span class="n">remaining</span>
+<span class="nc">Obligation</span> <span class="mi">1</span> <span class="k">of</span> <span class="n">quicksort</span><span class="o">:</span>
+<span class="k">forall</span> <span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span>
+<span class="o">(</span><span class="k">forall</span> <span class="n">l0</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="n">length</span> <span class="n">l0</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">)</span> <span class="o">-&gt;</span>
+<span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">),</span>
+<span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">l</span> <span class="o">-&gt;</span>
+<span class="k">let</span> <span class="n">filtered_var</span> <span class="o">:=</span> <span class="n">partition</span> <span class="o">(</span><span class="n">leb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">in</span>
+<span class="k">forall</span> <span class="n">rhs</span> <span class="n">lhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="o">(</span><span class="n">rhs</span><span class="o">,</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">=</span> <span class="n">filtered_var</span> <span class="o">-&gt;</span>
+                 <span class="n">length</span> <span class="n">lhs</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">.</span>
+
+<span class="nc">Obligation</span> <span class="mi">2</span> <span class="k">of</span> <span class="n">quicksort</span><span class="o">:</span>
+<span class="k">forall</span> <span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span>
+<span class="o">(</span><span class="k">forall</span> <span class="n">l0</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="n">length</span> <span class="n">l0</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">)</span> <span class="o">-&gt;</span>
+<span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">),</span>
+<span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">l</span> <span class="o">-&gt;</span>
+<span class="k">let</span> <span class="n">filtered_var</span> <span class="o">:=</span> <span class="n">partition</span> <span class="o">(</span><span class="n">leb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">in</span>
+<span class="k">forall</span> <span class="n">rhs</span> <span class="n">lhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="o">(</span><span class="n">rhs</span><span class="o">,</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">=</span> <span class="n">filtered_var</span> <span class="o">-&gt;</span>
+                 <span class="n">length</span> <span class="n">rhs</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">.</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>Cool - two obligations. To solve these (which just verify the length
+of the inputs to the recursive calls (lhs and rhs) are &lt;= the length
+of the original input) I used "Next Obligation of quicksort." twice,
+applying a little theorem proving where needed. After proving both, I
+got:</p>
+
+<div class="brush: coq">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre>1
+2</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="nc">No</span> <span class="n">more</span> <span class="n">obligations</span> <span class="n">remaining</span>
+<span class="n">quicksort</span> <span class="k">is</span> <span class="n">defined</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>Side note: You may have noticed I swapped out the "let" statement in the
+original attempt for a "match" statement - but why? Well, using the
+"let" left me proving the facts about lhs and rhs without any evidence
+as to where they came from. Match, on the other hand, gave me the
+assumption "(lhs, rhs) = partition (gtb x) xs", which was important
+since that fact was key to proving their size was less than the
+original input. Kind of lame that I couldn&rsquo;t use the let (it seemed
+more direct and elegant), but oh well.</p>
+
+<h1><a name="(part._.Verified_.Quicksort)"></a>Verified Quicksort</h1>
+
+<p>So writing quicksort wasn&rsquo;t too bad. I learned a little about how
+proof obligations work with respect to the termination of
+fixpoints. But what about verifying it actually sorts the list we&rsquo;ve
+given it? How do we know it is correct?</p>
+
+<h2><a name="(part._.Is_testing_good_enough_)"></a>Is testing good enough?</h2>
+
+<p>I could throw a few tests cases at it to feel a little better
+about its correctness:</p>
+
+<div class="brush: coq">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="kn">Example</span> <span class="n">qs_nil</span><span class="o">:</span>
+  <span class="n">quicksort</span> <span class="bp">[]</span> <span class="o">=</span> <span class="bp">[]</span><span class="o">.</span>
+<span class="kn">Proof</span><span class="o">.</span>
+  <span class="k">auto</span><span class="o">.</span>
+<span class="kn">Qed</span><span class="o">.</span>
+
+<span class="kn">Example</span> <span class="n">qs_ex1</span><span class="o">:</span>
+  <span class="n">quicksort</span> <span class="o">[</span><span class="mi">3</span> <span class="o">;</span> <span class="mi">2</span> <span class="o">;</span> <span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span><span class="mi">1</span> <span class="o">;</span> <span class="mi">2</span> <span class="o">;</span> <span class="mi">3</span><span class="o">].</span>
+<span class="kn">Proof</span> <span class="k">with</span> <span class="k">auto</span><span class="o">.</span>
+  <span class="k">compute</span><span class="o">...</span>
+<span class="kn">Qed</span><span class="o">.</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>But we still can&rsquo;t be 100% certain it is correct. In fact, in this case
+a list reverse would have passed these tests! So in general, what
+can we do if we want to <span style="font-style: italic">formally verify</span> a program?
+In a language like Coq there are multiple ways to do this!</p>
+
+<h2><a name="(part._.Proving_.Quicksort_.Correct_with_.Dependent_.Types)"></a>Proving Quicksort Correct with Dependent Types</h2>
+
+<p>There&rsquo;s two primary approaches to verifying functions in Coq:
+You can write a theorem stating quicksort is correct and
+prove it valid, or you can add the specification to the type
+of quicksort itself. Let&rsquo;s do the latter.</p>
+
+<div class="brush: coq">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="nc">Program</span> <span class="kn">Fixpoint</span> <span class="n">quicksort</span>
+      <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="n">nat</span><span class="o">)</span>
+      <span class="o">{</span><span class="n">measure</span> <span class="o">(</span><span class="n">length</span> <span class="n">l</span><span class="o">)}</span> <span class="o">:</span>
+      <span class="o">{</span><span class="n">sl</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">|</span>
+        <span class="nc">Permutation</span> <span class="n">l</span> <span class="n">sl</span>
+        <span class="o">/\</span> <span class="nc">StronglySorted</span> <span class="n">le</span> <span class="n">sl</span><span class="o">}</span> <span class="o">:=</span>
+<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+<span class="o">|</span> <span class="n">nil</span> <span class="o">=&gt;</span> <span class="n">nil</span>
+<span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=&gt;</span>
+    <span class="k">match</span> <span class="n">partition</span> <span class="o">(</span><span class="n">gtb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="o">(</span><span class="n">lhs</span><span class="o">,</span> <span class="n">rhs</span><span class="o">)</span> <span class="o">=&gt;</span>
+      <span class="o">(</span><span class="n">quicksort</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">++</span> <span class="n">x</span> <span class="o">::</span> <span class="o">(</span><span class="n">quicksort</span> <span class="n">rhs</span><span class="o">)</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="o">.</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>This approach looks like our original version, except that our return
+type is not merely a list of nat, but a list of nat such that it is a
+permutation of the original and it is sorted (yes, that is all in the
+return type). Obligations for the predicate portion of the return type
+(Permutation l sl /\ StronglySorted le sl) must be proven as well if
+Coq cannot automatically prove them (and in this case, it cannot).</p>
+
+<p>The first obligation related to the return type is for the empty list
+case (nil), which is trivial (since quicksort merely returns nil,
+which is a permutation of nil and is sorted). In the second such
+obligation, we assume these properties hold for the recursive calls
+(quicksort lhs) and (quicksort rhs) (that they produce sorted
+partitions of their input - this is our inductive hypothesis) and
+prove these properties are maintained by (quicksort lhs) ++ x ::
+(quicksort rhs). With the use of a few lemmas related to partitioning
+and appending sorted lists that are related (such as how our two are
+in this case) this isn&rsquo;t these properties aren&rsquo;t too bad to verify
+(details in linked code).</p>
+
+<p><a href="https://github.com/sgtamk/sgtamk.github.io/blob/master/snippets/20140129-quicksort-code.v">Source code</a></p>
+
+<p>Suggestions and comments always welcome =)</p>
+  <footer>
+    <script type="text/javascript">
+      !function(d,s,id){
+          var js,fjs=d.getElementsByTagName(s)[0];
+          if(!d.getElementById(id)){
+              js=d.createElement(s);
+              js.id=id;
+              js.src="//platform.twitter.com/widgets.js";
+              fjs.parentNode.insertBefore(js,fjs);
+          }
+      }(document,"script","twitter-wjs");
+    </script>
+    <a href="https://twitter.com/share"
+       class="twitter-share-button"
+       data-url="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/"
+       data-dnt="true">
+      "Tweet"</a>
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+    <g:plusone size="medium" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/"></g:plusone>
+    <script type="text/javascript">
+      var disqus_shortname = 'shortname';
+      (function() {
+          var dsq = document.createElement('script');
+          dsq.type = 'text/javascript';
+          dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <div id="disqus_thread"></div>
+    <ul class="pager">
+
+    <li class="next">
+      <a href="/blog/2014/03/24/c-to-racket-examples/"><em>C to Racket Examples</em> &rarr;</a>
+    </li>
+    </ul>
+  </footer>
+</article>
+        </div>
+      </div>
+      <footer>
+        <hr />
+        <p><a href="https://twitter.com/racketlang"
+              class="twitter-follow-button"
+              data-show-count="false"
+              data-lang="en">
+             "Follow RacketLang"
+           </a>
+           <script type="text/javascript">
+             !function(d,s,id){
+                 var js,fjs=d.getElementsByTagName(s)[0];
+                 if(!d.getElementById(id)){
+                     js=d.createElement(s);
+                     js.id=id;
+                     js.src="//platform.twitter.com/widgets.js";
+                     fjs.parentNode.insertBefore(js,fjs);
+                 }
+             }(document,"script","twitter-wjs");
+           </script></p>
+        <p>Site generated
+        by <a href="https://github.com/greghendershott/frog">Frog</a>,
+        the <strong>fr</strong>ozen bl<strong>og</strong> tool.</p>
+        <p>Using <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a>.</p>
+        <p><em>This website does not reflect the views of anyone but the author, Andrew M. Kent. Any and all code is provided as-is with no warranty. User discretion advised ;-)</em>.</p>
+      </footer>
+    </div>
+    <!-- </body> JS -->
+    <script type="text/javascript" src="//code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  </body>
+</html>

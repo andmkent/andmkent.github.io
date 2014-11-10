@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+ <title type="text">My Awesome Blog: Posts tagged 'Program Verification'</title>
+ <link rel="self" href="http://www.example.com/feeds/Program-Verification.atom.xml" />
+ <link href="http://www.example.com/tags/Program-Verification.html" />
+ <id>urn:http-www-example-com:-tags-Program-Verification-html</id>
+ <updated>2014-02-06T22:36:50Z</updated>
+ <entry>
+  <title type="text">Total List Functions</title>
+  <link rel="alternate" href="http://www.example.com/blog/2014/02/06/total-list-functions/?utm_source=Program-Verification&amp;utm_medium=Atom" />
+  <id>urn:http-www-example-com:-blog-2014-02-06-total-list-functions</id>
+  <published>2014-02-06T22:36:50Z</published>
+  <updated>2014-02-06T22:36:50Z</updated>
+  <author>
+   <name>The Unknown Author</name></author>
+  <content type="html">&lt;html&gt;
+&lt;p&gt;What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:&lt;/p&gt;
+
+&lt;div class="brush: racket"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;&lt;a href="http://docs.racket-lang.org/ts-reference/special-forms.html#(form._((lib._typed-racket/base-env/prims..rkt)._~3a))" style="color: inherit"&gt;:&lt;/a&gt;&lt;/span&gt; &lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/list..rkt)._first))" style="color: inherit"&gt;first&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;&lt;a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types-extra..rkt)._.All))" style="color: inherit"&gt;All&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;&lt;a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types..rkt)._.Listof))" style="color: inherit"&gt;Listof&lt;/a&gt;&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;&lt;a href="http://docs.racket-lang.org/reference/function-contracts.html#(form._((lib._racket/contract/base..rkt)._-~3e))" style="color: inherit"&gt;-&amp;gt;&lt;/a&gt;&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This (typed racket syntax) says &lt;em&gt;first&lt;/em&gt; is a function from a list of X&amp;rsquo;s to an X (where X is any type). However, we really know that, although its type is ((Listof X) -&amp;gt; X), if we pass an empty list of X we will not get an X, but a runtime error of some sort (e.g. no values). The type then isn&amp;rsquo;t really giving us a guarantee of what it will do for us&amp;hellip; it&amp;rsquo;s just telling us what it will &lt;em&gt;try&lt;/em&gt; to do for us if it doesn&amp;rsquo;t fail.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&amp;ldquo;No. Try not. Do&amp;hellip; or do not. There is no try.&amp;rdquo; - Master Yoda&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;There is a parallel in math: some functions are not defined for all possible input values (e.g. f(x)=1/x). These are called partial functions (as opposed to total functions). It is common practice to reserve the term &amp;ldquo;function&amp;rdquo; for total functions in math, while in programming partial functions are ubiquitous and there is little effort to distinguish between the two. If only there was some way that the types could reflect this possibility&amp;hellip;&lt;/p&gt;
+&lt;!-- more--&gt;
+
+&lt;p&gt;&lt;em&gt;Note: The property of being total in theoretical computer science is also referred to as the strong normalization property.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;In type theory, the type that has no values is commonly called the &lt;a href="http://en.wikipedia.org/wiki/Bottom_type"&gt;bottom type&lt;/a&gt;. It is often written as ⊥ (\bot in LaTeX). Thus we could say &lt;em&gt;first&lt;/em&gt; has type ((Listof X) -&amp;gt; (U X ⊥)), or in other words, we define our return type as the union of types X and ⊥ to reflect that not returning anything (the bottom type ⊥) is an option.&lt;/p&gt;
+
+&lt;p&gt;Type systems often dodge/ignore this problem by merely guaranteeing that they will prevent all &lt;em&gt;type errors&lt;/em&gt; and not &lt;em&gt;run-time errors&lt;/em&gt;, with a definition of &lt;em&gt;type errors&lt;/em&gt; that to them is reasonable and suites their needs. Lets assume, however, that we did not wish to ignore ⊥ and that we wanted our type checking to provide stronger guarantees about what happens in our program. We could approach this by using a type with an explicit failure case for &lt;em&gt;first&lt;/em&gt; (i.e. wrap the return value in a &amp;ldquo;maybe&amp;rdquo;), thus forcing us to always return a failure value (or similar) instead of error or exit. The other option (and the one we will explore) is to use types which limit the domain of the function so that the function &lt;em&gt;becomes&lt;/em&gt; total (e.g. dissallow empty lists in the type itself so first &lt;em&gt;always&lt;/em&gt; returns an X).&lt;/p&gt;
+
+&lt;h2 id="sigma-types"&gt;Sigma Types&lt;/h2&gt;
+
+&lt;p&gt;In a previous post while examining what a verified version of quicksort might look like, I included the properties I desired &lt;em&gt;in&lt;/em&gt; the return type:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="nc"&gt;Program&lt;/span&gt; &lt;span class="kn"&gt;Fixpoint&lt;/span&gt; &lt;span class="n"&gt;quicksort&lt;/span&gt;
+        &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;measure&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;)}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;sl&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;Permutation&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="n"&gt;sl&lt;/span&gt;
+                         &lt;span class="o"&gt;/\&lt;/span&gt; &lt;span class="nc"&gt;StronglySorted&lt;/span&gt; &lt;span class="n"&gt;le&lt;/span&gt; &lt;span class="n"&gt;sl&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That is, the return type of this function is not merely a list, but a list and a proof it is a permutation of the input and strongly sorted. This was done using Coq&amp;rsquo;s Sigma-types:&lt;/p&gt;
+
+&lt;p&gt;From the Coq manual: &lt;em&gt;Subsets and Sigma-types (sig A P), or more suggestively {x:A | P x}, denotes the subset of elements of the type A which satisfy the predicate P.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Similarly, Sigma-types can help us in our endeavor to devise robust, total list functions.&lt;/p&gt;
+
+&lt;h2 id="writing-a-total-first"&gt;Writing a total &amp;ldquo;first&amp;rdquo;&lt;/h2&gt;
+
+&lt;p&gt;What we really want to do is say that our function &amp;ldquo;first&amp;rdquo; is not merely of type ((Listof X) -&amp;gt; X), but it additionally requires the input list be non-empty and it returns the first element of it.&lt;/p&gt;
+
+&lt;p&gt;Now we can attempt write our total version of first:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Definition&lt;/span&gt; &lt;span class="n"&gt;strong_first&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;):&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt;
+&lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;reflneq&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt;  &lt;span class="n"&gt;x&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;strong_first takes a list l and a proof it is not null and returns an X.&lt;/p&gt;
+
+&lt;p&gt;It accomplishes this by matching the list against the possible two structural forms for a list:&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;nil case&lt;/em&gt;: If it is empty, we use the proof that nil &amp;lt;&amp;gt; nil with the following lemma:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Lemma&lt;/span&gt; &lt;span class="n"&gt;reflneq&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nn"&gt;False&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;span class="nn"&gt;Proof&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+  &lt;span class="n"&gt;auto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Qed&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This gives us False within our function, which we use to vacuously satisfy the match statement for the nil case (since False has exactly 0 constructors).&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;cons case&lt;/em&gt;: In the cons case, we merely return the first element, x.&lt;/p&gt;
+
+&lt;p&gt;If we were designing a complex system that used this function, if/when we extracted the code out of Coq into another language (OCaml in this case) we get:&lt;/p&gt;
+
+&lt;div class="brush: ocaml"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="k"&gt;let&lt;/span&gt; &lt;span class="n"&gt;strong_first&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;Nil&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="bp"&gt;false&lt;/span&gt; &lt;span class="c"&gt;(* absurd case *)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;Cons&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And although this function &lt;em&gt;seems&lt;/em&gt; to have the problem we originally sought to solve (it errors on some input allowed by the OCaml type system), this case would &lt;em&gt;never&lt;/em&gt; be reached by any code also verified and extracted in Coq (since the type checking in Coq would have &lt;em&gt;ensured&lt;/em&gt; the list was non-empty). As for whether or not external code calls this function incorrectly (i.e. with an empty list), that is a matter that must be handled separately. One approach would be the way Typed Racket ensures that typed and untyped modules play nicely: it wraps interactions between untyped and typed code in contracts that perform dynamic checks to prevent any such &amp;ldquo;mixed type error.&amp;rdquo;&lt;/p&gt;
+
+&lt;h2 id="a-verified-return-value"&gt;A verified return value&lt;/h2&gt;
+
+&lt;p&gt;We can also, as we did with quicksort, add a specification to the return type via a Sigma-type so our specification is more precise.&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4
+5
+6&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Definition&lt;/span&gt; &lt;span class="n"&gt;strong_first&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;):&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="k"&gt;exists&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt;
+&lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;reflneq&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Unfortunately, as we see when we try to compile this, we are now returning only the element and not the proof of it&amp;rsquo;s first-ness:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="nc"&gt;The&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="s2"&gt;"x"&lt;/span&gt; &lt;span class="n"&gt;has&lt;/span&gt; &lt;span class="n"&gt;type&lt;/span&gt; &lt;span class="s2"&gt;"X"&lt;/span&gt; &lt;span class="n"&gt;while&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="n"&gt;expected&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="k"&gt;have&lt;/span&gt; &lt;span class="n"&gt;type&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x0&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="k"&gt;exists&lt;/span&gt; &lt;span class="n"&gt;xs0&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;?&lt;/span&gt;&lt;span class="mi"&gt;25&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x0&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs0&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We will take this as an opportunity to exploit the ability to change perspectives and instead approach this in Coq&amp;rsquo;s interactive proving mode:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Definition&lt;/span&gt; &lt;span class="n"&gt;strong_first&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kn"&gt;Set&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+  &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="k"&gt;exists&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;}.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This creates a proof goal that matches the signature of the function we wish to write:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kn"&gt;Set&lt;/span&gt;
+&lt;span class="o"&gt;============================&lt;/span&gt;
+ &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+   &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="k"&gt;exists&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can then use the refine tactic:&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;8.2.3 refine term: This tactic applies to any goal. It behaves like exact with a big difference: the user can leave some holes (denoted by&lt;/em&gt; or (&lt;em&gt;:type)) in the term. refine will generate as many subgoals as there are holes in the term. The type of holes must be either synthesized by the system or declared by an explicit cast like (&lt;/em&gt;:nat-&amp;gt;Prop). This low-level tactic can be useful to advanced users._&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4
+5
+6&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;  &lt;span class="k"&gt;refine&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt;
+   &lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+     &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;False_rec&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt;
+     &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;exist&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt;
+   &lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="o"&gt;).&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;_Note: We used False&lt;em&gt;rec instead of the empty match cases we did previously. They&amp;rsquo;re really the same thing when you flesh them all the way out.&lt;/em&gt;&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="nc"&gt;False_rec&lt;/span&gt;
+&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="nc"&gt;P&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kn"&gt;Set&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;False&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;P&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;False&lt;em&gt;rec just hides some of the machinery and the&lt;/em&gt; wholes allow us to give Coq&amp;rsquo;s automation a chance to fill in the gaps for us.&lt;/p&gt;
+
+&lt;p&gt;This is what remains in our goals:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="n"&gt;subgoals&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subgoal&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;ID&lt;/span&gt; &lt;span class="mi"&gt;41&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+  &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kn"&gt;Set&lt;/span&gt;
+  &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;
+  &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;
+  &lt;span class="n"&gt;pf0&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;
+  &lt;span class="o"&gt;============================&lt;/span&gt;
+   &lt;span class="nc"&gt;False&lt;/span&gt;
+
+&lt;span class="n"&gt;subgoal&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;ID&lt;/span&gt; &lt;span class="mi"&gt;45&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+ &lt;span class="k"&gt;exists&lt;/span&gt; &lt;span class="n"&gt;xs0&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs0&lt;/span&gt;
+
+&lt;span class="nn"&gt;Abort&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;From here we can see the resulting goals are relatively simple, and so we can supplement the refine with a call to eauto. We will also define and use some notation which can be useful if writing numerous functions in this fashion:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Notation&lt;/span&gt; &lt;span class="s2"&gt;"&amp;gt;&amp;gt;&amp;lt;&amp;lt;"&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;False_rec&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;_).&lt;/span&gt;
+&lt;span class="kn"&gt;Notation&lt;/span&gt; &lt;span class="s2"&gt;"&amp;gt;&amp;gt; x &amp;lt;&amp;lt;"&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;False_rec&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;).&lt;/span&gt;
+&lt;span class="kn"&gt;Notation&lt;/span&gt; &lt;span class="s2"&gt;"[ e ]"&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;exist&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="o"&gt;_).&lt;/span&gt;
+
+&lt;span class="kn"&gt;Definition&lt;/span&gt; &lt;span class="n"&gt;strong_first&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kn"&gt;Set&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="k"&gt;exists&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;}.&lt;/span&gt;
+  &lt;span class="k"&gt;refine&lt;/span&gt;
+    &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fun&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt;
+       &lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;lt;&amp;lt;&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+       &lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt; &lt;span class="n"&gt;eauto&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Defined&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+
+&lt;span class="nc"&gt;Extraction&lt;/span&gt; &lt;span class="n"&gt;strong_first&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It&amp;rsquo;s the same extracted function, and it now has the specified output! Cool.&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4
+5&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="c"&gt;(** val strong_first&amp;#39; : &amp;#39;a1 list -&amp;gt; &amp;#39;a1 **)&lt;/span&gt;
+
+&lt;span class="k"&gt;let&lt;/span&gt; &lt;span class="n"&gt;strong_first&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;function&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;Nil&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="bp"&gt;false&lt;/span&gt; &lt;span class="c"&gt;(* absurd case *)&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;Cons&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s see if we can apply this strategy to devise a verified list-indexing function!&lt;/p&gt;
+
+&lt;h2 id="verified-list-indexing"&gt;Verified List-Indexing&lt;/h2&gt;
+
+&lt;p&gt;First we define a lemma or two that will be used in our definition:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Lemma&lt;/span&gt; &lt;span class="n"&gt;lt_list&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;
+&lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Proof&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+  &lt;span class="n"&gt;crush&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Qed&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+
+&lt;span class="kn"&gt;Lemma&lt;/span&gt; &lt;span class="n"&gt;ltnil&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;):&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;
+&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;nil&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nn"&gt;False&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;span class="nn"&gt;Proof&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+  &lt;span class="n"&gt;crush&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Qed&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Note: I wrote these as I saw I needed them, obviously. By &amp;ldquo;first&amp;rdquo;, I mean we need these defined first =)&lt;/p&gt;
+
+&lt;p&gt;We also define a notion which can capture the idea we have for what it means to return the correct nth item from a list:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4
+5
+6&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Inductive&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kn"&gt;Set&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="kt"&gt;Prop&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;LInil&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;LIcons&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;x&amp;#39;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;
+             &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;x&amp;#39;&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+             &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="n"&gt;x&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;).&lt;/span&gt;
+&lt;span class="kn"&gt;Hint&lt;/span&gt; &lt;span class="nc"&gt;Constructors&lt;/span&gt; &lt;span class="nn"&gt;ListIndex&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And for convenience&amp;hellip; I define a shorter, more clear name for the function that extracts the item out of a sigma type:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Definition&lt;/span&gt; &lt;span class="n"&gt;sigX&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="n"&gt;proj1_sig&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+
+&lt;span class="kn"&gt;Definition&lt;/span&gt; &lt;span class="n"&gt;strong_nth&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kn"&gt;Set&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;}.&lt;/span&gt;
+  &lt;span class="k"&gt;refine&lt;/span&gt;
+    &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fix&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;nat&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt;
+       &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt;
+       &lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt;  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;sigX&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lt_list&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;))]&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="o"&gt;_,&lt;/span&gt; &lt;span class="o"&gt;_,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;ltnil&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;
+       &lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt; &lt;span class="n"&gt;crush&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We&amp;rsquo;re almost there. The crush tactic derived everything except the details regarding the fact that our recursive call&amp;rsquo;s type is equivalent to (or implies, perhaps) the type we wish to return from the initial call:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kn"&gt;Set&lt;/span&gt;
+  &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+      &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;
+  &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt;
+  &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;
+  &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;
+  &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;
+  &lt;span class="n"&gt;pf0&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt;
+  &lt;span class="n"&gt;pf1&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;============================&lt;/span&gt;
+   &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sigX&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lt_list&lt;/span&gt; &lt;span class="n"&gt;pf1&lt;/span&gt;&lt;span class="o"&gt;)))&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nn"&gt;Abort&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We simply build a lemma that extends the proof to meet our needs, given what we get from the recursive call and we&amp;rsquo;re good to go:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="kn"&gt;Lemma&lt;/span&gt; &lt;span class="n"&gt;nthrec&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kn"&gt;Set&lt;/span&gt;&lt;span class="o"&gt;}:&lt;/span&gt; &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;}),&lt;/span&gt;
+&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+&lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;proj1_sig&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;).&lt;/span&gt;
+&lt;span class="kn"&gt;Proof&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+  &lt;span class="k"&gt;intros&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+  &lt;span class="k"&gt;destruct&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;crush&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Qed&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Hint&lt;/span&gt; &lt;span class="kn"&gt;Resolve&lt;/span&gt; &lt;span class="n"&gt;nthrec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+
+&lt;span class="kn"&gt;Definition&lt;/span&gt; &lt;span class="n"&gt;strong_nth&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kn"&gt;Set&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="k"&gt;forall&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;nat&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;}.&lt;/span&gt;
+  &lt;span class="k"&gt;refine&lt;/span&gt;
+    &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fix&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kt"&gt;list&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;nat&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt;
+       &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;X&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;ListIndex&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt;
+       &lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt;  &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;sigX&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lt_list&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;))]&lt;/span&gt;
+         &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="o"&gt;_,&lt;/span&gt; &lt;span class="o"&gt;_,&lt;/span&gt; &lt;span class="o"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;ltnil&lt;/span&gt; &lt;span class="n"&gt;pf&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;
+       &lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt; &lt;span class="n"&gt;crush&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="kn"&gt;Defined&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;So how is this different from our first example (first)?&lt;/p&gt;
+
+&lt;p&gt;I had to explicitly tell it I wanted to derive false from the lemma ltnil. Without that it would &amp;ldquo;complete&amp;rdquo;, but the result would be ill-typed and fail when closing the proof with &amp;ldquo;Defined&amp;rdquo;. Can&amp;rsquo;t leave everything up to automation I guess =) Because of the recursive nature of this function, I had to build a lemma which evaluated the Sigma-type of the recursive call and showed from it we could derive the type we wished to ultimately return.&lt;/p&gt;
+
+&lt;p&gt;And here&amp;rsquo;s what she looks like extracted:&lt;/p&gt;
+
+&lt;div class="brush: coq"&gt;
+ &lt;table class="sourcetable"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td class="linenos"&gt;
+     &lt;div class="linenodiv"&gt;
+      &lt;pre&gt;1
+2
+3
+4
+5
+6
+7
+8
+9&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
+    &lt;td class="code"&gt;
+     &lt;div class="source"&gt;
+      &lt;pre&gt;&lt;span class="c"&gt;(** val strong_nth : &amp;#39;a1 list -&amp;gt; nat -&amp;gt; &amp;#39;a1 **)&lt;/span&gt;
+
+&lt;span class="k"&gt;let&lt;/span&gt; &lt;span class="n"&gt;rec&lt;/span&gt; &lt;span class="n"&gt;strong_nth&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;
+  &lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;Nil&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="bp"&gt;false&lt;/span&gt; &lt;span class="c"&gt;(* absurd case *)&lt;/span&gt;
+  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;Cons&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+    &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;match&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt;
+     &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;O&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;
+     &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nc"&gt;S&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;sigX&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strong_nth&lt;/span&gt; &lt;span class="n"&gt;xs&lt;/span&gt; &lt;span class="n"&gt;i&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Beautiful!&lt;/p&gt;
+
+&lt;p&gt;Source code related to this post found &lt;a href="https://github.com/sgtamk/sgtamk.github.io/blob/master/snippets/20140206-listbasics-code.v"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Note: This post is inspired by some of my personal experimenting and some related material from the &amp;ldquo;Subset&amp;rdquo; chapter from &lt;a href="http://adam.chlipala.net/cpdt/"&gt;CPDT&lt;/a&gt; (an excellent Coq resource!).&lt;/p&gt;&lt;/html&gt;</content></entry></feed>

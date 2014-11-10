@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <title>Posts tagged 'Coq'</title>
+    <meta name="description" content="Posts tagged 'Coq'">
+    <meta name="author"      content="The Unknown Author">
+    <meta name="keywords"    content="Coq">
+    <meta name="viewport"    content="width=device-width, initial-scale=1.0">
+    <link rel="icon"      href="/favicon.ico">
+    <link rel="canonical" href="http://www.example.com/tags/Coq.html">
+
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/pygments.css">
+    <link rel="stylesheet" type="text/css" href="/css/scribble.css">
+    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+    <!-- Feeds -->
+    <link ref="alternate" type="application/atom+xml"
+          href="/feeds/Coq.atom.xml" title="Atom Feed">
+    <link ref="alternate" type="application/rss+xml"
+          href="/feeds/Coq.rss.xml" title="RSS Feed">
+    <!-- JS -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-xxxxx']);
+      _gaq.push(['_setDomainName', 'example.com']);
+      _gaq.push(['_trackPageview']);
+      setTimeout(function(){_gaq.push(['_trackEvent', '30_seconds', 'read'])}, 30000); // http://drawingablank.me/blog/fix-your-bounce-rate.html
+      (function() {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- A standard Twitter Bootstrap nav bar -->
+    <header class="navbar navbar-default navbar-inverse"
+            role="banner">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button"
+                  class="navbar-toggle"
+                  data-toggle="collapse"
+                  data-target=".our-nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="/index.html" class="navbar-brand">Andrew M. Kent</a>
+        </div>
+        <div class="collapse navbar-collapse our-nav-collapse"
+             role="navigation">
+          <ul class="nav navbar-nav">
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Tags <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/index.html">All Posts</a></li>
+
+<li><a href="/tags/C.html">C</a></li>
+
+<li><a href="/tags/Coq.html">Coq</a></li>
+
+<li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
+
+<li><a href="/tags/Program-Verification.html">Program Verification</a></li>
+
+<li><a href="/tags/Racket.html">Racket</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="/About.html">About Me</a>
+            </li> 
+            <li><a href="/feeds/Coq.atom.xml">Atom</a></li>
+            <li><a href="/feeds/Coq.rss.xml">RSS</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+
+        <!-- Main column -->
+        <div id="content" class="col-md-12">
+
+
+
+          <h1>Posts tagged <em>Coq</em></h1>
+
+          <article>
+  <header>
+    <h2><a href='/blog/2014/11/10/dependently-typed-quicksort/'>Dependently Typed Quicksort</a></h2>
+    <p class='date-and-tags'>
+<time datetime="2014-11-10" pubdate="true">2014-11-10</time> :: <span class="tags"><a href="/tags/Dependent-Types.html">Dependent Types</a>, <a href="/tags/Coq.html">Coq</a></span></p>
+  </header>
+
+<p>Coq&rsquo;s support for dependent types mean that type checking not only
+catches trivial errors like passing an integer to a function expecting
+a string, but it can also check and verify types which represent
+properties regarding the functional behavior of the a program.</p>
+
+<p>I thought it would be edifying to use this capability to write a
+verified version of quicksort (i.e. a quicksort with types that
+specify its behavior), and it was!</p>
+<footer class="read-more"><a href="/blog/2014/11/10/dependently-typed-quicksort/">&hellip;more&hellip;</a></footer>
+</article>
+<article>
+  <header>
+    <h2><a href='/blog/2014/02/06/total-list-functions/'>Total List Functions</a></h2>
+    <p class='date-and-tags'>
+<time datetime="2014-02-06" pubdate="true">2014-02-06</time> :: <span class="tags"><a href="/tags/Coq.html">Coq</a>, <a href="/tags/Program-Verification.html">Program Verification</a>, <a href="/tags/Dependent-Types.html">Dependent Types</a></span></p>
+  </header>
+
+<p>What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:</p>
+
+<div class="brush: racket">
+ <table class="sourcetable">
+  <tbody>
+   <tr>
+    <td class="linenos">
+     <div class="linenodiv">
+      <pre>1</pre></div></td>
+    <td class="code">
+     <div class="source">
+      <pre><span class="p">(</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/special-forms.html#(form._((lib._typed-racket/base-env/prims..rkt)._~3a))" style="color: inherit">:</a></span> <span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/list..rkt)._first))" style="color: inherit">first</a></span> <span class="p">(</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types-extra..rkt)._.All))" style="color: inherit">All</a></span> <span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="p">((</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types..rkt)._.Listof))" style="color: inherit">Listof</a></span> <span class="n">X</span><span class="p">)</span> <span class="k"><a href="http://docs.racket-lang.org/reference/function-contracts.html#(form._((lib._racket/contract/base..rkt)._-~3e))" style="color: inherit">-&gt;</a></span> <span class="n">X</span><span class="p">)))</span>
+</pre></div>
+</td></tr></tbody></table>
+</div>
+
+<p>This (typed racket syntax) says <em>first</em> is a function from a list of X&rsquo;s to an X (where X is any type). However, we really know that, although its type is ((Listof X) -&gt; X), if we pass an empty list of X we will not get an X, but a runtime error of some sort (e.g. no values). The type then isn&rsquo;t really giving us a guarantee of what it will do for us&hellip; it&rsquo;s just telling us what it will <em>try</em> to do for us if it doesn&rsquo;t fail.</p>
+
+<p><em>&ldquo;No. Try not. Do&hellip; or do not. There is no try.&rdquo; - Master Yoda</em></p>
+
+<p>There is a parallel in math: some functions are not defined for all possible input values (e.g. f(x)=1/x). These are called partial functions (as opposed to total functions). It is common practice to reserve the term &ldquo;function&rdquo; for total functions in math, while in programming partial functions are ubiquitous and there is little effort to distinguish between the two. If only there was some way that the types could reflect this possibility&hellip;</p>
+<footer class="read-more"><a href="/blog/2014/02/06/total-list-functions/">&hellip;more&hellip;</a></footer>
+</article>
+        </div>
+      </div>
+      <footer>
+        <hr />
+        <p><a href="https://twitter.com/racketlang"
+              class="twitter-follow-button"
+              data-show-count="false"
+              data-lang="en">
+             "Follow RacketLang"
+           </a>
+           <script type="text/javascript">
+             !function(d,s,id){
+                 var js,fjs=d.getElementsByTagName(s)[0];
+                 if(!d.getElementById(id)){
+                     js=d.createElement(s);
+                     js.id=id;
+                     js.src="//platform.twitter.com/widgets.js";
+                     fjs.parentNode.insertBefore(js,fjs);
+                 }
+             }(document,"script","twitter-wjs");
+           </script></p>
+        <p>Site generated
+        by <a href="https://github.com/greghendershott/frog">Frog</a>,
+        the <strong>fr</strong>ozen bl<strong>og</strong> tool.</p>
+        <p>Using <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a>.</p>
+        <p><em>This website does not reflect the views of anyone but the author, Andrew M. Kent. Any and all code is provided as-is with no warranty. User discretion advised ;-)</em>.</p>
+      </footer>
+    </div>
+    <!-- </body> JS -->
+    <script type="text/javascript" src="//code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  </body>
+</html>
