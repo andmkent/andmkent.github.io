@@ -4,9 +4,310 @@
   <title>My Awesome Blog: My Awesome Blog</title>
   <description>My Awesome Blog: My Awesome Blog</description>
   <link>http://www.example.com/index.html</link>
-  <lastBuildDate>Mon, 10 Nov 2014 09:01:16 EST</lastBuildDate>
-  <pubDate>Mon, 10 Nov 2014 09:01:16 EST</pubDate>
+  <lastBuildDate>Sat, 20 Dec 2014 08:23:08 EST</lastBuildDate>
+  <pubDate>Sat, 20 Dec 2014 08:23:08 EST</pubDate>
   <ttl>1800</ttl>
+  <item>
+   <title>Let-aliasing in Typed Racket</title>
+   <link>http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=all&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</guid>
+   <pubDate>Sat, 20 Dec 2014 08:23:08 EST</pubDate>
+   <description>&lt;html&gt;
+&lt;p&gt;Although Typed Racket (TR) &lt;span style="font-style: italic"&gt;can&lt;/span&gt; currently typecheck a large number
+of common idioms found in Racket code, reasoning about direct and indirect
+usages of aliasing has escaped its grasp... until now!&lt;/p&gt;
+&lt;!--more--&gt;
+
+&lt;h1&gt;&lt;a name="(part._.Motivation_for_.Aliasing)"&gt;&lt;/a&gt;Motivation for Aliasing&lt;/h1&gt;
+
+&lt;p&gt;Typed Racket&amp;rsquo;s use of logical propositions about types enables
+it to typecheck programs whose control flows don&amp;rsquo;t neatly fit
+within the realm of what traditional type systems can check.&lt;/p&gt;
+
+&lt;p&gt;Here, for example, the type checker recognizes the result of
+&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt; has type-related implications, whether it
+evaluates to &lt;span class="RktVal"&gt;#t&lt;/span&gt; or &lt;span class="RktVal"&gt;#f&lt;/span&gt;:&lt;/p&gt;
+
+&lt;div class="SCodeFlow"&gt;
+ &lt;table cellpadding="0" cellspacing="0" class="RktBlk"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;:&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;foo&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;Any&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;&lt;span class="nobreak"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;define&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;size&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;cond&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;else&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktVal"&gt;42&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;That&amp;rsquo;s great&amp;ndash;but if we introduce just a little indirection:&lt;/p&gt;
+
+&lt;div class="SCodeFlow"&gt;
+ &lt;table cellpadding="0" cellspacing="0" class="RktBlk"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;:&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;foo-let&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;Any-&amp;gt;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;define&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;foo-let&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;let&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;cond&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;else&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktVal"&gt;42&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktCmt"&gt;;;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;does&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;not&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;typecheck&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;in&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;Racket&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;version&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;&amp;lt;=&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;6.1.1&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;=(&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;We discover that, even though &lt;span class="RktSym"&gt;y&lt;/span&gt; was bound to &lt;span class="RktSym"&gt;x&lt;/span&gt;,
+that information does not make it into the type-system.
+Instead, the only information that relates the two values is
+(more or less) the following three propositions:&lt;/p&gt;
+
+&lt;ul&gt;
+ &lt;li&gt;
+  &lt;p&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt; is of type &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;U&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;String&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+ &lt;li&gt;
+  &lt;p&gt;If &lt;span class="RktSym"&gt;y&lt;/span&gt; evaluates to &lt;span class="RktVal"&gt;#f&lt;/span&gt;, &lt;span class="RktSym"&gt;x&lt;/span&gt;
+   is of type &lt;span class="RktSym"&gt;False&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+ &lt;li&gt;
+  &lt;p&gt;If &lt;span class="RktSym"&gt;y&lt;/span&gt; evaluates to a non-&lt;span class="RktVal"&gt;#f&lt;/span&gt; value,
+   &lt;span class="RktSym"&gt;x&lt;/span&gt; is not of type &lt;span class="RktSym"&gt;False&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;
+
+&lt;p&gt;Now, you may be thinking &lt;span class="RktSym"&gt;foo-let&lt;/span&gt; doesn&amp;rsquo;t typecheck because
+no one should ever write such a silly program! However, many of Racket&amp;rsquo;s
+useful macros expand into code which requires just this sort of
+type-based reasoning:&lt;/p&gt;
+
+&lt;div class="SCodeFlow"&gt;
+ &lt;table cellpadding="0" cellspacing="0" class="RktBlk"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;:&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;foo-match&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;Any&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;&lt;span class="nobreak"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;define&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;foo-match&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;match&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;?&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;_&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktVal"&gt;42&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktCmt"&gt;;;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;does&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;not&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;typecheck&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;in&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;Racket&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;version&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;&amp;lt;=&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;6.1.1&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktCmt"&gt;;;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;because&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;match&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;expands&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;into&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;a&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;program&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;utilizing&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;let-bindings&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;It sure would be nice if we could get some of these seemingly simple
+programs (and more!) to typecheck without a big refactoring of
+the type system...&lt;/p&gt;
+
+&lt;h1&gt;&lt;a name="(part._.A_slight_aside__.What_is_an_object_in_.T.R_)"&gt;&lt;/a&gt;A slight aside: What is an object in TR?&lt;/h1&gt;
+
+&lt;p&gt;In the calculus which describes Typed Racket&amp;rsquo;s type system, an &amp;rsquo;object&amp;rsquo;
+is a kind of syntactic representation of some expression. If an expression
+&amp;rsquo;has an object,&amp;rsquo; it means there is some pure syntactic representation
+for the value it will evaluate to. Currently, objects can represent variables
+or accesses into immutable values such as &lt;span class="RktSym"&gt;cons&lt;/span&gt; cells or
+&lt;span class="RktSym"&gt;structs&lt;/span&gt;. For example:&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;table cellpadding="0" cellspacing="0"&gt;
+ &lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span style="font-weight: bold"&gt;Racket Expression&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span style="font-weight: bold"&gt;TR Object&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;random&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktVal"&gt;100&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;No Object&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;caar&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;p&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;car&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;car&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;p&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#955;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;string-length&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;s&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;No Object&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#955;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktVal"&gt;42&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;
+   &lt;td&gt;
+    &lt;p&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+
+&lt;p&gt;Basically, objects enable the type system derive the same
+logical meaning from expressions like &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#955;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;
+or &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#955;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;maybe-num&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;maybe-num&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;
+as it does from &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;.&lt;/p&gt;
+
+&lt;h1&gt;&lt;a name="(part._.A_.Simple_.Solution__.Let-aliasing_.Objects)"&gt;&lt;/a&gt;A Simple Solution: Let-aliasing Objects&lt;/h1&gt;
+
+&lt;p&gt;In desire to keep things simple and maintain compatibility with what
+Typed Racket is already doing so well for so many other Racket programs,
+I decided to explore adding a simple aliasing extension to the current
+type system that behaves in the following ways:&lt;/p&gt;
+
+&lt;ul&gt;
+ &lt;li&gt;
+  &lt;p&gt;Add a function, &lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt;, to the type environment, which
+maps identifiers to objects.&lt;/p&gt;&lt;/li&gt;
+ &lt;li&gt;
+  &lt;p&gt;By default, &lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt; acts like the identity function, mapping
+identifiers to themselves.&lt;/p&gt;&lt;/li&gt;
+ &lt;li&gt;
+  &lt;p&gt;&lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt; is extended only if, when typechecking a
+ let-expression, a variable is being bound to an expression
+ with an object. This extension is only in effect while checking
+ the body of that let expression.&lt;/p&gt;&lt;/li&gt;
+ &lt;li&gt;
+  &lt;p&gt;When typechecking any variable expression,
+&lt;span class="RktSym"&gt;x&lt;/span&gt;, reason about the object &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;
+instead of &lt;span class="RktSym"&gt;x&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;
+
+&lt;p&gt;So, for example, when typechecking the &lt;span style="font-style: italic"&gt;body&lt;/span&gt; of the let expression in
+&lt;span class="RktSym"&gt;foo-let&lt;/span&gt;, we extend the aliasing lookup &lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt; in the
+type environment to map &lt;span class="RktSym"&gt;y&lt;/span&gt; to the object &lt;span class="RktSym"&gt;x&lt;/span&gt; instead of adding
+the three propositions relating &lt;span class="RktSym"&gt;x&lt;/span&gt; and &lt;span class="RktSym"&gt;y&lt;/span&gt; we saw earlier.&lt;/p&gt;
+
+&lt;p&gt;This simple approach allows the type system to seemlessly track let-aliasing
+by only slightly modifying the type system&amp;rsquo;s behavior for let-expressions
+and variables!&lt;/p&gt;
+
+&lt;p&gt;With this change, TR can now successfully typecheck a variety of new programs!&lt;/p&gt;
+
+&lt;div class="SCodeFlow"&gt;
+ &lt;table cellpadding="0" cellspacing="0" class="RktBlk"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;:&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;super-foo&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&lt;span class="nobreak"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;Any&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;define&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;super-foo&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#955;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;match&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;?&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;`&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;_&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktMeta"&gt;.&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;_&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktMeta"&gt;.&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;,&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;?&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;cddr&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;`&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;_&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktMeta"&gt;.&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;_&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktMeta"&gt;.&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;,&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;?&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;pair?&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;p&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;if&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;caddr&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;car&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;p&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktVal"&gt;41&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;_&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktVal"&gt;42&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktCmt"&gt;;;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;typechecks&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;with&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktCmt"&gt;let-aliasing!&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;Additionally, because this approach prevents several propositions from being
+generated (and disjunctions no less!) some programs which took quite a while
+to typecheck can now be verified immediately!&lt;/p&gt;
+
+&lt;h1&gt;&lt;a name="(part._.Epilogue)"&gt;&lt;/a&gt;Epilogue&lt;/h1&gt;
+
+&lt;h2&gt;&lt;a name="(part._.So_ins_t_this_just_copy_propogation_)"&gt;&lt;/a&gt;So ins&amp;rsquo;t this just copy propogation?&lt;/h2&gt;
+
+&lt;p&gt;It&amp;rsquo;s definitely similar &amp;#8212;
+ &lt;wbr /&gt; both reason about known equalities between
+expressions and have to be aware of mutation (our use of objects handles this)
+ &amp;#8212;
+ &lt;wbr /&gt; however, we&amp;rsquo;re not modifying the source program as a separate pass. We&amp;rsquo;re keeping
+the same program and just trying to edify the typechecker (without adding additional
+passes) with the same kinds of insights it could have if it was typehecking a
+program that had been rewritten using copy propogation or a similar technique.&lt;/p&gt;
+
+&lt;h2&gt;&lt;a name="(part._.Are_there_any_simple_programs_you_re_still_working_to_typecheck_)"&gt;&lt;/a&gt;Are there any simple programs you&amp;rsquo;re still working to typecheck?&lt;/h2&gt;
+
+&lt;p&gt;Sure! This simple guy doesn&amp;rsquo;t typecheck:&lt;/p&gt;
+
+&lt;div class="SCodeFlow"&gt;
+ &lt;table cellpadding="0" cellspacing="0" class="RktBlk"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;:&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;size&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;U&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;String&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;&lt;span class="nobreak"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;define&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;size&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;match&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;?&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;_&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;string-length&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;Because it expands into something like this:&lt;/p&gt;
+
+&lt;div class="SCodeFlow"&gt;
+ &lt;table cellpadding="0" cellspacing="0" class="RktBlk"&gt;
+  &lt;tbody&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;define&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;size-expanded&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;let*&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;x1&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;f2&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#955;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;string-length&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;if&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;number?&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x1&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;f2&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+
+&lt;p&gt;Let-aliasing almost gets us there, but the environment in which &lt;span class="RktSym"&gt;f3&lt;/span&gt;
+is typechecked doesn&amp;rsquo;t know that we&amp;rsquo;re only going to call it if &lt;span class="RktSym"&gt;x1&lt;/span&gt;
+is not a number =(&lt;/p&gt;
+
+&lt;p&gt;Perhaps this is an argument for why let-aliasing should be a little more like
+copy propogation...? We&amp;rsquo;ll have to do some more digging and find out!&lt;/p&gt;
+
+&lt;h2&gt;&lt;a name="(part._.So_how_much_of_the_.Typed_.Racket_codebase_had_to_change_to_support_this_)"&gt;&lt;/a&gt;So how much of the Typed Racket codebase had to change to support this?&lt;/h2&gt;
+
+&lt;p&gt;Not that much! &lt;a href="https://github.com/racket/typed-racket/pull/2"&gt;Here&amp;rsquo;s&lt;/a&gt; the Github pull request. I had to improve TR&amp;rsquo;s ability to update
+type information inside of complex structures a little (e.g. &lt;span class="RktSym"&gt;cons&lt;/span&gt; cells,
+&lt;span class="RktSym"&gt;struct&lt;/span&gt;s) since there were no longer additional variables floating
+around explicitly representing things like the &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;car&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;p&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;, for example,
+but these changes were fairly natural/minor and perhaps should have been
+made regardless.&lt;/p&gt;
+
+&lt;h2&gt;&lt;a name="(part._.Where_can_.I_learn_more_about_.T.R_s_type_system_)"&gt;&lt;/a&gt;Where can I learn more about TR&amp;rsquo;s type system?&lt;/h2&gt;
+
+&lt;p&gt;Start here: &amp;rsquo;Logical Types for Untyped Languages&amp;rsquo; by Tobin-Hochstadt and Felleisen
+[&lt;a href="http://dl.acm.org/citation.cfm?id=1863561"&gt;ACM link&lt;/a&gt;]&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>
    <title>Dependently Typed Quicksort</title>
    <link>http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=all&amp;utm_medium=RSS</link>

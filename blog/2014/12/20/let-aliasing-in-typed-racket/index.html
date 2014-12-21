@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <title>Let-aliasing in Typed Racket</title>
+    <meta name="description" content="Although Typed Racket (TR) can currently typecheck a large number of common idioms found in Racket code, reasoning about direct and indirect usages of aliasing has escaped its grasp... until now!...">
+    <meta name="author"      content="The Unknown Author">
+    <meta name="keywords"    content="Typed Racket">
+    <meta name="viewport"    content="width=device-width, initial-scale=1.0">
+    <link rel="icon"      href="/favicon.ico">
+    <link rel="canonical" href="http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/">
+    <link rel="next" href="/blog/2014/11/10/dependently-typed-quicksort/">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/pygments.css">
+    <link rel="stylesheet" type="text/css" href="/css/scribble.css">
+    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+    <!-- Feeds -->
+    <link ref="alternate" type="application/atom+xml"
+          href="/feeds/all.atom.xml" title="Atom Feed">
+    <link ref="alternate" type="application/rss+xml"
+          href="/feeds/all.rss.xml" title="RSS Feed">
+    <!-- JS -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-xxxxx']);
+      _gaq.push(['_setDomainName', 'example.com']);
+      _gaq.push(['_trackPageview']);
+      setTimeout(function(){_gaq.push(['_trackEvent', '30_seconds', 'read'])}, 30000); // http://drawingablank.me/blog/fix-your-bounce-rate.html
+      (function() {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- A standard Twitter Bootstrap nav bar -->
+    <header class="navbar navbar-default navbar-inverse"
+            role="banner">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button"
+                  class="navbar-toggle"
+                  data-toggle="collapse"
+                  data-target=".our-nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="/index.html" class="navbar-brand">Andrew M. Kent</a>
+        </div>
+        <div class="collapse navbar-collapse our-nav-collapse"
+             role="navigation">
+          <ul class="nav navbar-nav">
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Tags <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/index.html">All Posts</a></li>
+
+<li><a href="/tags/C.html">C</a></li>
+
+<li><a href="/tags/Coq.html">Coq</a></li>
+
+<li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
+
+<li><a href="/tags/Program-Verification.html">Program Verification</a></li>
+
+<li><a href="/tags/Racket.html">Racket</a></li>
+
+<li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="/About.html">About Me</a>
+            </li> 
+            <li><a href="/feeds/all.atom.xml">Atom</a></li>
+            <li><a href="/feeds/all.rss.xml">RSS</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+
+        <!-- Main column -->
+        <div id="content" class="col-md-12">
+
+
+
+
+
+          <article>
+  <header>
+    <h1>Let-aliasing in Typed Racket</h1>
+    <p class='date-and-tags'>
+<time datetime="2014-12-20" pubdate="true">2014-12-20</time> :: <span class="tags"><a href="/tags/Typed-Racket.html">Typed Racket</a></span></p>
+  </header>
+
+<p>Although Typed Racket (TR) <span style="font-style: italic">can</span> currently typecheck a large number
+of common idioms found in Racket code, reasoning about direct and indirect
+usages of aliasing has escaped its grasp... until now!</p>
+<!--more-->
+
+<h1><a name="(part._.Motivation_for_.Aliasing)"></a>Motivation for Aliasing</h1>
+
+<p>Typed Racket&rsquo;s use of logical propositions about types enables
+it to typecheck programs whose control flows don&rsquo;t neatly fit
+within the realm of what traditional type systems can check.</p>
+
+<p>Here, for example, the type checker recognizes the result of
+<span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span> has type-related implications, whether it
+evaluates to <span class="RktVal">#t</span> or <span class="RktVal">#f</span>:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="hspace">&nbsp;</span><span class="RktSym">foo</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">Any</span><span class="hspace">&nbsp;</span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="hspace">&nbsp;</span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">size</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">cond</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">]</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">else</span><span class="hspace">&nbsp;</span><span class="RktVal">42</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr></tbody></table></div>
+
+<p>That&rsquo;s great&ndash;but if we introduce just a little indirection:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">foo-let</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">Any-&gt;</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">define</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">foo-let</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">let</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktPn">[</span><span class="RktSym">y</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">cond</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">y</span><span class="RktPn">)</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">]</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktSym">else</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktVal">42</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">does</span><span class="hspace">&nbsp;</span><span class="RktCmt">not</span><span class="hspace">&nbsp;</span><span class="RktCmt">typecheck</span><span class="hspace">&nbsp;</span><span class="RktCmt">in</span><span class="hspace">&nbsp;</span><span class="RktCmt">Racket</span><span class="hspace">&nbsp;</span><span class="RktCmt">version</span><span class="hspace">&nbsp;</span><span class="RktCmt">&lt;=</span><span class="hspace">&nbsp;</span><span class="RktCmt">6.1.1</span><span class="hspace">&nbsp;&nbsp;</span><span class="RktCmt">=(</span><span class="RktMeta"></span></td></tr></tbody></table></div>
+
+<p>We discover that, even though <span class="RktSym">y</span> was bound to <span class="RktSym">x</span>,
+that information does not make it into the type-system.
+Instead, the only information that relates the two values is
+(more or less) the following three propositions:</p>
+
+<ul>
+ <li>
+  <p><span class="RktSym">y</span> is of type <span class="RktPn">(</span><span class="RktSym">U</span><span class="stt"> </span><span class="RktSym">Number</span><span class="stt"> </span><span class="RktSym">String</span><span class="RktPn">)</span></p></li>
+ <li>
+  <p>If <span class="RktSym">y</span> evaluates to <span class="RktVal">#f</span>, <span class="RktSym">x</span>
+   is of type <span class="RktSym">False</span>.</p></li>
+ <li>
+  <p>If <span class="RktSym">y</span> evaluates to a non-<span class="RktVal">#f</span> value,
+   <span class="RktSym">x</span> is not of type <span class="RktSym">False</span>.</p></li></ul>
+
+<p>Now, you may be thinking <span class="RktSym">foo-let</span> doesn&rsquo;t typecheck because
+no one should ever write such a silly program! However, many of Racket&rsquo;s
+useful macros expand into code which requires just this sort of
+type-based reasoning:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">foo-match</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">Any</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">define</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">foo-match</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">match</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">number?</span><span class="RktPn">)</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">]</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktSym">_</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktVal">42</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">does</span><span class="hspace">&nbsp;</span><span class="RktCmt">not</span><span class="hspace">&nbsp;</span><span class="RktCmt">typecheck</span><span class="hspace">&nbsp;</span><span class="RktCmt">in</span><span class="hspace">&nbsp;</span><span class="RktCmt">Racket</span><span class="hspace">&nbsp;</span><span class="RktCmt">version</span><span class="hspace">&nbsp;</span><span class="RktCmt">&lt;=</span><span class="hspace">&nbsp;</span><span class="RktCmt">6.1.1</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">because</span><span class="hspace">&nbsp;</span><span class="RktCmt">match</span><span class="hspace">&nbsp;</span><span class="RktCmt">expands</span><span class="hspace">&nbsp;</span><span class="RktCmt">into</span><span class="hspace">&nbsp;</span><span class="RktCmt">a</span><span class="hspace">&nbsp;</span><span class="RktCmt">program</span><span class="hspace">&nbsp;</span><span class="RktCmt">utilizing</span><span class="hspace">&nbsp;</span><span class="RktCmt">let-bindings</span><span class="RktMeta"></span></td></tr></tbody></table></div>
+
+<p>It sure would be nice if we could get some of these seemingly simple
+programs (and more!) to typecheck without a big refactoring of
+the type system...</p>
+
+<h1><a name="(part._.A_slight_aside__.What_is_an_object_in_.T.R_)"></a>A slight aside: What is an object in TR?</h1>
+
+<p>In the calculus which describes Typed Racket&rsquo;s type system, an &rsquo;object&rsquo;
+is a kind of syntactic representation of some expression. If an expression
+&rsquo;has an object,&rsquo; it means there is some pure syntactic representation
+for the value it will evaluate to. Currently, objects can represent variables
+or accesses into immutable values such as <span class="RktSym">cons</span> cells or
+<span class="RktSym">structs</span>. For example:</p>
+
+<p></p>
+
+<table cellpadding="0" cellspacing="0">
+ <tbody>
+  <tr>
+   <td>
+    <p><span style="font-weight: bold">Racket Expression</span></p></td>
+   <td>
+    <p><span class="hspace">&nbsp;</span></p></td>
+   <td>
+    <p><span style="font-weight: bold">TR Object</span></p></td></tr>
+  <tr>
+   <td>
+    <p><span class="RktSym">x</span></p></td>
+   <td>
+    <p><span class="hspace">&nbsp;</span></p></td>
+   <td>
+    <p><span class="RktSym">x</span></p></td></tr>
+  <tr>
+   <td>
+    <p><span class="RktPn">(</span><span class="RktSym">random</span><span class="stt"> </span><span class="RktVal">100</span><span class="RktPn">)</span></p></td>
+   <td>
+    <p><span class="hspace">&nbsp;</span></p></td>
+   <td>
+    <p>No Object</p></td></tr>
+  <tr>
+   <td>
+    <p><span class="RktPn">(</span><span class="RktSym">caar</span><span class="stt"> </span><span class="RktSym">p</span><span class="RktPn">)</span></p></td>
+   <td>
+    <p><span class="hspace">&nbsp;</span></p></td>
+   <td>
+    <p><span class="RktPn">(</span><span class="RktSym">car</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">car</span><span class="stt"> </span><span class="RktSym">p</span><span class="RktPn">)</span><span class="RktPn">)</span></p></td></tr>
+  <tr>
+   <td>
+    <p><span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">x</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">y</span><span class="RktPn">)</span></p></td>
+   <td>
+    <p><span class="hspace">&nbsp;</span></p></td>
+   <td>
+    <p><span class="RktSym">y</span></p></td></tr>
+  <tr>
+   <td>
+    <p><span class="RktPn">(</span><span class="RktSym">string-length</span><span class="stt"> </span><span class="RktSym">s</span><span class="RktPn">)</span></p></td>
+   <td>
+    <p><span class="hspace">&nbsp;</span></p></td>
+   <td>
+    <p>No Object</p></td></tr>
+  <tr>
+   <td>
+    <p><span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">x</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">y</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktVal">42</span><span class="RktPn">)</span></p></td>
+   <td>
+    <p><span class="hspace">&nbsp;</span></p></td>
+   <td>
+    <p><span class="RktSym">y</span></p></td></tr></tbody></table>
+
+<p>Basically, objects enable the type system derive the same
+logical meaning from expressions like <span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span>
+or <span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">maybe-num</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktSym">maybe-num</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>
+as it does from <span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>.</p>
+
+<h1><a name="(part._.A_.Simple_.Solution__.Let-aliasing_.Objects)"></a>A Simple Solution: Let-aliasing Objects</h1>
+
+<p>In desire to keep things simple and maintain compatibility with what
+Typed Racket is already doing so well for so many other Racket programs,
+I decided to explore adding a simple aliasing extension to the current
+type system that behaves in the following ways:</p>
+
+<ul>
+ <li>
+  <p>Add a function, <span class="RktSym">&#952;</span>, to the type environment, which
+maps identifiers to objects.</p></li>
+ <li>
+  <p>By default, <span class="RktSym">&#952;</span> acts like the identity function, mapping
+identifiers to themselves.</p></li>
+ <li>
+  <p><span class="RktSym">&#952;</span> is extended only if, when typechecking a
+ let-expression, a variable is being bound to an expression
+ with an object. This extension is only in effect while checking
+ the body of that let expression.</p></li>
+ <li>
+  <p>When typechecking any variable expression,
+<span class="RktSym">x</span>, reason about the object <span class="RktPn">(</span><span class="RktSym">&#952;</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>
+instead of <span class="RktSym">x</span>.</p></li></ul>
+
+<p>So, for example, when typechecking the <span style="font-style: italic">body</span> of the let expression in
+<span class="RktSym">foo-let</span>, we extend the aliasing lookup <span class="RktSym">&#952;</span> in the
+type environment to map <span class="RktSym">y</span> to the object <span class="RktSym">x</span> instead of adding
+the three propositions relating <span class="RktSym">x</span> and <span class="RktSym">y</span> we saw earlier.</p>
+
+<p>This simple approach allows the type system to seemlessly track let-aliasing
+by only slightly modifying the type system&rsquo;s behavior for let-expressions
+and variables!</p>
+
+<p>With this change, TR can now successfully typecheck a variety of new programs!</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">super-foo</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">Any</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">define</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">super-foo</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">match</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">number?</span><span class="RktPn">)</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">]</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktSym">`</span><span class="RktPn">(</span><span class="RktSym">_</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktMeta">.</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">_</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktMeta">.</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">,</span><span class="RktPn">(</span><span class="RktSym">?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">number?</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">cddr</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktPn">]</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktSym">`</span><span class="RktPn">(</span><span class="RktSym">_</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktMeta">.</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">_</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktMeta">.</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">,</span><span class="RktPn">(</span><span class="RktSym">?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">pair?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">p</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">if</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">caddr</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">car</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">p</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktVal">41</span><span class="RktPn">)</span><span class="RktPn">]</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktSym">_</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktVal">42</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">typechecks</span><span class="hspace">&nbsp;</span><span class="RktCmt">with</span><span class="hspace">&nbsp;</span><span class="RktCmt">let-aliasing!</span><span class="RktMeta"></span></td></tr></tbody></table></div>
+
+<p>Additionally, because this approach prevents several propositions from being
+generated (and disjunctions no less!) some programs which took quite a while
+to typecheck can now be verified immediately!</p>
+
+<h1><a name="(part._.Epilogue)"></a>Epilogue</h1>
+
+<h2><a name="(part._.So_ins_t_this_just_copy_propogation_)"></a>So ins&rsquo;t this just copy propogation?</h2>
+
+<p>It&rsquo;s definitely similar &#8212;
+ <wbr /> both reason about known equalities between
+expressions and have to be aware of mutation (our use of objects handles this)
+ &#8212;
+ <wbr /> however, we&rsquo;re not modifying the source program as a separate pass. We&rsquo;re keeping
+the same program and just trying to edify the typechecker (without adding additional
+passes) with the same kinds of insights it could have if it was typehecking a
+program that had been rewritten using copy propogation or a similar technique.</p>
+
+<h2><a name="(part._.Are_there_any_simple_programs_you_re_still_working_to_typecheck_)"></a>Are there any simple programs you&rsquo;re still working to typecheck?</h2>
+
+<p>Sure! This simple guy doesn&rsquo;t typecheck:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="hspace">&nbsp;</span><span class="RktSym">size</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">U</span><span class="hspace">&nbsp;</span><span class="RktSym">Number</span><span class="hspace">&nbsp;</span><span class="RktSym">String</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="hspace">&nbsp;</span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">size</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">match</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">?</span><span class="hspace">&nbsp;</span><span class="RktSym">number?</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">]</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">_</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">string-length</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr></tbody></table></div>
+
+<p>Because it expands into something like this:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">size-expanded</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">let*</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktPn">[</span><span class="RktSym">x1</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">]</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">f2</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">string-length</span><span class="hspace">&nbsp;</span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">]</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">if</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="hspace">&nbsp;</span><span class="RktSym">x1</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktSym">x</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">f2</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr></tbody></table></div>
+
+<p>Let-aliasing almost gets us there, but the environment in which <span class="RktSym">f3</span>
+is typechecked doesn&rsquo;t know that we&rsquo;re only going to call it if <span class="RktSym">x1</span>
+is not a number =(</p>
+
+<p>Perhaps this is an argument for why let-aliasing should be a little more like
+copy propogation...? We&rsquo;ll have to do some more digging and find out!</p>
+
+<h2><a name="(part._.So_how_much_of_the_.Typed_.Racket_codebase_had_to_change_to_support_this_)"></a>So how much of the Typed Racket codebase had to change to support this?</h2>
+
+<p>Not that much! <a href="https://github.com/racket/typed-racket/pull/2">Here&rsquo;s</a> the Github pull request. I had to improve TR&rsquo;s ability to update
+type information inside of complex structures a little (e.g. <span class="RktSym">cons</span> cells,
+<span class="RktSym">struct</span>s) since there were no longer additional variables floating
+around explicitly representing things like the <span class="RktPn">(</span><span class="RktSym">car</span><span class="stt"> </span><span class="RktSym">p</span><span class="RktPn">)</span>, for example,
+but these changes were fairly natural/minor and perhaps should have been
+made regardless.</p>
+
+<h2><a name="(part._.Where_can_.I_learn_more_about_.T.R_s_type_system_)"></a>Where can I learn more about TR&rsquo;s type system?</h2>
+
+<p>Start here: &rsquo;Logical Types for Untyped Languages&rsquo; by Tobin-Hochstadt and Felleisen
+[<a href="http://dl.acm.org/citation.cfm?id=1863561">ACM link</a>]</p>
+  <footer>
+    <script type="text/javascript">
+      !function(d,s,id){
+          var js,fjs=d.getElementsByTagName(s)[0];
+          if(!d.getElementById(id)){
+              js=d.createElement(s);
+              js.id=id;
+              js.src="//platform.twitter.com/widgets.js";
+              fjs.parentNode.insertBefore(js,fjs);
+          }
+      }(document,"script","twitter-wjs");
+    </script>
+    <a href="https://twitter.com/share"
+       class="twitter-share-button"
+       data-url="http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/"
+       data-dnt="true">
+      "Tweet"</a>
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+    <g:plusone size="medium" href="http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/"></g:plusone>
+    <script type="text/javascript">
+      var disqus_shortname = 'shortname';
+      (function() {
+          var dsq = document.createElement('script');
+          dsq.type = 'text/javascript';
+          dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <div id="disqus_thread"></div>
+    <ul class="pager">
+
+    <li class="next">
+      <a href="/blog/2014/11/10/dependently-typed-quicksort/"><em>Dependently Typed Quicksort</em> &rarr;</a>
+    </li>
+    </ul>
+  </footer>
+</article>
+        </div>
+      </div>
+      <footer>
+        <hr />
+        <p><a href="https://twitter.com/racketlang"
+              class="twitter-follow-button"
+              data-show-count="false"
+              data-lang="en">
+             "Follow RacketLang"
+           </a>
+           <script type="text/javascript">
+             !function(d,s,id){
+                 var js,fjs=d.getElementsByTagName(s)[0];
+                 if(!d.getElementById(id)){
+                     js=d.createElement(s);
+                     js.id=id;
+                     js.src="//platform.twitter.com/widgets.js";
+                     fjs.parentNode.insertBefore(js,fjs);
+                 }
+             }(document,"script","twitter-wjs");
+           </script></p>
+        <p>Site generated
+        by <a href="https://github.com/greghendershott/frog">Frog</a>,
+        the <strong>fr</strong>ozen bl<strong>og</strong> tool.</p>
+        <p>Using <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a>.</p>
+        <p><em>This website does not reflect the views of anyone but the author, Andrew M. Kent. Any and all code is provided as-is with no warranty. User discretion advised ;-)</em>.</p>
+      </footer>
+    </div>
+    <!-- </body> JS -->
+    <script type="text/javascript" src="//code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  </body>
+</html>

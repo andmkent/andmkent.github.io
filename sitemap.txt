@@ -1,4 +1,5 @@
 http://www.example.com/blog/2014/02/06/total-list-functions/
 http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/
+http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/
 http://www.example.com/blog/2014/03/24/c-to-racket-examples/
 http://www.example.com/About.html
