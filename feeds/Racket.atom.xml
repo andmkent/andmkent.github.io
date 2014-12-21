@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
- <title type="text">My Awesome Blog: Posts tagged 'Racket'</title>
+ <title type="text">Andrew Kent's Blog: Posts tagged 'Racket'</title>
  <link rel="self" href="http://www.example.com/feeds/Racket.atom.xml" />
  <link href="http://www.example.com/tags/Racket.html" />
  <id>urn:http-www-example-com:-tags-Racket-html</id>

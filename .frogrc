@@ -2,7 +2,7 @@
 scheme/host = http://www.example.com
 
 # The title of the blog. Used when generating feeds.
-title = My Awesome Blog
+title = Andrew Kent's Blog
 
 # The author. Used when generating feeds, and provided to
 # `page-template.html` as the template variable `@author`.

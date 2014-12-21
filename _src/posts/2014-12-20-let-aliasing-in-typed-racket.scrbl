@@ -99,7 +99,11 @@ as it does from @racket[(number? x)].
 In desire to keep things simple and maintain compatibility with what 
 Typed Racket is already doing so well for so many other Racket programs, 
 I decided to explore adding a simple aliasing extension to the current 
-type system that behaves in the following ways:
+type system.
+
+@subsection[#:style 'unnumbered]{Let-aliasing overview}
+
+My goal was to implement the following changes:
 
 @itemlist[@item{Add a function, @racket[θ], to the type environment, which 
                 maps identifiers to objects.}
@@ -110,13 +114,87 @@ type system that behaves in the following ways:
                  with an object. This extension is only in effect while checking 
                  the body of that let expression.}
           @item{When typechecking any variable expression, 
-                @racket[x], reason about the object @racket[(θ x)]
-                instead of @racket[x].}]
+                @racket[x], reason about the object @racket[o] (where 
+                @racket[o = (θ x)]) in place of @racket[x].}]
 
 So, for example, when typechecking the @emph{body} of the let expression in 
 @racket[foo-let], we extend the aliasing lookup @racket[θ] in the 
 type environment to map @racket[y] to the object @racket[x] instead of adding
 the three propositions relating @racket[x] and @racket[y] we saw earlier.
+
+@subsection[#:style 'unnumbered]{Type Judgments}
+
+Another way to describe this change is to observe the changes to the
+type judgments affecting let expressions and variables.
+
+Here are the original typing judgments (in a PLT Redex-ish format) 
+from `Logical Types for Untyped Languages' by Tobin-Hochstadt and 
+Felleisen [@hyperlink["http://dl.acm.org/citation.cfm?id=1863561" "ACM link"]]
+
+@racketblock[
+[(Proves Γ_1 (x_1 -: τ_1))
+ ------------------------ "T-Var"
+ (TypeOf Γ_1 x_1 τ_1 (x_1 -! False) (x_1 -: False) x_1)]
+                                                        
+[(TypeOf Γ_1 e_0 τ_0 ψ_0+ ψ_0- o_0)
+ (where Γ_2 (cons (And (x_0 -: τ_0)
+                       (Or (And (x_0 -! False) ψ_0+)
+                           (And (x_0 -: False) ψ_0-))) 
+                  Γ_1))
+ (TypeOf Γ_2 e_1 τ_1 ψ_1+ ψ_1- o_1)
+ ------------------------ "T-Let"
+ (TypeOf Γ_1 
+         (let ([x_0 e_0]) e_1) 
+         τ_1  [o_0 / x_0] 
+         ψ_1+ [o_0 / x_0]
+         ψ_1- [o_0 / x_0]
+         o_1  [o_0 / x_0])]
+]
+
+Where @racket[TypeOf] is a 5-place relation meaning, for example,
+in type environment @racket[Γ_1] the expression @racket[(let ([x_0 e_0]) e_1)]
+is of some type @racket[τ_1], which if it evaluates to a truthy value
+implies the proposition @racket[ψ_1+ [o_0 / x_0]] and if it evaluates
+to @racket[#f] implies the proposition @racket[ψ_1- [o_0 / x_0]] and
+whose object is @racket[o_1  [o_0 / x_0]].
+
+@racket[(x_1 -: τ_1)] and @racket[(x_1 -! τ_1)] mean @racket[x_1] is or is not
+of some type @racket[τ_1], respectively.
+
+@racket[[o_0 / x_0]] placed next to something means to 
+substitute @racket[o_0] for @racket[x_0] within that something.
+
+
+Here are the let-aliasing versions that replace those rules:
+
+@codeblock{
+[(where o_x (lookup θ_1 x_1))
+ (Proves Γ_1 (o_x -: τ_1))
+ ------------------------ "T-Var-Alias"
+ (TypeOf θ_1 Γ_1 x_1 τ_1 (o_x -! False) (o_x -: False) o_x)]
+                                                        
+[(TypeOf θ_1 Γ_1 e_0 τ_0 ψ_0+ ψ_0- o_0)
+ (where #f (equal? o_0 null))
+ (where θ_2 (extend θ_1 x_0 o_0))
+ (TypeOf θ_2 Γ_2 e_1 τ_1 ψ_1+ ψ_1- o_1)
+ ------------------------ "T-Let-Alias"
+ (TypeOf θ_1 Γ_1 (let ([x_0 e_0]) e_1) τ_1 ψ_1+ ψ_1- o_1)]
+                                                          
+[(TypeOf θ_1 Γ_1 e_0 τ_0 ψ_0+ ψ_0- null)
+ (where Γ_2 (cons (And (x_0 -: τ_0)
+                       (Or (And (x_0 -! False) ψ_0+)
+                           (And (x_0 -: False) ψ_0-))) 
+                  Γ_1))
+ (TypeOf θ_1 Γ_2 e_1 τ_1 ψ_1+ ψ_1- o_1)
+ ------------------------ "T-Let-No-Alias" ;; same as T-Let above
+ (TypeOf θ_1
+         Γ_1 
+         (let ([x_0 e_0]) e_1) 
+         τ_1  [null / x_1] 
+         ψ_1+ [null / x_1]
+         ψ_1- [null / x_1]
+         o_1  [null / x_1])]
+}
 
 This simple approach allows the type system to seemlessly track let-aliasing
 by only slightly modifying the type system's behavior for let-expressions
@@ -192,12 +270,6 @@ type information inside of complex structures a little (e.g. @racket[cons] cells
 around explicitly representing things like the @racket[(car p)], for example, 
 but these changes were fairly natural/minor and perhaps should have been 
 made regardless.
-
-@subsection[#:style 'unnumbered]{Where can I learn more about TR's type system?}
-
-Start here: 'Logical Types for Untyped Languages' by Tobin-Hochstadt and Felleisen
-[@hyperlink["http://dl.acm.org/citation.cfm?id=1863561"
-"ACM link"]]
 
 
 

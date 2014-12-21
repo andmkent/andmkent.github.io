@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
- <title type="text">My Awesome Blog: Posts tagged 'Dependent Types'</title>
+ <title type="text">Andrew Kent's Blog: Posts tagged 'Dependent Types'</title>
  <link rel="self" href="http://www.example.com/feeds/Dependent-Types.atom.xml" />
  <link href="http://www.example.com/tags/Dependent-Types.html" />
  <id>urn:http-www-example-com:-tags-Dependent-Types-html</id>

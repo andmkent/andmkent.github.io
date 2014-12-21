@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <rss version="2.0">
  <channel>
-  <title>My Awesome Blog: Posts tagged 'Dependent Types'</title>
-  <description>My Awesome Blog: Posts tagged 'Dependent Types'</description>
+  <title>Andrew Kent's Blog: Posts tagged 'Dependent Types'</title>
+  <description>Andrew Kent's Blog: Posts tagged 'Dependent Types'</description>
   <link>http://www.example.com/tags/Dependent-Types.html</link>
   <lastBuildDate>Mon, 10 Nov 2014 09:01:16 EST</lastBuildDate>
   <pubDate>Mon, 10 Nov 2014 09:01:16 EST</pubDate>

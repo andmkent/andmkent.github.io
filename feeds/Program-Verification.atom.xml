@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
- <title type="text">My Awesome Blog: Posts tagged 'Program Verification'</title>
+ <title type="text">Andrew Kent's Blog: Posts tagged 'Program Verification'</title>
  <link rel="self" href="http://www.example.com/feeds/Program-Verification.atom.xml" />
  <link href="http://www.example.com/tags/Program-Verification.html" />
  <id>urn:http-www-example-com:-tags-Program-Verification-html</id>

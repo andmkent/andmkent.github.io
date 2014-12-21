@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <rss version="2.0">
  <channel>
-  <title>My Awesome Blog: Posts tagged 'Racket'</title>
-  <description>My Awesome Blog: Posts tagged 'Racket'</description>
+  <title>Andrew Kent's Blog: Posts tagged 'Racket'</title>
+  <description>Andrew Kent's Blog: Posts tagged 'Racket'</description>
   <link>http://www.example.com/tags/Racket.html</link>
   <lastBuildDate>Mon, 24 Mar 2014 09:16:07 EST</lastBuildDate>
   <pubDate>Mon, 24 Mar 2014 09:16:07 EST</pubDate>
