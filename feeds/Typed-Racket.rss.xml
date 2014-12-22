@@ -355,7 +355,7 @@ a place for &lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt; next to &lt;span 
    &lt;tr&gt;
     &lt;td&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;o_1&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;null&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;/&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;span class="RktSym"&gt;x_1&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktMeta"&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
 
-&lt;p&gt;This simple approach allows the type system to seemlessly track let-aliasing
+&lt;p&gt;This simple approach allows the type system to seamlessly track let-aliasing
 by only slightly modifying the type system&amp;rsquo;s behavior for let-expressions
 and variables!&lt;/p&gt;
 
@@ -395,7 +395,7 @@ to typecheck can now be verified immediately!&lt;/p&gt;
 
 &lt;h1&gt;&lt;a name="(part._.Epilogue)"&gt;&lt;/a&gt;Epilogue&lt;/h1&gt;
 
-&lt;h2&gt;&lt;a name="(part._.So_ins_t_this_just_copy_propogation_)"&gt;&lt;/a&gt;So ins&amp;rsquo;t this just copy propogation?&lt;/h2&gt;
+&lt;h2&gt;&lt;a name="(part._.So_isn_t_this_just_copy_propagation_)"&gt;&lt;/a&gt;So isn&amp;rsquo;t this just copy propagation?&lt;/h2&gt;
 
 &lt;p&gt;It&amp;rsquo;s definitely similar &amp;#8212;
  &lt;wbr /&gt; both reason about known equalities between
@@ -404,7 +404,7 @@ expressions and have to be aware of mutation (our use of objects handles this)
  &lt;wbr /&gt; however, we&amp;rsquo;re not modifying the source program as a separate pass. We&amp;rsquo;re keeping
 the same program and just trying to edify the typechecker (without adding additional
 passes) with the same kinds of insights it could have if it was typehecking a
-program that had been rewritten using copy propogation or a similar technique.&lt;/p&gt;
+program that had been rewritten using copy propagation or a similar technique.&lt;/p&gt;
 
 &lt;h2&gt;&lt;a name="(part._.Are_there_any_simple_programs_you_re_still_working_to_typecheck_)"&gt;&lt;/a&gt;Are there any simple programs you&amp;rsquo;re still working to typecheck?&lt;/h2&gt;
 
@@ -447,7 +447,7 @@ is typechecked doesn&amp;rsquo;t know that we&amp;rsquo;re only going to call it
 is not a number =(&lt;/p&gt;
 
 &lt;p&gt;Perhaps this is an argument for why let-aliasing should be a little more like
-copy propogation...? We&amp;rsquo;ll have to do some more digging and find out!&lt;/p&gt;
+copy propagation...? We&amp;rsquo;ll have to do some more digging and find out!&lt;/p&gt;
 
 &lt;h2&gt;&lt;a name="(part._.So_how_much_of_the_.Typed_.Racket_codebase_had_to_change_to_support_this_)"&gt;&lt;/a&gt;So how much of the Typed Racket codebase had to change to support this?&lt;/h2&gt;
 

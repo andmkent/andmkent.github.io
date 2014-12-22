@@ -445,7 +445,7 @@ a place for <span class="RktSym">&#952;</span> next to <span class="RktSym">&#91
    <tr>
     <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktSym">o_1</span><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktSym">null</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">/</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x_1</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">]</span><span class="RktMeta"></span></td></tr></tbody></table></div>
 
-<p>This simple approach allows the type system to seemlessly track let-aliasing
+<p>This simple approach allows the type system to seamlessly track let-aliasing
 by only slightly modifying the type system&rsquo;s behavior for let-expressions
 and variables!</p>
 
@@ -485,7 +485,7 @@ to typecheck can now be verified immediately!</p>
 
 <h1><a name="(part._.Epilogue)"></a>Epilogue</h1>
 
-<h2><a name="(part._.So_ins_t_this_just_copy_propogation_)"></a>So ins&rsquo;t this just copy propogation?</h2>
+<h2><a name="(part._.So_isn_t_this_just_copy_propagation_)"></a>So isn&rsquo;t this just copy propagation?</h2>
 
 <p>It&rsquo;s definitely similar &#8212;
  <wbr /> both reason about known equalities between
@@ -494,7 +494,7 @@ expressions and have to be aware of mutation (our use of objects handles this)
  <wbr /> however, we&rsquo;re not modifying the source program as a separate pass. We&rsquo;re keeping
 the same program and just trying to edify the typechecker (without adding additional
 passes) with the same kinds of insights it could have if it was typehecking a
-program that had been rewritten using copy propogation or a similar technique.</p>
+program that had been rewritten using copy propagation or a similar technique.</p>
 
 <h2><a name="(part._.Are_there_any_simple_programs_you_re_still_working_to_typecheck_)"></a>Are there any simple programs you&rsquo;re still working to typecheck?</h2>
 
@@ -537,7 +537,7 @@ is typechecked doesn&rsquo;t know that we&rsquo;re only going to call it if <spa
 is not a number =(</p>
 
 <p>Perhaps this is an argument for why let-aliasing should be a little more like
-copy propogation...? We&rsquo;ll have to do some more digging and find out!</p>
+copy propagation...? We&rsquo;ll have to do some more digging and find out!</p>
 
 <h2><a name="(part._.So_how_much_of_the_.Typed_.Racket_codebase_had_to_change_to_support_this_)"></a>So how much of the Typed Racket codebase had to change to support this?</h2>
 

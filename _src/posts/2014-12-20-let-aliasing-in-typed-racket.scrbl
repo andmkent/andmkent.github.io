@@ -212,7 +212,7 @@ a place for @racket[θ] next to @racket[Γ]):
          o_1  [null / x_1])]
 }
 
-This simple approach allows the type system to seemlessly track let-aliasing
+This simple approach allows the type system to seamlessly track let-aliasing
 by only slightly modifying the type system's behavior for let-expressions
 and variables!
 
@@ -240,14 +240,14 @@ to typecheck can now be verified immediately!
 
 @section[#:style 'unnumbered]{Epilogue}
 
-@subsection[#:style 'unnumbered]{So ins't this just copy propogation?}
+@subsection[#:style 'unnumbered]{So isn't this just copy propagation?}
 
 It's definitely similar --- both reason about known equalities between 
 expressions and have to be aware of mutation (our use of objects handles this)
  --- however, we're not modifying the source program as a separate pass. We're keeping
 the same program and just trying to edify the typechecker (without adding additional
 passes) with the same kinds of insights it could have if it was typehecking a 
-program that had been rewritten using copy propogation or a similar technique.
+program that had been rewritten using copy propagation or a similar technique.
 
 @subsection[#:style 'unnumbered]{Are there any simple programs you're still working to typecheck?}
 
@@ -275,7 +275,7 @@ is typechecked doesn't know that we're only going to call it if @racket[x1]
 is not a number =(
 
 Perhaps this is an argument for why let-aliasing should be a little more like 
-copy propogation...? We'll have to do some more digging and find out!
+copy propagation...? We'll have to do some more digging and find out!
 
 @subsection[#:style 'unnumbered]{So how much of the Typed Racket codebase had to change to support this?}
 
