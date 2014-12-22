@@ -197,8 +197,8 @@ the type system...</p>
 <h1><a name="(part._.A_slight_aside__.What_is_an_object_in_.T.R_)"></a>A slight aside: What is an object in TR?</h1>
 
 <p>In the calculus which describes Typed Racket&rsquo;s type system, an &rsquo;object&rsquo;
-is a kind of syntactic representation of some expression. If an expression
-&rsquo;has an object,&rsquo; it means there is some pure syntactic representation
+is a syntactic representation of an expression. If an expression
+&lsquo;has an object,&rsquo; then there is some pure syntactic representation
 for the value it will evaluate to. Currently, objects can represent variables
 or accesses into immutable values such as <span class="RktSym">cons</span> cells or
 <span class="RktSym">structs</span>. For example:</p>
@@ -259,15 +259,14 @@ or accesses into immutable values such as <span class="RktSym">cons</span> cells
 
 <p>Basically, objects enable the type system derive the same
 logical meaning from expressions like <span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span>
-or <span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">maybe-num</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktSym">maybe-num</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>
+or <span class="RktPn">(</span><span class="RktPn">(</span><span class="RktSym">&#955;</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">a</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktSym">a</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>
 as it does from <span class="RktPn">(</span><span class="RktSym">number?</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>.</p>
 
 <h1><a name="(part._.A_.Simple_.Solution__.Let-aliasing_.Objects)"></a>A Simple Solution: Let-aliasing Objects</h1>
 
 <p>In desire to keep things simple and maintain compatibility with what
-Typed Racket is already doing so well for so many other Racket programs,
-I decided to explore adding a simple aliasing extension to the current
-type system.</p>
+Typed Racket already does so well, I decided to explore adding a simple
+aliasing extension to the current type system.</p>
 
 <h2><a name="(part._.Let-aliasing_overview)"></a>Let-aliasing overview</h2>
 
@@ -275,30 +274,43 @@ type system.</p>
 
 <ul>
  <li>
-  <p>Add a function, <span class="RktSym">&#952;</span>, to the type environment, which
-maps identifiers to objects.</p></li>
+  <p>Add a function <span class="RktSym">&#952;</span> to the type environment which
+maps identifiers to objects. By default, <span class="RktSym">&#952;</span> just
+maps identifiers to themselves.</p></li>
  <li>
-  <p>By default, <span class="RktSym">&#952;</span> acts like the identity function, mapping
-identifiers to themselves.</p></li>
- <li>
-  <p><span class="RktSym">&#952;</span> is extended only if, when typechecking a
- let-expression, a variable is being bound to an expression
- with an object. This extension is only in effect while checking
- the body of that let expression.</p></li>
+  <p><span class="RktSym">&#952;</span> is extended when a let-expression binds an expression
+ with an object to a variable. This extension is only in effect
+ while checking the body of that let-expression.</p></li>
  <li>
   <p>When typechecking any variable expression,
-<span class="RktSym">x</span>, reason about the object <span class="RktSym">o</span> (where
-<span class="RktSym">o</span><span class="stt"> </span><span class="RktSym">=</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">&#952;</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>) in place of <span class="RktSym">x</span>.</p></li></ul>
+<span class="RktSym">x</span>, pretend your considering the object <span class="RktSym">o</span>
+(where <span class="RktSym">o</span><span class="stt"> </span><span class="RktSym">=</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">&#952;</span><span class="stt"> </span><span class="RktSym">x</span><span class="RktPn">)</span>) instead.</p></li></ul>
 
-<p>So, for example, when typechecking the <span style="font-style: italic">body</span> of the let expression in
-<span class="RktSym">foo-let</span>, we extend the aliasing lookup <span class="RktSym">&#952;</span> in the
-type environment to map <span class="RktSym">y</span> to the object <span class="RktSym">x</span> instead of adding
-the three propositions relating <span class="RktSym">x</span> and <span class="RktSym">y</span> we saw earlier.</p>
+<p>So, for example, when typechecking the <span style="font-style: italic">body</span> of the let-expression in
+<span class="RktSym">foo-let</span>, we extend <span class="RktSym">&#952;</span> with the mapping <span class="RktPn">(</span><span class="RktSym">x</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="stt"> </span><span class="RktSym">y</span><span class="RktPn">)</span>
+instead of adding the three propositions relating <span class="RktSym">x</span> and <span class="RktSym">y</span>
+we saw earlier:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">foo-let</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">Any-&gt;</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">define</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">foo-let</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">let</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktPn">[</span><span class="RktSym">y</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">&lt;-</span><span class="hspace">&nbsp;</span><span class="RktCmt">we</span><span class="hspace">&nbsp;</span><span class="RktCmt">extend</span><span class="hspace">&nbsp;</span><span class="RktCmt">&#952;,</span><span class="hspace">&nbsp;</span><span class="RktCmt">mapping</span><span class="hspace">&nbsp;</span><span class="RktCmt">'y'</span><span class="hspace">&nbsp;</span><span class="RktCmt">to</span><span class="hspace">&nbsp;</span><span class="RktCmt">the</span><span class="hspace">&nbsp;</span><span class="RktCmt">object</span><span class="hspace">&nbsp;</span><span class="RktCmt">'x',</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">cond</span><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">making</span><span class="hspace">&nbsp;</span><span class="RktCmt">references</span><span class="hspace">&nbsp;</span><span class="RktCmt">to</span><span class="hspace">&nbsp;</span><span class="RktCmt">'y'</span><span class="hspace">&nbsp;</span><span class="RktCmt">be</span><span class="hspace">&nbsp;</span><span class="RktCmt">viewed</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">number?</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">y</span><span class="RktPn">)</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">x</span><span class="RktPn">]</span><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">as</span><span class="hspace">&nbsp;</span><span class="RktCmt">references</span><span class="hspace">&nbsp;</span><span class="RktCmt">to</span><span class="hspace">&nbsp;</span><span class="RktCmt">'x'</span><span class="hspace">&nbsp;</span><span class="RktCmt">here</span><span class="hspace">&nbsp;</span><span class="RktCmt">within</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktSym">else</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktVal">42</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktMeta"></span><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">the</span><span class="hspace">&nbsp;</span><span class="RktCmt">body</span><span class="hspace">&nbsp;</span><span class="RktCmt">of</span><span class="hspace">&nbsp;</span><span class="RktCmt">the</span><span class="hspace">&nbsp;</span><span class="RktCmt">let</span><span class="RktMeta"></span></td></tr></tbody></table></div>
 
 <h2><a name="(part._.Type_.Judgments)"></a>Type Judgments</h2>
 
 <p>Another way to describe this change is to observe the changes to the
-type judgments affecting let expressions and variables.</p>
+type judgments affecting let-expressions and variables.</p>
 
 <p>Here are the original typing judgments (in a PLT Redex-ish format)
 from &lsquo;Logical Types for Untyped Languages&rsquo; by Tobin-Hochstadt and
@@ -342,20 +354,36 @@ Felleisen [<a href="http://dl.acm.org/citation.cfm?id=1863561">ACM link</a>]</p>
    <tr>
     <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktSym">o_1</span><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">o_0</span><span class="hspace">&nbsp;</span><span class="RktSym">/</span><span class="hspace">&nbsp;</span><span class="RktSym">x_0</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">]</span></td></tr></tbody></table></div>
 
-<p>Where <span class="RktSym">TypeOf</span> is a 5-place relation meaning, for example,
-in type environment <span class="RktSym">&#915;_1</span> the expression <span class="RktPn">(</span><span class="RktSym">let</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktPn">[</span><span class="RktSym">x_0</span><span class="stt"> </span><span class="RktSym">e_0</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">e_1</span><span class="RktPn">)</span>
-is of some type <span class="RktSym">&#964;_1</span>, which if it evaluates to a truthy value
-implies the proposition <span class="RktSym">&#968;_1+</span><span class="stt"> </span><span class="RktPn">[</span><span class="RktSym">o_0</span><span class="stt"> </span><span class="RktSym">/</span><span class="stt"> </span><span class="RktSym">x_0</span><span class="RktPn">]</span> and if it evaluates
-to <span class="RktVal">#f</span> implies the proposition <span class="RktSym">&#968;_1-</span><span class="stt"> </span><span class="RktPn">[</span><span class="RktSym">o_0</span><span class="stt"> </span><span class="RktSym">/</span><span class="stt"> </span><span class="RktSym">x_0</span><span class="RktPn">]</span> and
-whose object is <span class="RktSym">o_1</span><span class="stt"> </span><span class="RktPn">[</span><span class="RktSym">o_0</span><span class="stt"> </span><span class="RktSym">/</span><span class="stt"> </span><span class="RktSym">x_0</span><span class="RktPn">]</span>.</p>
+<p>Where <span class="RktPn">(</span><span class="RktSym">TypeOf</span><span class="stt"> </span><span class="RktSym">&#915;</span><span class="stt"> </span><span class="RktSym">e</span><span class="stt"> </span><span class="RktSym">&#964;</span><span class="stt"> </span><span class="RktSym">&#968;</span><span class="stt"> </span><span class="RktSym">&#968;</span><span class="stt"> </span><span class="RktSym">o</span><span class="RktPn">)</span> is a 5-place relation with the
+following arguments:</p>
 
-<p><span class="RktPn">(</span><span class="RktSym">x_1</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-:</span></span><span class="stt"> </span><span class="RktSym">&#964;_1</span><span class="RktPn">)</span> and <span class="RktPn">(</span><span class="RktSym">x_1</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-!</span></span><span class="stt"> </span><span class="RktSym">&#964;_1</span><span class="RktPn">)</span> mean <span class="RktSym">x_1</span> is or is not
-of some type <span class="RktSym">&#964;_1</span>, respectively.</p>
+<ul>
+ <li>
+  <p><span class="RktSym">&#915;</span> is the current type environment.</p></li>
+ <li>
+  <p><span class="RktSym">e</span> is the expression being typechecked.</p></li>
+ <li>
+  <p><span class="RktSym">&#964;</span> is the type of <span class="RktSym">e</span>.</p></li>
+ <li>
+  <p>The first <span class="RktSym">&#968;</span> is what we learn if <span class="RktSym">e</span> evaluates
+to be a non-<span class="RktVal">#f</span> value.</p></li>
+ <li>
+  <p>The second <span class="RktSym">&#968;</span> is what we learn if <span class="RktSym">e</span> evaluates
+to <span class="RktVal">#f</span>.</p></li>
+ <li>
+  <p><span class="RktSym">o</span> is the object of <span class="RktSym">e</span>.</p></li></ul>
+
+<p><span class="RktPn">(</span><span class="RktSym">Proves</span><span class="stt"> </span><span class="RktSym">&#915;</span><span class="stt"> </span><span class="RktSym">&#968;</span><span class="RktPn">)</span> is a 2-place relation which holds when the
+environment of propositions <span class="RktSym">&#915;</span> can prove the proposition <span class="RktSym">&#968;</span>.</p>
+
+<p><span class="RktPn">(</span><span class="RktSym">x_1</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-:</span></span><span class="stt"> </span><span class="RktSym">&#964;_1</span><span class="RktPn">)</span> and <span class="RktPn">(</span><span class="RktSym">x_1</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-!</span></span><span class="stt"> </span><span class="RktSym">&#964;_1</span><span class="RktPn">)</span> are propositions
+which mean <span class="RktSym">x_1</span> is or is not of some type <span class="RktSym">&#964;_1</span>, respectively.</p>
 
 <p><span class="RktPn">[</span><span class="RktSym">o_0</span><span class="stt"> </span><span class="RktSym">/</span><span class="stt"> </span><span class="RktSym">x_0</span><span class="RktPn">]</span> placed next to something means to
 substitute <span class="RktSym">o_0</span> for <span class="RktSym">x_0</span> within that something.</p>
 
-<p>Here are the let-aliasing versions that replace those rules:</p>
+<p>Here are the let-aliasing versions that replace those rules (note we add
+a place for <span class="RktSym">&#952;</span> next to <span class="RktSym">&#915;</span>):</p>
 
 <div class="SCodeFlow">
  <table cellpadding="0" cellspacing="0" class="RktBlk">
@@ -385,6 +413,10 @@ substitute <span class="RktSym">o_0</span> for <span class="RktSym">x_0</span> w
    <tr>
     <td><span class="RktMeta">&#160;</span></td></tr>
    <tr>
+    <td><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">this</span><span class="hspace">&nbsp;</span><span class="RktCmt">one</span><span class="hspace">&nbsp;</span><span class="RktCmt">is</span><span class="hspace">&nbsp;</span><span class="RktCmt">the</span><span class="hspace">&nbsp;</span><span class="RktCmt">same</span><span class="hspace">&nbsp;</span><span class="RktCmt">as</span><span class="hspace">&nbsp;</span><span class="RktCmt">T-Let</span><span class="hspace">&nbsp;</span><span class="RktCmt">above</span><span class="hspace">&nbsp;</span><span class="RktCmt">but</span><span class="hspace">&nbsp;</span><span class="RktCmt">e_0</span><span class="hspace">&nbsp;</span><span class="RktCmt">is</span><span class="hspace">&nbsp;</span><span class="RktCmt">required</span><span class="RktMeta"></span></td></tr>
+   <tr>
+    <td><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">to</span><span class="hspace">&nbsp;</span><span class="RktCmt">have</span><span class="hspace">&nbsp;</span><span class="RktCmt">a</span><span class="hspace">&nbsp;</span><span class="RktCmt">null</span><span class="hspace">&nbsp;</span><span class="RktCmt">object</span><span class="hspace">&nbsp;</span><span class="RktCmt">(i.e.</span><span class="hspace">&nbsp;</span><span class="RktCmt">not</span><span class="hspace">&nbsp;</span><span class="RktCmt">have</span><span class="hspace">&nbsp;</span><span class="RktCmt">an</span><span class="hspace">&nbsp;</span><span class="RktCmt">object)</span><span class="RktMeta"></span></td></tr>
+   <tr>
     <td><span class="RktMeta"></span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">TypeOf</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#952;_1</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#915;_1</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">e_0</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#964;_0</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#968;_0+</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#968;_0-</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">null</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
    <tr>
     <td><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">where</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#915;_2</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">cons</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">And</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">x_0</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym"><span class="nobreak">-:</span></span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#964;_0</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
@@ -397,7 +429,7 @@ substitute <span class="RktSym">o_0</span> for <span class="RktSym">x_0</span> w
    <tr>
     <td><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">TypeOf</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#952;_1</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#915;_2</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">e_1</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#964;_1</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#968;_1+</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#968;_1-</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">o_1</span><span class="RktPn">)</span><span class="RktMeta"></span></td></tr>
    <tr>
-    <td><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym"><span class="nobreak">------------------------</span></span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktVal">"T-Let-No-Alias"</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktCmt">;;</span><span class="hspace">&nbsp;</span><span class="RktCmt">same</span><span class="hspace">&nbsp;</span><span class="RktCmt">as</span><span class="hspace">&nbsp;</span><span class="RktCmt">T-Let</span><span class="hspace">&nbsp;</span><span class="RktCmt">above</span><span class="RktMeta"></span></td></tr>
+    <td><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym"><span class="nobreak">------------------------</span></span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktVal">"T-Let-No-Alias"</span><span class="RktMeta"></span></td></tr>
    <tr>
     <td><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktPn">(</span><span class="RktSym">TypeOf</span><span class="RktMeta"></span><span class="hspace">&nbsp;</span><span class="RktMeta"></span><span class="RktSym">&#952;_1</span><span class="RktMeta"></span></td></tr>
    <tr>
@@ -500,7 +532,7 @@ program that had been rewritten using copy propogation or a similar technique.</
    <tr>
     <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">f2</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr></tbody></table></div>
 
-<p>Let-aliasing almost gets us there, but the environment in which <span class="RktSym">f3</span>
+<p>Let-aliasing almost gets us there, but the environment in which <span class="RktSym">f2</span>
 is typechecked doesn&rsquo;t know that we&rsquo;re only going to call it if <span class="RktSym">x1</span>
 is not a number =(</p>
 
@@ -509,12 +541,22 @@ copy propogation...? We&rsquo;ll have to do some more digging and find out!</p>
 
 <h2><a name="(part._.So_how_much_of_the_.Typed_.Racket_codebase_had_to_change_to_support_this_)"></a>So how much of the Typed Racket codebase had to change to support this?</h2>
 
-<p>Not that much! <a href="https://github.com/racket/typed-racket/pull/2">Here&rsquo;s</a> the Github pull request. I had to improve TR&rsquo;s ability to update
-type information inside of complex structures a little (e.g. <span class="RktSym">cons</span> cells,
-<span class="RktSym">struct</span>s) since there were no longer additional variables floating
-around explicitly representing things like the <span class="RktPn">(</span><span class="RktSym">car</span><span class="stt"> </span><span class="RktSym">p</span><span class="RktPn">)</span>, for example,
-but these changes were fairly natural/minor and perhaps should have been
-made regardless.</p>
+<p>Not that much! <a href="https://github.com/racket/typed-racket/pull/2">Here&rsquo;s</a> the Github pull request.</p>
+
+<p>I had to improve TR&rsquo;s ability to update type information inside of
+structured types a little (e.g. <span class="RktSym">cons</span> cells, <span class="RktSym">struct</span>s) since
+we no longer had extra variables floating around when we did things
+like  <span class="RktPn">(</span><span class="RktSym">let</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktPn">[</span><span class="RktSym">x</span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">car</span><span class="stt"> </span><span class="RktSym">p</span><span class="RktPn">)</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="stt"> </span><span class="RktSym">...</span><span class="RktPn">)</span>.</p>
+
+<p>Now when two propositions like <span class="RktPn">(</span><span class="RktSym">x</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-:</span></span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">Pairof</span><span class="stt"> </span><span class="RktSym">Number</span><span class="stt"> </span><span class="RktSym">Any</span><span class="RktPn">)</span><span class="RktPn">)</span> and
+<span class="RktPn">(</span><span class="RktSym">x</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-:</span></span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">Pairof</span><span class="stt"> </span><span class="RktSym">Any</span><span class="stt"> </span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span> are joined, we structurally recur into
+the <span class="RktSym">car</span> and <span class="RktSym">cdr</span> of the type and get the resulting fact
+<span class="RktPn">(</span><span class="RktSym">x</span><span class="stt"> </span><span class="RktSym"><span class="nobreak">-:</span></span><span class="stt"> </span><span class="RktPn">(</span><span class="RktSym">Pairof</span><span class="stt"> </span><span class="RktSym">Number</span><span class="stt"> </span><span class="RktSym">Number</span><span class="RktPn">)</span><span class="RktPn">)</span>, which was essential to typechecking
+programs which use aliases instead of new variables.</p>
+
+<p>These changes were fairly natural/minor, however, and probably should have been
+made at some point even without aliasing. Aliasing just brought the matter
+front and center.</p>
   <footer>
     <script type="text/javascript">
       !function(d,s,id){

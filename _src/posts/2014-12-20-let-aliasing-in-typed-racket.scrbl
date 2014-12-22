@@ -74,8 +74,8 @@ the type system...
 @section[#:style 'unnumbered]{A slight aside: What is an object in TR?}
 
 In the calculus which describes Typed Racket's type system, an 'object'
-is a kind of syntactic representation of some expression. If an expression
-'has an object,' it means there is some pure syntactic representation
+is a syntactic representation of an expression. If an expression
+`has an object,' then there is some pure syntactic representation
 for the value it will evaluate to. Currently, objects can represent variables
 or accesses into immutable values such as @racket[cons] cells or 
 @racket[structs]. For example:
@@ -91,41 +91,47 @@ or accesses into immutable values such as @racket[cons] cells or
 
 Basically, objects enable the type system derive the same
 logical meaning from expressions like @racket[(number? ((λ () x)))]
-or @racket[((λ (maybe-num) (number? maybe-num)) x)]
+or @racket[((λ (a) (number? a)) x)]
 as it does from @racket[(number? x)].
 
 @section[#:style 'unnumbered]{A Simple Solution: Let-aliasing Objects}
 
 In desire to keep things simple and maintain compatibility with what 
-Typed Racket is already doing so well for so many other Racket programs, 
-I decided to explore adding a simple aliasing extension to the current 
-type system.
+Typed Racket already does so well, I decided to explore adding a simple 
+aliasing extension to the current type system.
 
 @subsection[#:style 'unnumbered]{Let-aliasing overview}
 
 My goal was to implement the following changes:
 
-@itemlist[@item{Add a function, @racket[θ], to the type environment, which 
-                maps identifiers to objects.}
-          @item{By default, @racket[θ] acts like the identity function, mapping
-                identifiers to themselves.}
-          @item{@racket[θ] is extended only if, when typechecking a 
-                 let-expression, a variable is being bound to an expression
-                 with an object. This extension is only in effect while checking 
-                 the body of that let expression.}
+@itemlist[@item{Add a function @racket[θ] to the type environment which 
+                maps identifiers to objects. By default, @racket[θ] just 
+                maps identifiers to themselves.}
+          @item{@racket[θ] is extended when a let-expression binds an expression
+                 with an object to a variable. This extension is only in effect 
+                 while checking the body of that let-expression.}
           @item{When typechecking any variable expression, 
-                @racket[x], reason about the object @racket[o] (where 
-                @racket[o = (θ x)]) in place of @racket[x].}]
+                @racket[x], pretend your considering the object @racket[o] 
+                (where @racket[o = (θ x)]) instead.}]
 
-So, for example, when typechecking the @emph{body} of the let expression in 
-@racket[foo-let], we extend the aliasing lookup @racket[θ] in the 
-type environment to map @racket[y] to the object @racket[x] instead of adding
-the three propositions relating @racket[x] and @racket[y] we saw earlier.
+So, for example, when typechecking the @emph{body} of the let-expression in 
+@racket[foo-let], we extend @racket[θ] with the mapping @racket[(x -> y)]
+instead of adding the three propositions relating @racket[x] and @racket[y] 
+we saw earlier:
+
+@codeblock{
+(: foo-let (Any-> Number))
+(define (foo-let x)
+  (let ([y x])  ;; <- we extend θ, mapping 'y' to the object 'x',
+    (cond              ;; making references to 'y' be viewed
+      [(number? y) x]  ;; as references to 'x' here within
+      [else 42])))     ;; the body of the let
+}
 
 @subsection[#:style 'unnumbered]{Type Judgments}
 
 Another way to describe this change is to observe the changes to the
-type judgments affecting let expressions and variables.
+type judgments affecting let-expressions and variables.
 
 Here are the original typing judgments (in a PLT Redex-ish format) 
 from `Logical Types for Untyped Languages' by Tobin-Hochstadt and 
@@ -151,21 +157,29 @@ Felleisen [@hyperlink["http://dl.acm.org/citation.cfm?id=1863561" "ACM link"]]
          o_1  [o_0 / x_0])]
 ]
 
-Where @racket[TypeOf] is a 5-place relation meaning, for example,
-in type environment @racket[Γ_1] the expression @racket[(let ([x_0 e_0]) e_1)]
-is of some type @racket[τ_1], which if it evaluates to a truthy value
-implies the proposition @racket[ψ_1+ [o_0 / x_0]] and if it evaluates
-to @racket[#f] implies the proposition @racket[ψ_1- [o_0 / x_0]] and
-whose object is @racket[o_1  [o_0 / x_0]].
+Where @racket[(TypeOf Γ e τ ψ ψ o)] is a 5-place relation with the 
+following arguments:
 
-@racket[(x_1 -: τ_1)] and @racket[(x_1 -! τ_1)] mean @racket[x_1] is or is not
-of some type @racket[τ_1], respectively.
+@itemlist[@item{@racket[Γ] is the current type environment.}
+           @item{@racket[e] is the expression being typechecked.}
+           @item{@racket[τ] is the type of @racket[e].}
+           @item{The first @racket[ψ] is what we learn if @racket[e] evaluates
+                 to be a non-@racket[#f] value.}
+           @item{The second @racket[ψ] is what we learn if @racket[e] evaluates
+                 to @racket[#f].}
+          @item{@racket[o] is the object of @racket[e].}]
+          
+@racket[(Proves Γ ψ)] is a 2-place relation which holds when the 
+environment of propositions @racket[Γ] can prove the proposition @racket[ψ]. 
+
+@racket[(x_1 -: τ_1)] and @racket[(x_1 -! τ_1)] are propositions 
+which mean @racket[x_1] is or is not of some type @racket[τ_1], respectively.
 
 @racket[[o_0 / x_0]] placed next to something means to 
 substitute @racket[o_0] for @racket[x_0] within that something.
 
-
-Here are the let-aliasing versions that replace those rules:
+Here are the let-aliasing versions that replace those rules (note we add
+a place for @racket[θ] next to @racket[Γ]):
 
 @codeblock{
 [(where o_x (lookup θ_1 x_1))
@@ -179,14 +193,16 @@ Here are the let-aliasing versions that replace those rules:
  (TypeOf θ_2 Γ_2 e_1 τ_1 ψ_1+ ψ_1- o_1)
  ------------------------ "T-Let-Alias"
  (TypeOf θ_1 Γ_1 (let ([x_0 e_0]) e_1) τ_1 ψ_1+ ψ_1- o_1)]
-                                                          
+
+;; this one is the same as T-Let above but e_0 is required
+;; to have a null object (i.e. not have an object)
 [(TypeOf θ_1 Γ_1 e_0 τ_0 ψ_0+ ψ_0- null)
  (where Γ_2 (cons (And (x_0 -: τ_0)
                        (Or (And (x_0 -! False) ψ_0+)
                            (And (x_0 -: False) ψ_0-))) 
                   Γ_1))
  (TypeOf θ_1 Γ_2 e_1 τ_1 ψ_1+ ψ_1- o_1)
- ------------------------ "T-Let-No-Alias" ;; same as T-Let above
+ ------------------------ "T-Let-No-Alias"
  (TypeOf θ_1
          Γ_1 
          (let ([x_0 e_0]) e_1) 
@@ -254,7 +270,7 @@ Because it expands into something like this:
                      x
                      (f2))))]
 
-Let-aliasing almost gets us there, but the environment in which @racket[f3]
+Let-aliasing almost gets us there, but the environment in which @racket[f2]
 is typechecked doesn't know that we're only going to call it if @racket[x1]
 is not a number =(
 
@@ -264,12 +280,22 @@ copy propogation...? We'll have to do some more digging and find out!
 @subsection[#:style 'unnumbered]{So how much of the Typed Racket codebase had to change to support this?}
 
 Not that much! @hyperlink["https://github.com/racket/typed-racket/pull/2"
-"Here's"] the Github pull request. I had to improve TR's ability to update
-type information inside of complex structures a little (e.g. @racket[cons] cells, 
-@racket[struct]s) since there were no longer additional variables floating 
-around explicitly representing things like the @racket[(car p)], for example, 
-but these changes were fairly natural/minor and perhaps should have been 
-made regardless.
+"Here's"] the Github pull request. 
+
+I had to improve TR's ability to update type information inside of 
+structured types a little (e.g. @racket[cons] cells, @racket[struct]s) since 
+we no longer had extra variables floating around when we did things
+like  @racket[(let ([x (car p)]) ...)].
+
+Now when two propositions like @racket[(x -: (Pairof Number Any))] and
+@racket[(x -: (Pairof Any Number))] are joined, we structurally recur into
+the @racket[car] and @racket[cdr] of the type and get the resulting fact
+@racket[(x -: (Pairof Number Number))], which was essential to typechecking
+programs which use aliases instead of new variables.
+
+These changes were fairly natural/minor, however, and probably should have been 
+made at some point even without aliasing. Aliasing just brought the matter
+front and center.
 
 
 
