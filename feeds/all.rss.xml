@@ -197,7 +197,7 @@ maps identifiers to themselves.&lt;/p&gt;&lt;/li&gt;
 (where &lt;span class="RktSym"&gt;o&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;=&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;) instead.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;
 
 &lt;p&gt;So, for example, when typechecking the &lt;span style="font-style: italic"&gt;body&lt;/span&gt; of the let-expression in
-&lt;span class="RktSym"&gt;foo-let&lt;/span&gt;, we extend &lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt; with the mapping &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;&lt;span class="nobreak"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;
+&lt;span class="RktSym"&gt;foo-let&lt;/span&gt;, we extend &lt;span class="RktSym"&gt;&amp;#952;&lt;/span&gt; with the mapping &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;&lt;span class="nobreak"&gt;-&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;x&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;
 instead of adding the three propositions relating &lt;span class="RktSym"&gt;x&lt;/span&gt; and &lt;span class="RktSym"&gt;y&lt;/span&gt;
 we saw earlier:&lt;/p&gt;
 

@@ -115,7 +115,7 @@ My goal was to implement the following changes:
                 (where @racket[o = (θ x)]) instead.}]
 
 So, for example, when typechecking the @emph{body} of the let-expression in 
-@racket[foo-let], we extend @racket[θ] with the mapping @racket[(x -> y)]
+@racket[foo-let], we extend @racket[θ] with the mapping @racket[(y -> x)]
 instead of adding the three propositions relating @racket[x] and @racket[y] 
 we saw earlier:
 
