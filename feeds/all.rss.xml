@@ -3,14 +3,14 @@
  <channel>
   <title>Andrew Kent's Blog: Andrew Kent's Blog</title>
   <description>Andrew Kent's Blog: Andrew Kent's Blog</description>
-  <link>http://www.example.com/index.html</link>
+  <link>http://andmkent.com/index.html</link>
   <lastBuildDate>Sat, 20 Dec 2014 08:23:08 EST</lastBuildDate>
   <pubDate>Sat, 20 Dec 2014 08:23:08 EST</pubDate>
   <ttl>1800</ttl>
   <item>
    <title>Let-aliasing in Typed Racket</title>
-   <link>http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=all&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</guid>
+   <link>http://andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=all&amp;utm_medium=RSS</link>
+   <guid>urn:http-andmkent-com:-blog-2014-12-20-let-aliasing-in-typed-racket</guid>
    <pubDate>Sat, 20 Dec 2014 08:23:08 EST</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;Although Typed Racket (TR) &lt;span style="font-style: italic"&gt;can&lt;/span&gt; currently typecheck a large number
@@ -466,11 +466,13 @@ programs which use aliases instead of new variables.&lt;/p&gt;
 
 &lt;p&gt;These changes were fairly natural/minor, however, and probably should have been
 made at some point even without aliasing. Aliasing just brought the matter
-front and center.&lt;/p&gt;&lt;/html&gt;</description></item>
+front and center.&lt;/p&gt;
+
+&lt;p&gt;Edits: A few typos&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>
    <title>Dependently Typed Quicksort</title>
-   <link>http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=all&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-11-10-dependently-typed-quicksort</guid>
+   <link>http://andmkent.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=all&amp;utm_medium=RSS</link>
+   <guid>urn:http-andmkent-com:-blog-2014-11-10-dependently-typed-quicksort</guid>
    <pubDate>Mon, 10 Nov 2014 09:01:16 EST</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;Coq&amp;rsquo;s support for dependent types mean that type checking not only
@@ -821,8 +823,8 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>
    <title>C to Racket Examples</title>
-   <link>http://www.example.com/blog/2014/03/24/c-to-racket-examples/?utm_source=all&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-03-24-c-to-racket-examples</guid>
+   <link>http://andmkent.com/blog/2014/03/24/c-to-racket-examples/?utm_source=all&amp;utm_medium=RSS</link>
+   <guid>urn:http-andmkent-com:-blog-2014-03-24-c-to-racket-examples</guid>
    <pubDate>Mon, 24 Mar 2014 09:16:07 EST</pubDate>
    <description>&lt;html&gt;
 &lt;h3 id="racket-and-c"&gt;Racket and C&lt;/h3&gt;
@@ -2299,8 +2301,8 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;/div&gt;&lt;/html&gt;</description></item>
   <item>
    <title>Total List Functions</title>
-   <link>http://www.example.com/blog/2014/02/06/total-list-functions/?utm_source=all&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-02-06-total-list-functions</guid>
+   <link>http://andmkent.com/blog/2014/02/06/total-list-functions/?utm_source=all&amp;utm_medium=RSS</link>
+   <guid>urn:http-andmkent-com:-blog-2014-02-06-total-list-functions</guid>
    <pubDate>Thu, 06 Feb 2014 22:36:50 EST</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:&lt;/p&gt;

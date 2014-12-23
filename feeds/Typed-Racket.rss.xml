@@ -3,14 +3,14 @@
  <channel>
   <title>Andrew Kent's Blog: Posts tagged 'Typed Racket'</title>
   <description>Andrew Kent's Blog: Posts tagged 'Typed Racket'</description>
-  <link>http://www.example.com/tags/Typed-Racket.html</link>
+  <link>http://andmkent.com/tags/Typed-Racket.html</link>
   <lastBuildDate>Sat, 20 Dec 2014 08:23:08 EST</lastBuildDate>
   <pubDate>Sat, 20 Dec 2014 08:23:08 EST</pubDate>
   <ttl>1800</ttl>
   <item>
    <title>Let-aliasing in Typed Racket</title>
-   <link>http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</guid>
+   <link>http://andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=RSS</link>
+   <guid>urn:http-andmkent-com:-blog-2014-12-20-let-aliasing-in-typed-racket</guid>
    <pubDate>Sat, 20 Dec 2014 08:23:08 EST</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;Although Typed Racket (TR) &lt;span style="font-style: italic"&gt;can&lt;/span&gt; currently typecheck a large number
@@ -466,4 +466,6 @@ programs which use aliases instead of new variables.&lt;/p&gt;
 
 &lt;p&gt;These changes were fairly natural/minor, however, and probably should have been
 made at some point even without aliasing. Aliasing just brought the matter
-front and center.&lt;/p&gt;&lt;/html&gt;</description></item></channel></rss>
+front and center.&lt;/p&gt;
+
+&lt;p&gt;Edits: A few typos&lt;/p&gt;&lt;/html&gt;</description></item></channel></rss>

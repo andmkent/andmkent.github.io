@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
  <title type="text">Andrew Kent's Blog: Posts tagged 'Typed Racket'</title>
- <link rel="self" href="http://www.example.com/feeds/Typed-Racket.atom.xml" />
- <link href="http://www.example.com/tags/Typed-Racket.html" />
- <id>urn:http-www-example-com:-tags-Typed-Racket-html</id>
+ <link rel="self" href="http://andmkent.com/feeds/Typed-Racket.atom.xml" />
+ <link href="http://andmkent.com/tags/Typed-Racket.html" />
+ <id>urn:http-andmkent-com:-tags-Typed-Racket-html</id>
  <updated>2014-12-20T08:23:08Z</updated>
  <entry>
   <title type="text">Let-aliasing in Typed Racket</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
+  <link rel="alternate" href="http://andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=Atom" />
+  <id>urn:http-andmkent-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
   <published>2014-12-20T08:23:08Z</published>
   <updated>2014-12-20T08:23:08Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;p&gt;Although Typed Racket (TR) &lt;span style="font-style: italic"&gt;can&lt;/span&gt; currently typecheck a large number
 of common idioms found in Racket code, reasoning about direct and indirect
@@ -467,4 +467,6 @@ programs which use aliases instead of new variables.&lt;/p&gt;
 
 &lt;p&gt;These changes were fairly natural/minor, however, and probably should have been
 made at some point even without aliasing. Aliasing just brought the matter
-front and center.&lt;/p&gt;&lt;/html&gt;</content></entry></feed>
+front and center.&lt;/p&gt;
+
+&lt;p&gt;Edits: A few typos&lt;/p&gt;&lt;/html&gt;</content></entry></feed>

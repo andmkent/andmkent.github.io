@@ -297,6 +297,7 @@ These changes were fairly natural/minor, however, and probably should have been
 made at some point even without aliasing. Aliasing just brought the matter
 front and center.
 
+Edits: A few typos
 
 
 

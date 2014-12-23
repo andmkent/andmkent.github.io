@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
  <title type="text">Andrew Kent's Blog: Andrew Kent's Blog</title>
- <link rel="self" href="http://www.example.com/feeds/all.atom.xml" />
- <link href="http://www.example.com/index.html" />
- <id>urn:http-www-example-com:-index-html</id>
+ <link rel="self" href="http://andmkent.com/feeds/all.atom.xml" />
+ <link href="http://andmkent.com/index.html" />
+ <id>urn:http-andmkent-com:-index-html</id>
  <updated>2014-12-20T08:23:08Z</updated>
  <entry>
   <title type="text">Let-aliasing in Typed Racket</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
+  <link rel="alternate" href="http://andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-andmkent-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
   <published>2014-12-20T08:23:08Z</published>
   <updated>2014-12-20T08:23:08Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;p&gt;Although Typed Racket (TR) &lt;span style="font-style: italic"&gt;can&lt;/span&gt; currently typecheck a large number
 of common idioms found in Racket code, reasoning about direct and indirect
@@ -467,15 +467,17 @@ programs which use aliases instead of new variables.&lt;/p&gt;
 
 &lt;p&gt;These changes were fairly natural/minor, however, and probably should have been
 made at some point even without aliasing. Aliasing just brought the matter
-front and center.&lt;/p&gt;&lt;/html&gt;</content></entry>
+front and center.&lt;/p&gt;
+
+&lt;p&gt;Edits: A few typos&lt;/p&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">Dependently Typed Quicksort</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-11-10-dependently-typed-quicksort</id>
+  <link rel="alternate" href="http://andmkent.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-andmkent-com:-blog-2014-11-10-dependently-typed-quicksort</id>
   <published>2014-11-10T09:01:16Z</published>
   <updated>2014-11-10T09:01:16Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;p&gt;Coq&amp;rsquo;s support for dependent types mean that type checking not only
 catches trivial errors like passing an integer to a function expecting
@@ -825,12 +827,12 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">C to Racket Examples</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/03/24/c-to-racket-examples/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-03-24-c-to-racket-examples</id>
+  <link rel="alternate" href="http://andmkent.com/blog/2014/03/24/c-to-racket-examples/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-andmkent-com:-blog-2014-03-24-c-to-racket-examples</id>
   <published>2014-03-24T09:16:07Z</published>
   <updated>2014-03-24T09:16:07Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;h3 id="racket-and-c"&gt;Racket and C&lt;/h3&gt;
 
@@ -2306,12 +2308,12 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;/div&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">Total List Functions</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/02/06/total-list-functions/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-02-06-total-list-functions</id>
+  <link rel="alternate" href="http://andmkent.com/blog/2014/02/06/total-list-functions/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-andmkent-com:-blog-2014-02-06-total-list-functions</id>
   <published>2014-02-06T22:36:50Z</published>
   <updated>2014-02-06T22:36:50Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;p&gt;What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:&lt;/p&gt;
 
