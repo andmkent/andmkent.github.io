@@ -45,7 +45,7 @@ that information does not make it into the type-system.
 Instead, the only information that relates the two values is 
 (more or less) the following three propositions:
 
-@itemlist[@item{@racket[y] is of type @racket[(U Number String)]}
+@itemlist[@item{@racket[y] is of type @racket[Any]}
           @item{If @racket[y] evaluates to @racket[#f], @racket[x]
                    is of type @racket[False].}
           @item{If @racket[y] evaluates to a non-@racket[#f] value, 

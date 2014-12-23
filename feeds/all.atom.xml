@@ -70,7 +70,7 @@ Instead, the only information that relates the two values is
 
 &lt;ul&gt;
  &lt;li&gt;
-  &lt;p&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt; is of type &lt;span class="RktPn"&gt;(&lt;/span&gt;&lt;span class="RktSym"&gt;U&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;Number&lt;/span&gt;&lt;span class="stt"&gt; &lt;/span&gt;&lt;span class="RktSym"&gt;String&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+  &lt;p&gt;&lt;span class="RktSym"&gt;y&lt;/span&gt; is of type &lt;span class="RktSym"&gt;Any&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
  &lt;li&gt;
   &lt;p&gt;If &lt;span class="RktSym"&gt;y&lt;/span&gt; evaluates to &lt;span class="RktVal"&gt;#f&lt;/span&gt;, &lt;span class="RktSym"&gt;x&lt;/span&gt;
    is of type &lt;span class="RktSym"&gt;False&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
