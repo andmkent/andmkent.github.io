@@ -13,7 +13,7 @@
     <td></td><td>Curriculum Vitae: <a href="docs/amkcv.pdf">pdf</a> </td> 
   </tr>
     <tr>
-    <td></td><td>Twitter: <a href="http://www.twitter.com/andmkent">@andmkent</a></td> 
+    <td></td><td>Twitter: <a href="http://www.twitter.com/andmkent_">@andmkent_</a></td> 
   </tr>
     <tr>
     <td></td><td>Code/Projects: <a href="http://www.github.com/andmkent">GitHub</a></td> 
