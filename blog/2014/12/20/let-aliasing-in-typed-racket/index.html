@@ -559,6 +559,80 @@ made at some point even without aliasing. Aliasing just brought the matter
 front and center.</p>
 
 <p>Edits: A few typos</p>
+
+<h2><a name="(part._.Update__.What_if_.I_don_t_want_aliasing__)"></a>Update: What if I don&rsquo;t want aliasing?!</h2>
+
+<p>This change, in addition to allowing aliasing, assumes it is the desired
+default behavior when typechecking. It was pointed out that with this change,
+there are a few programs which <span style="font-style: italic">used to</span> typecheck but no longer do:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="hspace">&nbsp;</span><span class="RktSym">adhoc-min</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">All</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">A</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">adhoc-min</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">let</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktPn">[</span><span class="RktSym">a*</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="RktPn">]</span><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">b*</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">]</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">cond</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">and</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">integer?</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">integer?</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">if</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">&lt;</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span><span class="hspace">&nbsp;&nbsp;</span><span class="RktSym">a*</span><span class="hspace">&nbsp;</span><span class="RktSym">b*</span><span class="RktPn">)</span><span class="RktPn">]</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">else</span><span class="hspace">&nbsp;</span><span class="RktSym">a*</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr></tbody></table></div>
+
+<p>This program errors with the following message:
+<span style="font-style: italic">Type Checker: type mismatch. Expected: A.
+Given: (U Integer Inexact-Real) in: a*.</span></p>
+
+<p>This is because previously the absence of aliasing prevented occurrences of
+<span class="RktSym">a*</span> or <span class="RktSym">b*</span> from having their types updated by
+type tests on <span class="RktSym">a</span> or <span class="RktSym">b</span>. If you wanted <span class="RktSym">a*</span> or <span class="RktSym">b*</span>
+to be unnaffected by type tests on <span class="RktSym">a</span> or <span class="RktSym">b</span>, you can simply
+add explicit annotations at the <span class="RktSym">let</span>-binding site:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="hspace">&nbsp;</span><span class="RktSym">adhoc-min2</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">All</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">A</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">adhoc-min2</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">let</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktPn">[</span><span class="RktSym">a*</span><span class="hspace">&nbsp;</span><span class="RktSym">:</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="RktPn">]</span><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">b*</span><span class="hspace">&nbsp;</span><span class="RktSym">:</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">]</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">cond</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">and</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">integer?</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">integer?</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">if</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">&lt;</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span><span class="hspace">&nbsp;&nbsp;</span><span class="RktSym">a*</span><span class="hspace">&nbsp;</span><span class="RktSym">b*</span><span class="RktPn">)</span><span class="RktPn">]</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">else</span><span class="hspace">&nbsp;</span><span class="RktSym">a*</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr></tbody></table></div>
+
+<p>or use local <span class="RktSym">define</span>s to create <span class="RktSym">a*</span> and <span class="RktSym">b*</span>:</p>
+
+<div class="SCodeFlow">
+ <table cellpadding="0" cellspacing="0" class="RktBlk">
+  <tbody>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">:</span><span class="hspace">&nbsp;</span><span class="RktSym">adhoc-min3</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">All</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">A</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym"><span class="nobreak">-&gt;</span></span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="hspace">&nbsp;</span><span class="RktSym">A</span><span class="RktPn">)</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">adhoc-min3</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktSym">a*</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">define</span><span class="hspace">&nbsp;</span><span class="RktSym">b*</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">cond</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktPn">(</span><span class="RktSym">and</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">integer?</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="RktPn">)</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">integer?</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">(</span><span class="RktSym">if</span><span class="hspace">&nbsp;</span><span class="RktPn">(</span><span class="RktSym">&lt;</span><span class="hspace">&nbsp;</span><span class="RktSym">a</span><span class="hspace">&nbsp;</span><span class="RktSym">b</span><span class="RktPn">)</span><span class="hspace">&nbsp;&nbsp;</span><span class="RktSym">a*</span><span class="hspace">&nbsp;</span><span class="RktSym">b*</span><span class="RktPn">)</span><span class="RktPn">]</span></td></tr>
+   <tr>
+    <td><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="RktPn">[</span><span class="RktSym">else</span><span class="hspace">&nbsp;</span><span class="RktSym">a*</span><span class="RktPn">]</span><span class="RktPn">)</span><span class="RktPn">)</span></td></tr></tbody></table></div>
   <footer>
     <script type="text/javascript">
       !function(d,s,id){

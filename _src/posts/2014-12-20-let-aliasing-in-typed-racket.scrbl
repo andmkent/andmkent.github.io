@@ -299,5 +299,49 @@ front and center.
 
 Edits: A few typos
 
+@subsection[#:style 'unnumbered]{Update: What if I don't want aliasing?!}
 
+This change, in addition to allowing aliasing, assumes it is the desired
+default behavior when typechecking. It was pointed out that with this change,
+there are a few programs which @emph{used to} typecheck but no longer do:
 
+@racketblock[
+             (: adhoc-min (All (A) (-> A A A))) 
+             (define (adhoc-min a b) 
+               (let ([a* a]  [b* b]) 
+                 (cond 
+                   [(and (integer? a) (integer? b))
+                    (if (< a b)  a* b*)]
+                   [else a*])))
+              ]
+
+This program errors with the following message: 
+@emph{Type Checker: type mismatch. Expected: A. 
+Given: (U Integer Inexact-Real) in: a*.}
+
+This is because previously the absence of aliasing prevented occurrences of 
+@racket[a*] or @racket[b*] from having their types updated by
+type tests on @racket[a] or @racket[b]. If you wanted @racket[a*] or @racket[b*]
+to be unnaffected by type tests on @racket[a] or @racket[b], you can simply
+add explicit annotations at the @racket[let]-binding site:
+
+@racketblock[
+             (: adhoc-min2 (All (A) (-> A A A))) 
+             (define (adhoc-min2 a b) 
+               (let ([a* : A a]  [b* : A b]) 
+                 (cond 
+                   [(and (integer? a) (integer? b))
+                    (if (< a b)  a* b*)]
+                   [else a*])))]
+
+or use local @racket[define]s to create @racket[a*] and @racket[b*]:
+
+@racketblock[
+             (: adhoc-min3 (All (A) (-> A A A))) 
+             (define (adhoc-min3 a b)
+               (define a* a)
+               (define b* b)
+               (cond 
+                 [(and (integer? a) (integer? b))
+                  (if (< a b)  a* b*)]
+                 [else a*]))]
