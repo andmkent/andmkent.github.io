@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
- <title type="text">Andrew Kent's Blog: Posts tagged 'Typed Racket'</title>
- <link rel="self" href="http://andmkent.com/feeds/Typed-Racket.atom.xml" />
- <link href="http://andmkent.com/tags/Typed-Racket.html" />
- <id>urn:http-andmkent-com:-tags-Typed-Racket-html</id>
+ <title type="text">Andrew M. Kent: Posts tagged 'Typed Racket'</title>
+ <link rel="self" href="http://www.example.com/feeds/Typed-Racket.atom.xml" />
+ <link href="http://www.example.com/tags/Typed-Racket.html" />
+ <id>urn:http-www-example-com:-tags-Typed-Racket-html</id>
  <updated>2014-12-20T13:23:08Z</updated>
  <entry>
   <title type="text">Let-aliasing in Typed Racket</title>
-  <link rel="alternate" href="http://andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=Atom" />
-  <id>urn:http-andmkent-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
+  <link rel="alternate" href="http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=Atom" />
+  <id>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
   <published>2014-12-20T13:23:08Z</published>
   <updated>2014-12-20T13:23:08Z</updated>
   <author>

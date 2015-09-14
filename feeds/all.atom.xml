@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
- <title type="text">Andrew Kent's Blog: Andrew Kent's Blog</title>
- <link rel="self" href="http://andmkent.com/feeds/all.atom.xml" />
- <link href="http://andmkent.com/index.html" />
- <id>urn:http-andmkent-com:-index-html</id>
+ <title type="text">Andrew M. Kent: Andrew M. Kent</title>
+ <link rel="self" href="http://www.example.com/feeds/all.atom.xml" />
+ <link href="http://www.example.com/index.html" />
+ <id>urn:http-www-example-com:-index-html</id>
  <updated>2014-12-20T13:23:08Z</updated>
  <entry>
   <title type="text">Let-aliasing in Typed Racket</title>
-  <link rel="alternate" href="http://andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-andmkent-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
+  <link rel="alternate" href="http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</id>
   <published>2014-12-20T13:23:08Z</published>
   <updated>2014-12-20T13:23:08Z</updated>
   <author>
@@ -546,8 +546,8 @@ add explicit annotations at the &lt;span class="RktSym"&gt;let&lt;/span&gt;-bind
     &lt;td&gt;&lt;span class="hspace"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span class="RktPn"&gt;[&lt;/span&gt;&lt;span class="RktSym"&gt;else&lt;/span&gt;&lt;span class="hspace"&gt;&amp;nbsp;&lt;/span&gt;&lt;span class="RktSym"&gt;a*&lt;/span&gt;&lt;span class="RktPn"&gt;]&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;span class="RktPn"&gt;)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">Dependently Typed Quicksort</title>
-  <link rel="alternate" href="http://andmkent.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-andmkent-com:-blog-2014-11-10-dependently-typed-quicksort</id>
+  <link rel="alternate" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-www-example-com:-blog-2014-11-10-dependently-typed-quicksort</id>
   <published>2014-11-10T14:01:16Z</published>
   <updated>2014-11-10T14:01:16Z</updated>
   <author>
@@ -901,8 +901,8 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">C to Racket Examples</title>
-  <link rel="alternate" href="http://andmkent.com/blog/2014/03/24/c-to-racket-examples/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-andmkent-com:-blog-2014-03-24-c-to-racket-examples</id>
+  <link rel="alternate" href="http://www.example.com/blog/2014/03/24/c-to-racket-examples/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-www-example-com:-blog-2014-03-24-c-to-racket-examples</id>
   <published>2014-03-24T13:16:07Z</published>
   <updated>2014-03-24T13:16:07Z</updated>
   <author>
@@ -2382,8 +2382,8 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;/div&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">Total List Functions</title>
-  <link rel="alternate" href="http://andmkent.com/blog/2014/02/06/total-list-functions/?utm_source=all&amp;utm_medium=Atom" />
-  <id>urn:http-andmkent-com:-blog-2014-02-06-total-list-functions</id>
+  <link rel="alternate" href="http://www.example.com/blog/2014/02/06/total-list-functions/?utm_source=all&amp;utm_medium=Atom" />
+  <id>urn:http-www-example-com:-blog-2014-02-06-total-list-functions</id>
   <published>2014-02-07T03:36:50Z</published>
   <updated>2014-02-07T03:36:50Z</updated>
   <author>
@@ -2644,7 +2644,7 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;_Note: We used False&lt;em&gt;rec instead of the empty match cases we did previously. They&amp;rsquo;re really the same thing when you flesh them all the way out.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note: We used False_rec instead of the empty match cases we did previously. They&amp;rsquo;re really the same thing when you flesh them all the way out.&lt;/em&gt;&lt;/p&gt;
 
 &lt;div class="brush: coq"&gt;
  &lt;table class="sourcetable"&gt;
@@ -2662,7 +2662,7 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;False&lt;em&gt;rec just hides some of the machinery and the&lt;/em&gt; wholes allow us to give Coq&amp;rsquo;s automation a chance to fill in the gaps for us.&lt;/p&gt;
+&lt;p&gt;False_rec just hides some of the machinery and the _ wholes allow us to give Coq&amp;rsquo;s automation a chance to fill in the gaps for us.&lt;/p&gt;
 
 &lt;p&gt;This is what remains in our goals:&lt;/p&gt;
 

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
- <title type="text">Andrew Kent's Blog: Posts tagged 'Dependent Types'</title>
+ <title type="text">Andrew M. Kent: Posts tagged 'Dependent Types'</title>
  <link rel="self" href="http://www.example.com/feeds/Dependent-Types.atom.xml" />
  <link href="http://www.example.com/tags/Dependent-Types.html" />
  <id>urn:http-www-example-com:-tags-Dependent-Types-html</id>
- <updated>2014-11-10T09:01:16Z</updated>
+ <updated>2014-11-10T14:01:16Z</updated>
  <entry>
   <title type="text">Dependently Typed Quicksort</title>
   <link rel="alternate" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
   <id>urn:http-www-example-com:-blog-2014-11-10-dependently-typed-quicksort</id>
-  <published>2014-11-10T09:01:16Z</published>
-  <updated>2014-11-10T09:01:16Z</updated>
+  <published>2014-11-10T14:01:16Z</published>
+  <updated>2014-11-10T14:01:16Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;p&gt;Coq&amp;rsquo;s support for dependent types mean that type checking not only
 catches trivial errors like passing an integer to a function expecting
@@ -364,10 +364,10 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
   <title type="text">Total List Functions</title>
   <link rel="alternate" href="http://www.example.com/blog/2014/02/06/total-list-functions/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
   <id>urn:http-www-example-com:-blog-2014-02-06-total-list-functions</id>
-  <published>2014-02-06T22:36:50Z</published>
-  <updated>2014-02-06T22:36:50Z</updated>
+  <published>2014-02-07T03:36:50Z</published>
+  <updated>2014-02-07T03:36:50Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;p&gt;What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:&lt;/p&gt;
 
@@ -624,7 +624,7 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;_Note: We used False&lt;em&gt;rec instead of the empty match cases we did previously. They&amp;rsquo;re really the same thing when you flesh them all the way out.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note: We used False_rec instead of the empty match cases we did previously. They&amp;rsquo;re really the same thing when you flesh them all the way out.&lt;/em&gt;&lt;/p&gt;
 
 &lt;div class="brush: coq"&gt;
  &lt;table class="sourcetable"&gt;
@@ -642,7 +642,7 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;
 
-&lt;p&gt;False&lt;em&gt;rec just hides some of the machinery and the&lt;/em&gt; wholes allow us to give Coq&amp;rsquo;s automation a chance to fill in the gaps for us.&lt;/p&gt;
+&lt;p&gt;False_rec just hides some of the machinery and the _ wholes allow us to give Coq&amp;rsquo;s automation a chance to fill in the gaps for us.&lt;/p&gt;
 
 &lt;p&gt;This is what remains in our goals:&lt;/p&gt;
 

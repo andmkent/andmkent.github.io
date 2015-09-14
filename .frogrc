@@ -1,8 +1,13 @@
 # Required: Should NOT end in trailing slash.
-scheme/host = http://andmkent.com
+scheme/host = http://www.example.com
+
+# A path prepended to URIs, including those specified here in .frogrc
+# such as `permalink` and `posts-index-uri`. Defaults to `/`. This is
+# useful when you want to embed your blog in another web site.
+uri-prefix = /
 
 # The title of the blog. Used when generating feeds.
-title = Andrew Kent's Blog
+title = Andrew M. Kent
 
 # The author. Used when generating feeds, and provided to
 # `page-template.html` as the template variable `@author`.
@@ -62,6 +67,10 @@ feed-image-bugs? = true
 #
 auto-embed-tweets? = true
 
+# When embedding tweets that are replies, show the parent tweet along
+# with the reply?
+embed-tweet-parents? = true
+
 # Try to automatically link symbols in Markdown ```racket fenced code
 # blocks, to Racket documentation?
 racket-doc-link-code? = true
@@ -100,6 +109,10 @@ source-dir = _src
 output-dir = .
 
 # Options controlling Pygments' HTML format.
+## Python executable to be passed to the shell. If only a filename or
+## relative path is given, Racket's find-executable-path will be used
+## to locate the executable.
+python-executable = python
 ## Whether to use line numbers.
 pygments-linenos? = true
 ## CSS class for the wrapping <div> tag (default: 'highlight').

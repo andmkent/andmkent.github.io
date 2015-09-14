@@ -3,33 +3,35 @@
   <head>
     @;{ The at-exp reader for a template treats this as a comment.
         Also, notice the use template variables like @title,
-        @description etc. }
+@description etc. }
     <meta charset="utf-8">
     <title>@|title|</title>
     <meta name="description" content="@|description|">
     <meta name="author"      content="@|author|">
     <meta name="keywords"    content="@|keywords|">
     <meta name="viewport"    content="width=device-width, initial-scale=1.0">
-    <link rel="icon"      href="/favicon.ico">
+    <link rel="icon"      href="@|uri-prefix|/favicon.ico">
     <link rel="canonical" href="@|full-uri|">
     @(when rel-next @list{<link rel="next" href="@|rel-next|">})
     @(when rel-prev @list{<link rel="prev" href="@|rel-prev|">})
     <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/pygments.css">
-    <link rel="stylesheet" type="text/css" href="/css/scribble.css">
-    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="@|uri-prefix|/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="@|uri-prefix|/css/pygments.css">
+    <link rel="stylesheet" type="text/css" href="@|uri-prefix|/css/scribble.css">
+    <link rel="stylesheet" type="text/css" href="@|uri-prefix|/css/custom.css">
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Sans" />
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Source+Code+Pro" />
     <!-- Feeds -->
-    <link ref="alternate" type="application/atom+xml"
+    <link rel="alternate" type="application/atom+xml"
           href="@|atom-feed-uri|" title="Atom Feed">
-    <link ref="alternate" type="application/rss+xml"
+    <link rel="alternate" type="application/rss+xml"
           href="@|rss-feed-uri|" title="RSS Feed">
     <!-- JS -->
-    @google-analytics["UA-xxxxx" "example.com"]
+    @google-universal-analytics["UA-xxxxx"]
   </head>
   <body>
     <!-- A standard Twitter Bootstrap nav bar -->
-    <header class="navbar navbar-default navbar-inverse"
+    <header class="navbar navbar-default"
             role="banner">
       <div class="container">
         <div class="navbar-header">
@@ -41,7 +43,8 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/index.html" class="navbar-brand">Andrew M. Kent</a>
+          <a href="@|uri-prefix|/index.html"
+          class="navbar-brand">Andrew M. Kent</a>
         </div>
         <div class="collapse navbar-collapse our-nav-collapse"
              role="navigation">
@@ -53,18 +56,18 @@
               @list{
                 <li@(when (string-ci=? uri uri-path) " class=\"active\"")>
                   <a href="@|uri|"@|a-attribs|>@|label|</a>
-                </li> })
+            </li> })
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Tags <b class="caret"></b></a>
+                Post Tags<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="/index.html">All Posts</a></li>
+                <li><a href="@|uri-prefix|/index.html">All Posts</a></li>
                 @|tags-list-items|
               </ul>
             </li>
-            @ni["/About.html" "About Me"]
-            <li><a href="@|atom-feed-uri|">Atom</a></li>
-            <li><a href="@|rss-feed-uri|">RSS</a></li>
+            <li><a href="@|uri-prefix|/docs/amkcv.pdf">CV</a></li>
+            <li><a href="https://github.com/andmkent">Github</a></li>
+            <li><a href="https://twitter.com/andmkent_">Twitter</a></li>
           </ul>
         </div>
       </div>
@@ -78,10 +81,32 @@
         <div id="content" class="col-md-12">
           @;{ To put something only on the home page, check for
               @uri-path being "/index.html" }
-          @(when (string-ci=? uri-path "/index.html")
-            @list{
-              <h1>Welcome</h1>
-              <p>This is the blog of Indiana University CS PhD student Andrew Kent. The <a href="/About.html">About Me</a> page has all my personal info.</p> })
+          @(when (string-ci=? uri-path
+                              (string-append uri-prefix
+                                             "/index.html"))
+          @list{
+        <div class="TITLE">
+          <span class="LHS"><img src="img/me.jpg" class="IMAGE"/></span>
+          <span class="MIDL "><p><b>About Me</b></p></span>
+          <span class="MIDL"><p>I'm a 2<sup>nd</sup> year PhD student at Indiana
+          University working with
+          <a href="http://www.ccs.neu.edu/home/samth/">Sam Tobin-Hochstadt</a>.</p></span>
+          <span class="MIDL"><p>I am interested in programming language research, particularly
+          that which relates to type theory, formal verification, and gradual typing. My recent
+          <a href="http://2015.ecoop.org/event/stop2015-adding-practical-dependent-types-to-typed-racket">work</a> has involved designing and prototyping an extension to
+          <a href="http://docs.racket-lang.org/ts-guide/">Typed Racket</a>
+          which adds support for some basic dependent types.</p></span>
+          <span class="MIDL"><p>My code & projects are most often found on my
+          <a href="https://github.com/andmkent">Github</a> account. I post news and
+          miscellaneous bloggings on this site. I occassionaly
+          <a href="https://www.twitter.com/andmkent_">microblog</a>.</p></span>
+          <span class="MIDL"><p>Shoot me an <a href="mailto:@'andmkent@indiana.edu">email</a>
+          or find me in the <a href="http://racket-lang.org/irc-chat.html">#racket</a>
+          IRC channel (andmkent) if you want to chat about anything.</p></span>          
+        </div>
+        <span class="clear"></span>
+
+          <h4> News and Blog Posts</h4>})
           @;{ Index pages for posts have @tag that's not #f }
           @(when tag
             @list{<h1>Posts tagged <em>@|tag|</em></h1>})
@@ -90,17 +115,19 @@
         </div>
       </div>
       <footer>
-        <hr />
-        <p>@twitter-follow-button["racketlang" "Follow RacketLang"]</p>
+      <hr />
+      <p>Blog Feeds: <a href="@|rss-feed-uri|">RSS</a>, <a href="@|atom-feed-uri|">Atom</a></p>
+      <p>@twitter-follow-button["andmkent_" "Follow Andrew M. Kent"]
+         @twitter-follow-button["racketlang" "Follow RacketLang"]</p>
         <p>Site generated
         by <a href="https://github.com/greghendershott/frog">Frog</a>,
-        the <strong>fr</strong>ozen bl<strong>og</strong> tool.</p>
-        <p>Using <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a>.</p>
-        <p><em>This website does not reflect the views of anyone but the author, Andrew M. Kent. Any and all code is provided as-is with no warranty. User discretion advised ;-)</em>.</p>
+        the <strong>fr</strong>ozen bl<strong>og</strong> tool,
+        using <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a>.</p>
+        <p><em>Copyright (c) 2015 Andrew M. Kent. All software found on this site should be considered under The MIT License unless otherwise stated</em>.</p>
       </footer>
     </div>
     <!-- </body> JS -->
-    <script type="text/javascript" src="//code.jquery.com/jquery.js"></script>
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery.min.js"></script>
+    <script type="text/javascript" src="@|uri-prefix|/js/bootstrap.min.js"></script>
   </body>
-</html>
+    </html>

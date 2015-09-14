@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <rss version="2.0">
  <channel>
-  <title>Andrew Kent's Blog: Posts tagged 'Typed Racket'</title>
-  <description>Andrew Kent's Blog: Posts tagged 'Typed Racket'</description>
-  <link>http://andmkent.com/tags/Typed-Racket.html</link>
+  <title>Andrew M. Kent: Posts tagged 'Typed Racket'</title>
+  <description>Andrew M. Kent: Posts tagged 'Typed Racket'</description>
+  <link>http://www.example.com/tags/Typed-Racket.html</link>
   <lastBuildDate>Sat, 20 Dec 2014 13:23:08 UT</lastBuildDate>
   <pubDate>Sat, 20 Dec 2014 13:23:08 UT</pubDate>
   <ttl>1800</ttl>
   <item>
    <title>Let-aliasing in Typed Racket</title>
-   <link>http://andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=RSS</link>
-   <guid>urn:http-andmkent-com:-blog-2014-12-20-let-aliasing-in-typed-racket</guid>
+   <link>http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-example-com:-blog-2014-12-20-let-aliasing-in-typed-racket</guid>
    <pubDate>Sat, 20 Dec 2014 13:23:08 UT</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;Although Typed Racket (TR) &lt;span style="font-style: italic"&gt;can&lt;/span&gt; currently typecheck a large number

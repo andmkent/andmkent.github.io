@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <rss version="2.0">
  <channel>
-  <title>My Awesome Blog: Posts tagged 'C'</title>
-  <description>My Awesome Blog: Posts tagged 'C'</description>
+  <title>Andrew M. Kent: Posts tagged 'C'</title>
+  <description>Andrew M. Kent: Posts tagged 'C'</description>
   <link>http://www.example.com/tags/C.html</link>
-  <lastBuildDate>Mon, 24 Mar 2014 09:16:07 EST</lastBuildDate>
-  <pubDate>Mon, 24 Mar 2014 09:16:07 EST</pubDate>
+  <lastBuildDate>Mon, 24 Mar 2014 13:16:07 UT</lastBuildDate>
+  <pubDate>Mon, 24 Mar 2014 13:16:07 UT</pubDate>
   <ttl>1800</ttl>
   <item>
    <title>C to Racket Examples</title>
    <link>http://www.example.com/blog/2014/03/24/c-to-racket-examples/?utm_source=C&amp;utm_medium=RSS</link>
    <guid>urn:http-www-example-com:-blog-2014-03-24-c-to-racket-examples</guid>
-   <pubDate>Mon, 24 Mar 2014 09:16:07 EST</pubDate>
+   <pubDate>Mon, 24 Mar 2014 13:16:07 UT</pubDate>
    <description>&lt;html&gt;
 &lt;h3 id="racket-and-c"&gt;Racket and C&lt;/h3&gt;
 

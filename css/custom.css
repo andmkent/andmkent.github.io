@@ -1,7 +1,11 @@
 /* custom.css */
 
+/* Font */
+*{font-family: 'Noto Sans',  sans-serif;}
+
 code {
     color: black;
+    font-family: 'Source Code Pro', monospace;
 }
 
 /* When highlighted code blocks are too wide, they wrap. Resulting in the */
@@ -11,3 +15,101 @@ pre {
     white-space: pre;
     width: inherit;
 }
+
+/* About me css classes */
+
+.TITLE {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #eeeeee;
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    width: 875px;
+    height: 300px;
+    overflow:hidden;
+    padding: 3px 3px 0px 3px;
+} 
+.IMAGE {
+    padding: 10px 10px 10px 10px; height: 320px;
+}
+.LHS {
+     position:relative;
+     top: -15px;
+     left:-15px;
+    float: left; padding: 0px 0px 0px 0px; width: 275px;
+}
+.MIDL {
+    min-width: 100px; max-width: 500px
+}
+.CLEAR {
+    clear: both;
+}
+
+/* End of About me */
+
+
+/* Navbar Theme
+   Generated at http://work.smarchal.com/twbscolor/css/3253ffeeeeeefdfdfd0501f90
+*/
+
+.navbar-default {
+  background-color: #f8f8f8;
+  border-color: #eeeeee;
+}
+.navbar-default .navbar-brand {
+  color: #000000;
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+  color: #0501f9;
+}
+.navbar-default .navbar-text {
+  color: #000000;
+}
+.navbar-default .navbar-nav > li > a {
+  color: #000000;
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+  color: #0501f9;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+  color: #0501f9;
+  background-color: #eeeeee;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+  color: #0501f9;
+  background-color: #eeeeee;
+}
+.navbar-default .navbar-toggle {
+  border-color: #eeeeee;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+  background-color: #eeeeee;
+}
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #000000;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+  border-color: #000000;
+}
+.navbar-default .navbar-link {
+  color: #000000;
+}
+.navbar-default .navbar-link:hover {
+  color: #0501f9;
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #000000;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #0501f9;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #0501f9;
+    background-color: #eeeeee;
+  }
+}
+
+/* End of Navbar theme */

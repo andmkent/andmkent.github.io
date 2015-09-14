@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
- <title type="text">Andrew Kent's Blog: Posts tagged 'Racket'</title>
+ <title type="text">Andrew M. Kent: Posts tagged 'Racket'</title>
  <link rel="self" href="http://www.example.com/feeds/Racket.atom.xml" />
  <link href="http://www.example.com/tags/Racket.html" />
  <id>urn:http-www-example-com:-tags-Racket-html</id>
- <updated>2014-03-24T09:16:07Z</updated>
+ <updated>2014-03-24T13:16:07Z</updated>
  <entry>
   <title type="text">C to Racket Examples</title>
   <link rel="alternate" href="http://www.example.com/blog/2014/03/24/c-to-racket-examples/?utm_source=Racket&amp;utm_medium=Atom" />
   <id>urn:http-www-example-com:-blog-2014-03-24-c-to-racket-examples</id>
-  <published>2014-03-24T09:16:07Z</published>
-  <updated>2014-03-24T09:16:07Z</updated>
+  <published>2014-03-24T13:16:07Z</published>
+  <updated>2014-03-24T13:16:07Z</updated>
   <author>
-   <name>The Unknown Author</name></author>
+   <name>Andrew M. Kent</name></author>
   <content type="html">&lt;html&gt;
 &lt;h3 id="racket-and-c"&gt;Racket and C&lt;/h3&gt;
 
