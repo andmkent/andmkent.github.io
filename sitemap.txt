@@ -1,5 +1,6 @@
-http://www.example.com/blog/2014/02/06/total-list-functions/
-http://www.example.com/blog/2014/11/10/quicksort-in-coq/
-http://www.example.com/blog/2014/12/20/let-aliasing-in-typed-racket/
-http://www.example.com/blog/2014/03/24/c-to-racket-examples/
-http://www.example.com/About.html
+http://www.andmkent.com/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/
+http://www.andmkent.com/blog/2014/02/06/total-list-functions/
+http://www.andmkent.com/blog/2014/11/10/quicksort-in-coq/
+http://www.andmkent.com/blog/2014/12/20/let-aliasing-in-typed-racket/
+http://www.andmkent.com/blog/2014/03/24/c-to-racket-examples/
+http://www.andmkent.com/About.html

@@ -3,14 +3,14 @@
  <channel>
   <title>Andrew M. Kent: Posts tagged 'Dependent Types'</title>
   <description>Andrew M. Kent: Posts tagged 'Dependent Types'</description>
-  <link>http://www.example.com/tags/Dependent-Types.html</link>
+  <link>http://www.andmkent.com/tags/Dependent-Types.html</link>
   <lastBuildDate>Mon, 10 Nov 2014 14:01:16 UT</lastBuildDate>
   <pubDate>Mon, 10 Nov 2014 14:01:16 UT</pubDate>
   <ttl>1800</ttl>
   <item>
    <title>Quicksort in Coq</title>
-   <link>http://www.example.com/blog/2014/11/10/quicksort-in-coq/?utm_source=Dependent-Types&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-11-10-quicksort-in-coq</guid>
+   <link>http://www.andmkent.com/blog/2014/11/10/quicksort-in-coq/?utm_source=Dependent-Types&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-andmkent-com:-blog-2014-11-10-quicksort-in-coq</guid>
    <pubDate>Mon, 10 Nov 2014 14:01:16 UT</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;Coq&amp;rsquo;s support for dependent types mean that type checking not only
@@ -358,8 +358,8 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>
    <title>Total List Functions</title>
-   <link>http://www.example.com/blog/2014/02/06/total-list-functions/?utm_source=Dependent-Types&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-02-06-total-list-functions</guid>
+   <link>http://www.andmkent.com/blog/2014/02/06/total-list-functions/?utm_source=Dependent-Types&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-andmkent-com:-blog-2014-02-06-total-list-functions</guid>
    <pubDate>Fri, 07 Feb 2014 03:36:50 UT</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:&lt;/p&gt;

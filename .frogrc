@@ -1,5 +1,5 @@
 # Required: Should NOT end in trailing slash.
-scheme/host = http://www.example.com
+scheme/host = http://www.andmkent.com
 
 # A path prepended to URIs, including those specified here in .frogrc
 # such as `permalink` and `posts-index-uri`. Defaults to `/`. This is
@@ -114,6 +114,6 @@ output-dir = .
 ## to locate the executable.
 python-executable = python
 ## Whether to use line numbers.
-pygments-linenos? = true
+pygments-linenos? = false
 ## CSS class for the wrapping <div> tag (default: 'highlight').
 pygments-cssclass = source

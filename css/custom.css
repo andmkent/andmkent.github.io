@@ -2,19 +2,31 @@
 
 /* Font */
 body {
-    font-size: 15px;
-    font-family: 'Noto Sans',  sans-serif;
+    font-size: 14px;
+    font-family: 'Merriweather',  sans-serif;
 }
+
+h1{font-size:19px;}
+h2{font-size:18px;}
+h3{font-size:17px;}
+h4{font-size:16px;}
+h5{font-size:15px;}
+h6{font-size:14px;}
 
 /* When highlighted code blocks are too wide, they wrap. Resulting in the */
 /* line numbers column's rows not lining up with the code rows. Prevent */
 /* wrapping. */
 pre {
-    color: black;
+    color: #000;
     font-family: 'Source Code Pro', monospace;
     font-size: 14px;
     white-space: pre;
     width: inherit;
+}
+
+code {
+    color: #000;
+    background-color: #FFF;
 }
 
 /* About me css classes */
@@ -22,8 +34,8 @@ pre {
 .TITLE {
     border-style: solid;
     border-width: 1px;
-    border-color: #eeeeee;
-    background-color: #f8f8f8;
+    border-color: #CCC;
+    background-color: #F5F5F5;
     border-radius: 10px;
     width: 885px;
     height: 300px;
@@ -54,8 +66,8 @@ pre {
 */
 
 .navbar-default {
-  background-color: #f8f8f8;
-  border-color: #eeeeee;
+    border-color: #CCC;
+    background-color: #F5F5F5;
 }
 .navbar-default .navbar-brand {
   color: #000000;

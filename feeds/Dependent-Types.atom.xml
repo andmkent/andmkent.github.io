@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
  <title type="text">Andrew M. Kent: Posts tagged 'Dependent Types'</title>
- <link rel="self" href="http://www.example.com/feeds/Dependent-Types.atom.xml" />
- <link href="http://www.example.com/tags/Dependent-Types.html" />
- <id>urn:http-www-example-com:-tags-Dependent-Types-html</id>
+ <link rel="self" href="http://www.andmkent.com/feeds/Dependent-Types.atom.xml" />
+ <link href="http://www.andmkent.com/tags/Dependent-Types.html" />
+ <id>urn:http-www-andmkent-com:-tags-Dependent-Types-html</id>
  <updated>2014-11-10T14:01:16Z</updated>
  <entry>
   <title type="text">Quicksort in Coq</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/11/10/quicksort-in-coq/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-11-10-quicksort-in-coq</id>
+  <link rel="alternate" href="http://www.andmkent.com/blog/2014/11/10/quicksort-in-coq/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
+  <id>urn:http-www-andmkent-com:-blog-2014-11-10-quicksort-in-coq</id>
   <published>2014-11-10T14:01:16Z</published>
   <updated>2014-11-10T14:01:16Z</updated>
   <author>
@@ -359,8 +359,8 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">Total List Functions</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/02/06/total-list-functions/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-02-06-total-list-functions</id>
+  <link rel="alternate" href="http://www.andmkent.com/blog/2014/02/06/total-list-functions/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
+  <id>urn:http-www-andmkent-com:-blog-2014-02-06-total-list-functions</id>
   <published>2014-02-07T03:36:50Z</published>
   <updated>2014-02-07T03:36:50Z</updated>
   <author>

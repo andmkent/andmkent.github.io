@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
  <title type="text">Andrew M. Kent: Posts tagged 'C'</title>
- <link rel="self" href="http://www.example.com/feeds/C.atom.xml" />
- <link href="http://www.example.com/tags/C.html" />
- <id>urn:http-www-example-com:-tags-C-html</id>
+ <link rel="self" href="http://www.andmkent.com/feeds/C.atom.xml" />
+ <link href="http://www.andmkent.com/tags/C.html" />
+ <id>urn:http-www-andmkent-com:-tags-C-html</id>
  <updated>2014-03-24T13:16:07Z</updated>
  <entry>
   <title type="text">C to Racket Examples</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/03/24/c-to-racket-examples/?utm_source=C&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-03-24-c-to-racket-examples</id>
+  <link rel="alternate" href="http://www.andmkent.com/blog/2014/03/24/c-to-racket-examples/?utm_source=C&amp;utm_medium=Atom" />
+  <id>urn:http-www-andmkent-com:-blog-2014-03-24-c-to-racket-examples</id>
   <published>2014-03-24T13:16:07Z</published>
   <updated>2014-03-24T13:16:07Z</updated>
   <author>

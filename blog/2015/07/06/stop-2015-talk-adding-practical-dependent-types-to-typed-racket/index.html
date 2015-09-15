@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <title>STOP 2015 Talk: Adding Practical Dependent Types to Typed Racket</title>
+    <meta name="description" content="At the Scripts to Programs 2015 workshop (co-located with ECOOP 2015) I gave a talk reporting on our upcoming addition of some basic dependent types to Typed Racket....">
+    <meta name="author"      content="Andrew M. Kent">
+    <meta name="keywords"    content="Talks, Typed Racket">
+    <meta name="viewport"    content="width=device-width, initial-scale=1.0">
+    <link rel="icon"      href="/favicon.ico">
+    <link rel="canonical" href="http://www.andmkent.com/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/">
+    <link rel="next" href="/blog/2014/12/20/let-aliasing-in-typed-racket/">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/pygments.css">
+    <link rel="stylesheet" type="text/css" href="/css/scribble.css">
+    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merriweather" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Code+Pro" />
+    <!-- Feeds -->
+    <link rel="alternate" type="application/atom+xml"
+          href="/feeds/all.atom.xml" title="Atom Feed">
+    <link rel="alternate" type="application/rss+xml"
+          href="/feeds/all.rss.xml" title="RSS Feed">
+    <!-- JS -->
+    <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-xxxxx', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </head>
+  <body>
+    <!-- A standard Twitter Bootstrap nav bar -->
+    <header class="navbar navbar-default"
+            role="banner">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button"
+                  class="navbar-toggle"
+                  data-toggle="collapse"
+                  data-target=".our-nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="/index.html"
+          class="navbar-brand">Andrew M. Kent</a>
+        </div>
+        <div class="collapse navbar-collapse our-nav-collapse"
+             role="navigation">
+          <ul class="nav navbar-nav">
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Post Tags<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/index.html">All Posts</a></li>
+
+<li><a href="/tags/C.html">C</a></li>
+
+<li><a href="/tags/Coq.html">Coq</a></li>
+
+<li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
+
+<li><a href="/tags/Racket.html">Racket</a></li>
+
+<li><a href="/tags/Talks.html">Talks</a></li>
+
+<li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
+              </ul>
+            </li>
+            <li><a href="/docs/amkcv.pdf">CV</a></li>
+            <li><a href="https://github.com/andmkent">Github</a></li>
+            <li><a href="https://twitter.com/andmkent_">Twitter</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+
+        <!-- Main column -->
+        <div id="content" class="col-md-12">
+
+
+
+
+
+          <article>
+  <header>
+    <h1>STOP 2015 Talk: Adding Practical Dependent Types to Typed Racket</h1>
+    <p class='date-and-tags'>
+<time datetime="2015-07-06" pubdate="true">2015-07-06</time> :: <span class="tags"><a href="/tags/Talks.html">Talks</a>, <a href="/tags/Typed-Racket.html">Typed Racket</a></span></p>
+  </header>
+
+<p>At the <a href="http://2015.ecoop.org/track/STOP2015">Scripts to Programs 2015</a> workshop (co-located with ECOOP 2015) I gave a talk reporting on our upcoming addition of some basic dependent types to Typed Racket.</p>
+<!-- more-->
+
+<h2 id="abstract">Abstract</h2>
+
+<p>Typed Racket is a statically typed dialect of Racket that allows idiomatic Racket programs to be enriched with types. It can reason about many dynamically typed programming patterns while providing sound interoperability and optimizations. We have designed and are implementing an extension to Typed Racket which adds support for logical refinement types and linear integer constraints. This summary discusses our approach to implementing this novel combination of precise specifications and optimizations while maintaining sound interoperability with dynamically typed code. A PLT Redex model of the basic calculus describing our extension can be seen at https://github.com/andmkent/stop2015-redex and our development fork where we are extending Typed Racket is available at https://github.com/andmkent/typed-racket/tree/dtr-prototype.</p>
+
+<h2 id="overview-of-additions-to-typed-racket">Overview of Additions to Typed Racket</h2>
+
+<p>This extension involves adding just a few simple forms to Typed Racket.</p>
+
+<p>First, we need to add a type which can express dependencies within it. We do this with refinement types:</p>
+
+<div class="brush: racket">
+ <div class="source">
+  <pre><span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">x</span> <span class="n">:</span> <span class="n">T</span><span class="p">]</span> <span class="n">P</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+
+</div>
+
+<p>This intuitively describes all values <code>x</code> of type <code>T</code> where proposition <code>P(x)</code> holds.</p>
+
+<p>Today Typed Racket <em>already</em> reasons about some basic propositions:</p>
+
+<ul>
+ <li>
+  <p><code>(x -: T)</code>, <code>x</code> is of type <code>T</code></p></li>
+ <li>
+  <p><code>(x -! T)</code>, <code>x</code> is not of type <code>T</code></p></li>
+ <li>
+  <p><code>(and P ...)</code>, standard logical <em>and</em></p></li>
+ <li>
+  <p><code>(or P ...)</code>, standard logical <em>or</em></p></li></ul>
+
+<p>This is how Typed Racket can typecheck programs using type-tests in <code>if</code> statements, etc&hellip;</p>
+
+<p>Next we add propositions which can talk about linear inequalities:</p>
+
+<ul>
+ <li><code>((+ x (* 3 y)) ≤ 42)</code>, the linear combination <code>(+ x (* 3 y))</code> is less than or equal to <code>42</code>.</li></ul>
+
+<p>These propositions can only reference linear combinations of integers (<em>e.g. no 1.5 or (* x y)</em>).</p>
+
+<h2 id="examples-with-refinements-and-dependent-types">Examples with Refinements and Dependent Types</h2>
+
+<p>Here are two examples of programs we can write with these new forms. Both utilize <code>safe-vector-</code> operations, whose type requires the index to be verified statically (and they can therefore omit the runtime bounds-check).</p>
+
+<h3 id="vector-dot-product">Vector Dot Product</h3>
+
+<div class="brush: racket">
+ <div class="source">
+  <pre><span class="p">(</span><span class="n">:</span> <span class="n">dot-prod</span> <span class="p">(</span><span class="k">-&gt;</span> <span class="p">(</span><span class="n">Vecof</span> <span class="n">Int</span><span class="p">)</span> <span class="p">(</span><span class="n">Vecof</span> <span class="n">Int</span><span class="p">)</span>
+                <span class="n">Int</span><span class="p">))</span>
+<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="n">dot-prod</span> <span class="n">A</span> <span class="n">B</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">for/sum</span> <span class="p">([</span><span class="n">i</span> <span class="p">(</span><span class="nb">in-range</span> <span class="p">(</span><span class="n">len</span> <span class="n">A</span><span class="p">))])</span>
+    <span class="p">(</span><span class="nb">*</span> <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">A</span> <span class="n">i</span><span class="p">)</span>
+       <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">B</span> <span class="n">i</span><span class="p">))))</span>
+</pre></div>
+
+</div>
+
+<h3 id="matrix-multiplication">Matrix Multiplication</h3>
+
+<div class="brush: racket">
+ <div class="source">
+  <pre><span class="p">(</span><span class="k">define-syntax-rule</span> <span class="p">(</span><span class="n">Mref</span> <span class="n">M</span> <span class="n">r</span> <span class="n">c</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">M</span> <span class="n">r</span><span class="p">)</span> <span class="n">c</span><span class="p">))</span>
+
+<span class="p">(</span><span class="k">define-syntax-rule</span> <span class="p">(</span><span class="n">Mset!</span> <span class="n">M</span> <span class="n">r</span> <span class="n">c</span> <span class="n">val</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">safe-vector-set!</span> <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">M</span> <span class="n">r</span><span class="p">)</span> <span class="n">c</span> <span class="n">val</span><span class="p">))</span>
+
+<span class="c1">;; A[m×n] * B[n×p] = C[m×p]) </span>
+<span class="p">(</span><span class="n">:</span> <span class="n">matrix*</span>
+   <span class="p">(</span><span class="n">~&gt;</span> <span class="p">([</span><span class="n">A</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">a</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="n">Int</span><span class="p">)]</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="n">len</span> <span class="n">a</span><span class="p">)</span> <span class="n">n</span><span class="p">)))]</span>
+        <span class="p">[</span><span class="n">B</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">b</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="n">Int</span><span class="p">)]</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="n">len</span> <span class="n">b</span><span class="p">)</span> <span class="n">p</span><span class="p">)))]</span>
+        <span class="p">[</span><span class="n">C</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">c</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="n">Int</span><span class="p">)]</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="n">len</span> <span class="n">c</span><span class="p">)</span> <span class="n">p</span><span class="p">)))]</span>
+        <span class="p">[</span><span class="n">m</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">x</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">=</span> <span class="n">x</span> <span class="p">(</span><span class="n">len</span> <span class="n">A</span><span class="p">)</span> <span class="p">(</span><span class="n">len</span> <span class="n">C</span><span class="p">)))]</span>
+        <span class="p">[</span><span class="n">n</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">y</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">=</span> <span class="n">y</span> <span class="p">(</span><span class="n">len</span> <span class="n">B</span><span class="p">)))]</span>
+        <span class="p">[</span><span class="n">p</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">])</span>
+       <span class="n">Void</span><span class="p">))</span>
+<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="n">matrix*</span> <span class="n">A</span> <span class="n">B</span> <span class="n">C</span> <span class="n">m</span> <span class="n">n</span> <span class="n">p</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">for*</span> <span class="p">([</span><span class="n">i</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">x</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">&lt;</span> <span class="n">x</span> <span class="n">m</span><span class="p">))</span>
+            <span class="p">(</span><span class="nb">in-range</span> <span class="n">m</span><span class="p">)]</span>
+         <span class="p">[</span><span class="n">j</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">y</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">&lt;</span> <span class="n">y</span> <span class="n">p</span><span class="p">))</span>
+            <span class="p">(</span><span class="nb">in-range</span> <span class="n">p</span><span class="p">)])</span>
+    <span class="p">(</span><span class="k">define</span> <span class="n">Cij-val</span> <span class="n">:</span> <span class="n">Int</span>
+      <span class="p">(</span><span class="k">for/sum</span> <span class="p">([</span><span class="n">k</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">z</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">&lt;</span> <span class="n">z</span> <span class="n">n</span><span class="p">))</span>
+                   <span class="p">(</span><span class="nb">in-range</span> <span class="n">n</span><span class="p">)])</span>
+        <span class="p">(</span><span class="nb">+</span> <span class="p">(</span><span class="n">Mref</span> <span class="n">A</span> <span class="n">i</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="n">Mref</span> <span class="n">B</span> <span class="n">k</span> <span class="n">j</span><span class="p">))))</span>
+    <span class="p">(</span><span class="n">Mset!</span> <span class="n">C</span> <span class="n">i</span> <span class="n">j</span> <span class="n">Cij-val</span><span class="p">)))</span>
+</pre></div>
+
+</div>
+
+<h2 id="vector-bounds-case-study">Vector Bounds Case Study</h2>
+
+<p>We performed a case study analyzing how many instances of <code>vector-ref</code> and <code>vector-set!</code> we could automatically verify without any modifications to the code. In approximately 57k lines of code drawn from Racket&rsquo;s <a href="http://docs.racket-lang.org/math/">math</a>, <a href="http://docs.racket-lang.org/plot/index.html?q=plot">plot</a>, and <a href="https://github.com/ntoronto/pict3d">pict3d</a> libraries we successfully could verify the vector operations about 50% of the time.</p>
+
+<p>We will report in more detail on these findings in an upcoming publication.</p>
+  <footer>
+    <script type="text/javascript">
+      !function(d,s,id){
+          var js,fjs=d.getElementsByTagName(s)[0];
+          if(!d.getElementById(id)){
+              js=d.createElement(s);
+              js.id=id;
+              js.src="//platform.twitter.com/widgets.js";
+              fjs.parentNode.insertBefore(js,fjs);
+          }
+      }(document,"script","twitter-wjs");
+    </script>
+    <a href="https://twitter.com/share"
+       class="twitter-share-button"
+       data-url="http://www.andmkent.com/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/"
+       data-dnt="true">
+      "Tweet"</a>
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+    <g:plusone size="medium" href="http://www.andmkent.com/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/"></g:plusone>
+    <script type="text/javascript">
+      var disqus_shortname = 'shortname';
+      (function() {
+          var dsq = document.createElement('script');
+          dsq.type = 'text/javascript';
+          dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <div id="disqus_thread"></div>
+    <ul class="pager">
+
+    <li class="next">
+      <a href="/blog/2014/12/20/let-aliasing-in-typed-racket/"><em>Let-aliasing in Typed Racket</em> &rarr;</a>
+    </li>
+    </ul>
+  </footer>
+</article>
+        </div>
+      </div>
+      <footer>
+      <hr />
+      <p>Blog Feeds: <a href="/feeds/all.rss.xml">RSS</a>, <a href="/feeds/all.atom.xml">Atom</a></p>
+      <p><a href="https://twitter.com/andmkent_"
+            class="twitter-follow-button"
+            data-show-count="false"
+            data-lang="en">
+           "Follow Andrew M. Kent"
+         </a>
+         <script type="text/javascript">
+           !function(d,s,id){
+               var js,fjs=d.getElementsByTagName(s)[0];
+               if(!d.getElementById(id)){
+                   js=d.createElement(s);
+                   js.id=id;
+                   js.src="//platform.twitter.com/widgets.js";
+                   fjs.parentNode.insertBefore(js,fjs);
+               }
+           }(document,"script","twitter-wjs");
+         </script>
+         <a href="https://twitter.com/racketlang"
+            class="twitter-follow-button"
+            data-show-count="false"
+            data-lang="en">
+           "Follow RacketLang"
+         </a>
+         <script type="text/javascript">
+           !function(d,s,id){
+               var js,fjs=d.getElementsByTagName(s)[0];
+               if(!d.getElementById(id)){
+                   js=d.createElement(s);
+                   js.id=id;
+                   js.src="//platform.twitter.com/widgets.js";
+                   fjs.parentNode.insertBefore(js,fjs);
+               }
+           }(document,"script","twitter-wjs");
+         </script></p>
+        <p>Site generated
+        by <a href="https://github.com/greghendershott/frog">Frog</a>,
+        the <strong>fr</strong>ozen bl<strong>og</strong> tool,
+        using <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a>.</p>
+        <p><em>Copyright (c) 2015 Andrew M. Kent. All software found on this site should be considered under The MIT License unless otherwise stated</em>.</p>
+      </footer>
+    </div>
+    <!-- </body> JS -->
+    <script type="text/javascript" src="//code.jquery.com/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+  </body>
+    </html>
