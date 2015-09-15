@@ -8,9 +8,9 @@
   <pubDate>Mon, 10 Nov 2014 14:01:16 UT</pubDate>
   <ttl>1800</ttl>
   <item>
-   <title>Dependently Typed Quicksort</title>
-   <link>http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=Dependent-Types&amp;utm_medium=RSS</link>
-   <guid>urn:http-www-example-com:-blog-2014-11-10-dependently-typed-quicksort</guid>
+   <title>Quicksort in Coq</title>
+   <link>http://www.example.com/blog/2014/11/10/quicksort-in-coq/?utm_source=Dependent-Types&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-example-com:-blog-2014-11-10-quicksort-in-coq</guid>
    <pubDate>Mon, 10 Nov 2014 14:01:16 UT</pubDate>
    <description>&lt;html&gt;
 &lt;p&gt;Coq&amp;rsquo;s support for dependent types mean that type checking not only
@@ -353,10 +353,7 @@ partitions of their input - this is our inductive hypothesis) and
 prove these properties are maintained by (quicksort lhs) ++ x ::
 (quicksort rhs). With the use of a few lemmas related to partitioning
 and appending sorted lists that are related (such as how our two are
-in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to verify
-(details in linked code).&lt;/p&gt;
-
-&lt;p&gt;&lt;a href="https://github.com/sgtamk/sgtamk.github.io/blob/master/snippets/20140129-quicksort-code.v"&gt;Source code&lt;/a&gt;&lt;/p&gt;
+in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to verify.&lt;/p&gt;
 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>

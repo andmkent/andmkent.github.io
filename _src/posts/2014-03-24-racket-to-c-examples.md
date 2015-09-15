@@ -2,27 +2,16 @@
     Date: 2014-03-24T09:16:07
     Tags: Racket, C
 
-### Racket and C
-
 This post is a collection of simple C code snippets and roughly
 equivalent Racket code.
 
 Hopefully if you're coming from a C background (or similar) and you're
 struggling to make sense of Racket code, these examples will assist in
-clearing the fog and help bring about the utter bliss that is programming
-in Racket =)
+clearing the fog.
 
 <!-- more -->
 
-<br/>
-
-![Racket is a descendant of Lisp (comic from
- [xkcd](http://www.xkcd.com))](http://imgs.xkcd.com/comics/lisp_cycles.png)
-
-
-<br/>
-
-### "I need more!"
+### More details
 
 If you wish for a more in depth introduction to Racket, I recommend
 perusing the excellent [Racket
@@ -704,40 +693,3 @@ assert(max_in_list(&l1) == 99);
 (check-equal? (max-in-list (list 42 99 12)) 99)
 ```
 
-
-<br/>
-
-## <a name="other"></a>Last but not least... Functional tools!
-
-In addition to various ways to write functions that may resemble code
-you've seen in C, there are also a plethora of elegant, beautiful
-tools at your fingertips which you should start digging into.
-
-For example, you'll want to learn about some of the list functions
-like filter, map, fold, etc...
-
-```racket
-; returns list with only even numbers
-(define (only-even l)
-  (filter even? l))
-
-(check-equal? (only-even (list 0 1 2 3 4))
-              (list 0 2 4))
-
-; returns list with numbers squared
-(define (square-list l)
-  (map (λ (x) (* x x)) l))
-
-(check-equal? (square-list (list 0 1 1 2 3 5))
-              (list 0 1 1 4 9 25))
-
-; takes a list of strings and returns the sum of their lengths
-(define (str-len-sum lostr)
-  (foldl (λ (str sum)
-           (+ sum (string-length str)))
-         0 
-         lostr))
-
-(check-equal? (str-len-sum (list "cat" "dogs" "ferret"))
-              13)
-```

@@ -4,21 +4,21 @@
 
     <meta charset="utf-8">
     <title>C to Racket Examples</title>
-    <meta name="description" content="Racket and C:  This post is a collection of simple C code snippets and roughly equivalent Racket code.  Hopefully if you're coming from a C background (or similar) and you're struggling to make sense of Racket code, these examples will assist in clearing ...">
+    <meta name="description" content="This post is a collection of simple C code snippets and roughly equivalent Racket code.  Hopefully if you're coming from a C background (or similar) and you're struggling to make sense of Racket code, these examples will assist in clearing the fog....">
     <meta name="author"      content="Andrew M. Kent">
     <meta name="keywords"    content="Racket, C">
     <meta name="viewport"    content="width=device-width, initial-scale=1.0">
     <link rel="icon"      href="/favicon.ico">
     <link rel="canonical" href="http://www.example.com/blog/2014/03/24/c-to-racket-examples/">
     <link rel="next" href="/blog/2014/02/06/total-list-functions/">
-    <link rel="prev" href="/blog/2014/11/10/dependently-typed-quicksort/">
+    <link rel="prev" href="/blog/2014/11/10/quicksort-in-coq/">
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/pygments.css">
     <link rel="stylesheet" type="text/css" href="/css/scribble.css">
     <link rel="stylesheet" type="text/css" href="/css/custom.css">
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Sans" />
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Source+Code+Pro" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Noto+Sans" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Code+Pro" />
     <!-- Feeds -->
     <link rel="alternate" type="application/atom+xml"
           href="/feeds/all.atom.xml" title="Atom Feed">
@@ -68,8 +68,6 @@
 
 <li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
 
-<li><a href="/tags/Program-Verification.html">Program Verification</a></li>
-
 <li><a href="/tags/Racket.html">Racket</a></li>
 
 <li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
@@ -99,22 +97,12 @@
 <time datetime="2014-03-24" pubdate="true">2014-03-24</time> :: <span class="tags"><a href="/tags/Racket.html">Racket</a>, <a href="/tags/C.html">C</a></span></p>
   </header>
 
-<h3 id="racket-and-c">Racket and C</h3>
-
 <p>This post is a collection of simple C code snippets and roughly equivalent Racket code.</p>
 
-<p>Hopefully if you&rsquo;re coming from a C background (or similar) and you&rsquo;re struggling to make sense of Racket code, these examples will assist in clearing the fog and help bring about the utter bliss that is programming in Racket =)</p>
+<p>Hopefully if you&rsquo;re coming from a C background (or similar) and you&rsquo;re struggling to make sense of Racket code, these examples will assist in clearing the fog.</p>
 <!-- more-->
 
-<br />
-
-<div class="figure"><img src="http://imgs.xkcd.com/comics/lisp_cycles.png" alt="Racket is a descendant of Lisp (comic from
- [xkcd](http://www.xkcd.com))" />
- <p class="caption">Racket is a descendant of Lisp (comic from  <a href="http://www.xkcd.com">xkcd</a>)</p></div>
-
-<br />
-
-<h3 id="i-need-more">&ldquo;I need more!&rdquo;</h3>
+<h3 id="more-details">More details</h3>
 
 <p>If you wish for a more in depth introduction to Racket, I recommend perusing the excellent <a href="http://docs.racket-lang.org/guide/">Racket Guide</a>. If you&rsquo;re curious about a particular function the <a href="http://docs.racket-lang.org/">Racket manuals</a> are a great resource. If I&rsquo;ve configured the page correctly, library functions in the code snippets should link to their manual entries.</p>
 
@@ -1505,72 +1493,6 @@
 </pre></div>
 </td></tr></tbody></table>
 </div>
-
-<br />
-
-<h2 id="otherlast-but-not-least-functional-tools"><a name="other"></a>Last but not least&hellip; Functional tools!</h2>
-
-<p>In addition to various ways to write functions that may resemble code you&rsquo;ve seen in C, there are also a plethora of elegant, beautiful tools at your fingertips which you should start digging into.</p>
-
-<p>For example, you&rsquo;ll want to learn about some of the list functions like filter, map, fold, etc&hellip;</p>
-
-<div class="brush: racket">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="c1">; returns list with only even numbers</span>
-<span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/define.html#(form._((lib._racket/private/base..rkt)._define))" style="color: inherit">define</a></span> <span class="p">(</span><span class="n">only-even</span> <span class="n">l</span><span class="p">)</span>
-  <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/private/list..rkt)._filter))" style="color: inherit">filter</a></span> <span class="nb"><a href="http://docs.racket-lang.org/reference/number-types.html#(def._((quote._~23~25kernel)._even~3f))" style="color: inherit">even?</a></span> <span class="n">l</span><span class="p">))</span>
-
-<span class="p">(</span><span class="n">check-equal?</span> <span class="p">(</span><span class="n">only-even</span> <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit">list</a></span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">))</span>
-              <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit">list</a></span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">4</span><span class="p">))</span>
-
-<span class="c1">; returns list with numbers squared</span>
-<span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/define.html#(form._((lib._racket/private/base..rkt)._define))" style="color: inherit">define</a></span> <span class="p">(</span><span class="n">square-list</span> <span class="n">l</span><span class="p">)</span>
-  <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/private/map..rkt)._map))" style="color: inherit">map</a></span> <span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))" style="color: inherit">λ</a></span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))" style="color: inherit">*</a></span> <span class="n">x</span> <span class="n">x</span><span class="p">))</span> <span class="n">l</span><span class="p">))</span>
-
-<span class="p">(</span><span class="n">check-equal?</span> <span class="p">(</span><span class="n">square-list</span> <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit">list</a></span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">5</span><span class="p">))</span>
-              <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit">list</a></span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">9</span> <span class="mi">25</span><span class="p">))</span>
-
-<span class="c1">; takes a list of strings and returns the sum of their lengths</span>
-<span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/define.html#(form._((lib._racket/private/base..rkt)._define))" style="color: inherit">define</a></span> <span class="p">(</span><span class="n">str-len-sum</span> <span class="n">lostr</span><span class="p">)</span>
-  <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/private/list..rkt)._foldl))" style="color: inherit">foldl</a></span> <span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))" style="color: inherit">λ</a></span> <span class="p">(</span><span class="n">str</span> <span class="n">sum</span><span class="p">)</span>
-           <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))" style="color: inherit">+</a></span> <span class="n">sum</span> <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/strings.html#(def._((quote._~23~25kernel)._string-length))" style="color: inherit">string-length</a></span> <span class="n">str</span><span class="p">)))</span>
-         <span class="mi">0</span> 
-         <span class="n">lostr</span><span class="p">))</span>
-
-<span class="p">(</span><span class="n">check-equal?</span> <span class="p">(</span><span class="n">str-len-sum</span> <span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit">list</a></span> <span class="s2">"cat"</span> <span class="s2">"dogs"</span> <span class="s2">"ferret"</span><span class="p">))</span>
-              <span class="mi">13</span><span class="p">)</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
   <footer>
     <script type="text/javascript">
       !function(d,s,id){
@@ -1603,7 +1525,7 @@
     <div id="disqus_thread"></div>
     <ul class="pager">
     <li class="previous">
-      <a href="/blog/2014/11/10/dependently-typed-quicksort/">&larr; <em>Dependently Typed Quicksort</em></a>
+      <a href="/blog/2014/11/10/quicksort-in-coq/">&larr; <em>Quicksort in Coq</em></a>
     </li>
     <li class="next">
       <a href="/blog/2014/02/06/total-list-functions/"><em>Total List Functions</em> &rarr;</a>

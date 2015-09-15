@@ -1,6 +1,6 @@
     Title: Total List Functions
     Date: 2014-02-06T22:36:50
-    Tags: Coq, Program Verification, Dependent Types
+    Tags: Coq, Dependent Types
 
 What is the type of a function which returns the first element of a
 list? One possible (and likely common) answer would be:

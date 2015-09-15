@@ -3,13 +3,13 @@
   <head>
 
     <meta charset="utf-8">
-    <title>Dependently Typed Quicksort</title>
+    <title>Quicksort in Coq</title>
     <meta name="description" content="Coq's support for dependent types mean that type checking not only catches trivial errors like passing an integer to a function expecting a string, but it can also check and verify types which represent properties regarding the functional behavior of the ...">
     <meta name="author"      content="Andrew M. Kent">
-    <meta name="keywords"    content="Dependent Types, Coq">
+    <meta name="keywords"    content="Coq, Dependent Types">
     <meta name="viewport"    content="width=device-width, initial-scale=1.0">
     <link rel="icon"      href="/favicon.ico">
-    <link rel="canonical" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/">
+    <link rel="canonical" href="http://www.example.com/blog/2014/11/10/quicksort-in-coq/">
     <link rel="next" href="/blog/2014/03/24/c-to-racket-examples/">
     <link rel="prev" href="/blog/2014/12/20/let-aliasing-in-typed-racket/">
     <!-- CSS -->
@@ -17,8 +17,8 @@
     <link rel="stylesheet" type="text/css" href="/css/pygments.css">
     <link rel="stylesheet" type="text/css" href="/css/scribble.css">
     <link rel="stylesheet" type="text/css" href="/css/custom.css">
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Sans" />
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Source+Code+Pro" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Noto+Sans" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Code+Pro" />
     <!-- Feeds -->
     <link rel="alternate" type="application/atom+xml"
           href="/feeds/all.atom.xml" title="Atom Feed">
@@ -68,8 +68,6 @@
 
 <li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
 
-<li><a href="/tags/Program-Verification.html">Program Verification</a></li>
-
 <li><a href="/tags/Racket.html">Racket</a></li>
 
 <li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
@@ -94,9 +92,9 @@
 
           <article>
   <header>
-    <h1>Dependently Typed Quicksort</h1>
+    <h1>Quicksort in Coq</h1>
     <p class='date-and-tags'>
-<time datetime="2014-11-10" pubdate="true">2014-11-10</time> :: <span class="tags"><a href="/tags/Dependent-Types.html">Dependent Types</a>, <a href="/tags/Coq.html">Coq</a></span></p>
+<time datetime="2014-11-10" pubdate="true">2014-11-10</time> :: <span class="tags"><a href="/tags/Coq.html">Coq</a>, <a href="/tags/Dependent-Types.html">Dependent Types</a></span></p>
   </header>
 
 <p>Coq&rsquo;s support for dependent types mean that type checking not only
@@ -439,10 +437,7 @@ partitions of their input - this is our inductive hypothesis) and
 prove these properties are maintained by (quicksort lhs) ++ x ::
 (quicksort rhs). With the use of a few lemmas related to partitioning
 and appending sorted lists that are related (such as how our two are
-in this case) this isn&rsquo;t these properties aren&rsquo;t too bad to verify
-(details in linked code).</p>
-
-<p><a href="https://github.com/sgtamk/sgtamk.github.io/blob/master/snippets/20140129-quicksort-code.v">Source code</a></p>
+in this case) this isn&rsquo;t these properties aren&rsquo;t too bad to verify.</p>
 
 <p>Suggestions and comments always welcome =)</p>
   <footer>
@@ -459,11 +454,11 @@ in this case) this isn&rsquo;t these properties aren&rsquo;t too bad to verify
     </script>
     <a href="https://twitter.com/share"
        class="twitter-share-button"
-       data-url="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/"
+       data-url="http://www.example.com/blog/2014/11/10/quicksort-in-coq/"
        data-dnt="true">
       "Tweet"</a>
     <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-    <g:plusone size="medium" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/"></g:plusone>
+    <g:plusone size="medium" href="http://www.example.com/blog/2014/11/10/quicksort-in-coq/"></g:plusone>
     <script type="text/javascript">
       var disqus_shortname = 'shortname';
       (function() {

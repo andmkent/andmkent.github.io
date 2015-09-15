@@ -6,9 +6,9 @@
  <id>urn:http-www-example-com:-tags-Dependent-Types-html</id>
  <updated>2014-11-10T14:01:16Z</updated>
  <entry>
-  <title type="text">Dependently Typed Quicksort</title>
-  <link rel="alternate" href="http://www.example.com/blog/2014/11/10/dependently-typed-quicksort/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
-  <id>urn:http-www-example-com:-blog-2014-11-10-dependently-typed-quicksort</id>
+  <title type="text">Quicksort in Coq</title>
+  <link rel="alternate" href="http://www.example.com/blog/2014/11/10/quicksort-in-coq/?utm_source=Dependent-Types&amp;utm_medium=Atom" />
+  <id>urn:http-www-example-com:-blog-2014-11-10-quicksort-in-coq</id>
   <published>2014-11-10T14:01:16Z</published>
   <updated>2014-11-10T14:01:16Z</updated>
   <author>
@@ -354,10 +354,7 @@ partitions of their input - this is our inductive hypothesis) and
 prove these properties are maintained by (quicksort lhs) ++ x ::
 (quicksort rhs). With the use of a few lemmas related to partitioning
 and appending sorted lists that are related (such as how our two are
-in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to verify
-(details in linked code).&lt;/p&gt;
-
-&lt;p&gt;&lt;a href="https://github.com/sgtamk/sgtamk.github.io/blob/master/snippets/20140129-quicksort-code.v"&gt;Source code&lt;/a&gt;&lt;/p&gt;
+in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to verify.&lt;/p&gt;
 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</content></entry>
  <entry>

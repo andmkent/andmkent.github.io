@@ -13,22 +13,12 @@
    <guid>urn:http-www-example-com:-blog-2014-03-24-c-to-racket-examples</guid>
    <pubDate>Mon, 24 Mar 2014 13:16:07 UT</pubDate>
    <description>&lt;html&gt;
-&lt;h3 id="racket-and-c"&gt;Racket and C&lt;/h3&gt;
-
 &lt;p&gt;This post is a collection of simple C code snippets and roughly equivalent Racket code.&lt;/p&gt;
 
-&lt;p&gt;Hopefully if you&amp;rsquo;re coming from a C background (or similar) and you&amp;rsquo;re struggling to make sense of Racket code, these examples will assist in clearing the fog and help bring about the utter bliss that is programming in Racket =)&lt;/p&gt;
+&lt;p&gt;Hopefully if you&amp;rsquo;re coming from a C background (or similar) and you&amp;rsquo;re struggling to make sense of Racket code, these examples will assist in clearing the fog.&lt;/p&gt;
 &lt;!-- more--&gt;
 
-&lt;br /&gt;
-
-&lt;div class="figure"&gt;&lt;img src="http://imgs.xkcd.com/comics/lisp_cycles.png" alt="Racket is a descendant of Lisp (comic from
- [xkcd](http://www.xkcd.com))" /&gt;
- &lt;p class="caption"&gt;Racket is a descendant of Lisp (comic from  &lt;a href="http://www.xkcd.com"&gt;xkcd&lt;/a&gt;)&lt;/p&gt;&lt;/div&gt;
-
-&lt;br /&gt;
-
-&lt;h3 id="i-need-more"&gt;&amp;ldquo;I need more!&amp;rdquo;&lt;/h3&gt;
+&lt;h3 id="more-details"&gt;More details&lt;/h3&gt;
 
 &lt;p&gt;If you wish for a more in depth introduction to Racket, I recommend perusing the excellent &lt;a href="http://docs.racket-lang.org/guide/"&gt;Racket Guide&lt;/a&gt;. If you&amp;rsquo;re curious about a particular function the &lt;a href="http://docs.racket-lang.org/"&gt;Racket manuals&lt;/a&gt; are a great resource. If I&amp;rsquo;ve configured the page correctly, library functions in the code snippets should link to their manual entries.&lt;/p&gt;
 
@@ -1416,72 +1406,6 @@
         &lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._max))" style="color: inherit"&gt;max&lt;/a&gt;&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
 
 &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;check-equal?&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;max-in-list&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit"&gt;list&lt;/a&gt;&lt;/span&gt; &lt;span class="mi"&gt;42&lt;/span&gt; &lt;span class="mi"&gt;99&lt;/span&gt; &lt;span class="mi"&gt;12&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="mi"&gt;99&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;br /&gt;
-
-&lt;h2 id="otherlast-but-not-least-functional-tools"&gt;&lt;a name="other"&gt;&lt;/a&gt;Last but not least&amp;hellip; Functional tools!&lt;/h2&gt;
-
-&lt;p&gt;In addition to various ways to write functions that may resemble code you&amp;rsquo;ve seen in C, there are also a plethora of elegant, beautiful tools at your fingertips which you should start digging into.&lt;/p&gt;
-
-&lt;p&gt;For example, you&amp;rsquo;ll want to learn about some of the list functions like filter, map, fold, etc&amp;hellip;&lt;/p&gt;
-
-&lt;div class="brush: racket"&gt;
- &lt;table class="sourcetable"&gt;
-  &lt;tbody&gt;
-   &lt;tr&gt;
-    &lt;td class="linenos"&gt;
-     &lt;div class="linenodiv"&gt;
-      &lt;pre&gt; 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;
-    &lt;td class="code"&gt;
-     &lt;div class="source"&gt;
-      &lt;pre&gt;&lt;span class="c1"&gt;; returns list with only even numbers&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;&lt;a href="http://docs.racket-lang.org/reference/define.html#(form._((lib._racket/private/base..rkt)._define))" style="color: inherit"&gt;define&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;only-even&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/private/list..rkt)._filter))" style="color: inherit"&gt;filter&lt;/a&gt;&lt;/span&gt; &lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/number-types.html#(def._((quote._~23~25kernel)._even~3f))" style="color: inherit"&gt;even?&lt;/a&gt;&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;check-equal?&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;only-even&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit"&gt;list&lt;/a&gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-              &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit"&gt;list&lt;/a&gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="c1"&gt;; returns list with numbers squared&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;&lt;a href="http://docs.racket-lang.org/reference/define.html#(form._((lib._racket/private/base..rkt)._define))" style="color: inherit"&gt;define&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square-list&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/private/map..rkt)._map))" style="color: inherit"&gt;map&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;&lt;a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))" style="color: inherit"&gt;λ&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))" style="color: inherit"&gt;*&lt;/a&gt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;check-equal?&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square-list&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit"&gt;list&lt;/a&gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-              &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit"&gt;list&lt;/a&gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt; &lt;span class="mi"&gt;25&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="c1"&gt;; takes a list of strings and returns the sum of their lengths&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;&lt;a href="http://docs.racket-lang.org/reference/define.html#(form._((lib._racket/private/base..rkt)._define))" style="color: inherit"&gt;define&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;str-len-sum&lt;/span&gt; &lt;span class="n"&gt;lostr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/private/list..rkt)._foldl))" style="color: inherit"&gt;foldl&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;&lt;a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))" style="color: inherit"&gt;λ&lt;/a&gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;str&lt;/span&gt; &lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-           &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))" style="color: inherit"&gt;+&lt;/a&gt;&lt;/span&gt; &lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/strings.html#(def._((quote._~23~25kernel)._string-length))" style="color: inherit"&gt;string-length&lt;/a&gt;&lt;/span&gt; &lt;span class="n"&gt;str&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-         &lt;span class="mi"&gt;0&lt;/span&gt; 
-         &lt;span class="n"&gt;lostr&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;check-equal?&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;str-len-sum&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&lt;a href="http://docs.racket-lang.org/reference/pairs.html#(def._((quote._~23~25kernel)._list))" style="color: inherit"&gt;list&lt;/a&gt;&lt;/span&gt; &lt;span class="s2"&gt;"cat"&lt;/span&gt; &lt;span class="s2"&gt;"dogs"&lt;/span&gt; &lt;span class="s2"&gt;"ferret"&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-              &lt;span class="mi"&gt;13&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
 &lt;/div&gt;&lt;/html&gt;</description></item></channel></rss>

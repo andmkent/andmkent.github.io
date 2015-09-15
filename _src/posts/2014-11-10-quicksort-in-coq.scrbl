@@ -1,8 +1,8 @@
 #lang scribble/manual
 
-Title: Dependently Typed Quicksort
+Title: Quicksort in Coq
 Date: 2014-11-10T09:01:16
-Tags: Dependent Types, Coq
+Tags: Coq, Dependent Types
 
 @(require frog/scribble)
 
@@ -206,10 +206,6 @@ partitions of their input - this is our inductive hypothesis) and
 prove these properties are maintained by (quicksort lhs) ++ x ::
 (quicksort rhs). With the use of a few lemmas related to partitioning
 and appending sorted lists that are related (such as how our two are
-in this case) this isn't these properties aren't too bad to verify
-(details in linked code).
-
-@hyperlink["https://github.com/sgtamk/sgtamk.github.io/blob/master/snippets/20140129-quicksort-code.v" 
-           "Source code"]
+in this case) this isn't these properties aren't too bad to verify.
 
 Suggestions and comments always welcome =)
