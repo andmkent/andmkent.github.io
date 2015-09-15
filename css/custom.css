@@ -25,7 +25,7 @@ pre {
     border-color: #eeeeee;
     background-color: #f8f8f8;
     border-radius: 10px;
-    width: 875px;
+    width: 885px;
     height: 300px;
     overflow:hidden;
     padding: 3px 3px 0px 3px;
@@ -37,10 +37,10 @@ pre {
      position:relative;
      top: -15px;
      left:-15px;
-    float: left; padding: 0px 0px 0px 0px; width: 275px;
+    float: left; padding: 0px 0px 0px 0px; width: 265px;
 }
 .MIDL {
-    min-width: 100px; max-width: 500px
+    min-width: 100px; max-width: 515px
 }
 .CLEAR {
     clear: both;
