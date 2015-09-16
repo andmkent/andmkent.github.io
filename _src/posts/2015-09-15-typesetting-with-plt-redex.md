@@ -97,7 +97,8 @@ to look like `Γ ⊢ e : τ` instead of the default typesetting
 
 ## Advanced Typesetting
 
-PLT Redex model typesetting can be enhanced with two forms of rewriters.
+In addition to a few simple knobs and switches, PLT Redex model
+typesetting can be enhanced with two forms of rewriters.
 
 ### Atomic rewriters
 

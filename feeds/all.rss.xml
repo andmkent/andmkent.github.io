@@ -98,7 +98,7 @@
 
 &lt;h2 id="advanced-typesetting"&gt;Advanced Typesetting&lt;/h2&gt;
 
-&lt;p&gt;PLT Redex model typesetting can be enhanced with two forms of rewriters.&lt;/p&gt;
+&lt;p&gt;In addition to a few simple knobs and switches, PLT Redex model typesetting can be enhanced with two forms of rewriters.&lt;/p&gt;
 
 &lt;h3 id="atomic-rewriters"&gt;Atomic rewriters&lt;/h3&gt;
 
