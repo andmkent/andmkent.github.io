@@ -171,6 +171,8 @@ With these tools, we can define the following rewriters and rewriting context:
 
 ```racket
 
+(require typeset-rewriter)
+
 (define lambda-rw
   (rw [`(lambda ([,x : ,t]) ,body)
        => (list "" "λ" x ":" t ". " body)]

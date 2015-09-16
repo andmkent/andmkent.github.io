@@ -254,7 +254,9 @@
 
 <div class="brush: racket">
  <div class="source">
-  <pre><span class="p">(</span><span class="k">define</span> <span class="n">lambda-rw</span>
+  <pre><span class="p">(</span><span class="k">require</span> <span class="n">typeset-rewriter</span><span class="p">)</span>
+
+<span class="p">(</span><span class="k">define</span> <span class="n">lambda-rw</span>
   <span class="p">(</span><span class="n">rw</span> <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">lambda</span> <span class="p">([</span><span class="o">,</span><span class="n">x</span> <span class="ss">:</span> <span class="o">,</span><span class="n">t</span><span class="p">])</span> <span class="o">,</span><span class="n">body</span><span class="p">)</span>
        <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">""</span> <span class="s2">"λ"</span> <span class="n">x</span> <span class="s2">":"</span> <span class="n">t</span> <span class="s2">". "</span> <span class="n">body</span><span class="p">)]</span>
       <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">lambda</span> <span class="p">([</span><span class="o">,</span><span class="n">x</span> <span class="ss">:</span> <span class="o">,</span><span class="n">t</span><span class="p">])</span> <span class="o">,</span><span class="n">body</span> <span class="o">,</span><span class="n">bodies</span> <span class="ss">...</span><span class="p">)</span>
