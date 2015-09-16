@@ -1,3 +1,4 @@
+http://www.andmkent.com/blog/2015/09/15/typesetting-with-plt-redex/
 http://www.andmkent.com/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/
 http://www.andmkent.com/blog/2014/02/06/total-list-functions/
 http://www.andmkent.com/blog/2014/11/10/quicksort-in-coq/
