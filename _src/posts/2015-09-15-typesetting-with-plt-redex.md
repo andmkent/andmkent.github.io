@@ -176,10 +176,10 @@ With these tools, we can define the following rewriters and rewriting context:
 
 (define lambda-rw
   (rw [`(lambda ([,x : ,t]) ,body)
-       => (list "" "λ" x ":" t ". " body)]
+       => (list "λ" x ":" t ". " body)]
       [`(lambda ([,x : ,t]) ,body ,bodies ...)
-       => (list* "" "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
-
+      => (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
+      
 (define typeof-rw
   (rw [`(typeof ,Γ ,e ,t)
        => (list "" Γ " ⊢ " e " : " t)]))
@@ -227,9 +227,9 @@ than seemed necessary:
 ```racket
 (define lambda-rw
   (rw [`(lambda ([,x : ,t]) ,body)
-       => (list "" "λ" x ":" t ". " body)]
+       => (list "λ" x ":" t ". " body)]
       [`(lambda ([,x : ,t]) ,body ,bodies ...)
-       => (list* "" "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
+       => (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
 ```
 
 This was just to show that the `rw` macro is merely a thin layer of
