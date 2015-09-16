@@ -104,8 +104,8 @@ typesetting can be enhanced with two forms of rewriters.
 
 [Atomic rewriters](http://docs.racket-lang.org/search/index.html?q=with-atomic-rewriter)
 will get us part of the way there. They allow us to rewrite symbols
-with strings, and things like subscripts are preserved just the way we
-would hope:
+with provided strings (or thunks returning picts), and things like
+subscripts are preserved just the way we would hope:
 
 ```racket
 (with-atomic-rewriter

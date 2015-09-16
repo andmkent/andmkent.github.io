@@ -103,7 +103,7 @@
 
 &lt;h3 id="atomic-rewriters"&gt;Atomic rewriters&lt;/h3&gt;
 
-&lt;p&gt;&lt;a href="http://docs.racket-lang.org/search/index.html?q=with-atomic-rewriter"&gt;Atomic rewriters&lt;/a&gt; will get us part of the way there. They allow us to rewrite symbols with strings, and things like subscripts are preserved just the way we would hope:&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://docs.racket-lang.org/search/index.html?q=with-atomic-rewriter"&gt;Atomic rewriters&lt;/a&gt; will get us part of the way there. They allow us to rewrite symbols with provided strings (or thunks returning picts), and things like subscripts are preserved just the way we would hope:&lt;/p&gt;
 
 &lt;div class="brush: racket"&gt;
  &lt;div class="source"&gt;
