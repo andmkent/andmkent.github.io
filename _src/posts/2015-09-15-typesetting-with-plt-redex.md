@@ -41,8 +41,6 @@ Note: In this definition we _could_ have used unicode characters directly
 shouldn't feel obligated to. We can throw in all the greek we want
 when typesetting.
 
-<br>
-
 And maybe we have some judgments and metafunctions:
 
 ```racket
@@ -75,7 +73,7 @@ And maybe we have some judgments and metafunctions:
 _"..." in this case is not special syntax, but just to stand in for
 the obvious definitions_
 
-<br>
+
 
 ## Vanilla Typesetting
 
@@ -93,7 +91,7 @@ instead of `Env`, and we probably want our typing judgments
 to look like `Γ ⊢ e : τ` instead of the default typesetting
  `typeof〚Γ, e, τ〛`.
 
-<br>
+
 
 ## Advanced Typesetting
 
@@ -114,22 +112,18 @@ subscripts are preserved just the way we would hope:
   't 'τ
   (render-language STLC #:nts '(v exp ty Env))))
 ```
-  
-<br>
 
 I'm not sure why there isn't a plural version of this form... so I went ahead and
 defined one in the `typeset-rewriter` package:
 
 ```racket
-(with-atomic-rewriters
+(with-atomic-rws
  (['Env "Γ"] ['exp "e"] ['ty "τ"] ['-> "→"] ['integer "n"])
  (render-language STLC #:nts '(v exp ty Env)))
 ```
 
 But if we want to get our typing judgment to look correct, we're going
 to need just a little more muscle.
-
-<br>
 
 ### Compound Rewriters
 
@@ -149,10 +143,8 @@ before typesetting
 any term of the form `(lambda any ...)` will be passed to our `lambda-rw`
 procedure.
 
-<br>
-
 This gives us great power... but if we look at the signature for these rewriters
-we see the catch:
+we see theirs a subtle catch:
 
 ```racket
 (listof lw) -> (listof (or/c lw? string? pict?))
@@ -161,12 +153,11 @@ we see the catch:
 We have to work with lists of the `lw` structs that redex uses to typeset
 code if we want to tweak how our figures will look.
 
-To make this more palatable, I built a macro that abstracts away all
-the struct details of our redex terms and lets us use the much simpler
-`quasiquote` and `unquote` syntax we're used to working with in Racket
+To make this more palatable, I built a `match-lambda`-like macro that
+abstracts away all the struct details of our redex terms and lets us
+use the much simpler `quasiquote` and `unquote` syntax we're used to
+working with in Racket
 [pattern matching](http://docs.racket-lang.org/reference/match.html).
-
-<br>
 
 With these tools, we can define the following rewriters and rewriting context:
 
@@ -175,28 +166,33 @@ With these tools, we can define the following rewriters and rewriting context:
 (require typeset-rewriter)
 
 (define lambda-rw
-  (rw [`(lambda ([,x : ,t]) ,body)
-       => (list "λ" x ":" t ". " body)]
-      [`(lambda ([,x : ,t]) ,body ,bodies ...)
-      => (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
-      
+  (rw-lambda
+   [`(lambda ([,x : ,t]) ,body)
+    => (list "λ" x ":" t ". " body)]
+   [`(lambda ([,x : ,t]) ,body ,bodies ...)
+    => (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
+
 (define typeof-rw
-  (rw [`(typeof ,Γ ,e ,t)
-       => (list "" Γ " ⊢ " e " : " t)]))
+  (rw-lambda
+   [`(typeof ,Γ ,e ,t)
+    => (list "" Γ " ⊢ " e " : " t)]))
 
 (define extend-rw
-  (rw [`(extend ,Γ ,x ,t)
-       => (list "" Γ ", " x ":" t)]))
+  (rw-lambda
+   [`(extend ,Γ ,x ,t)
+    => (list "" Γ ", " x ":" t)]))
 
 (define lookup-rw
-  (rw [`(lookup ,Γ ,x)
-       => (list "" Γ "(" x ")")]))
+  (rw-lambda
+   [`(lookup ,Γ ,x)
+    => (list "" Γ "(" x ")")]))
 
 (define val-type-rw
-  (rw [`(val-type ,v)
-       => (list "type-of(" v ")")]))
+  (rw-lambda
+   [`(val-type ,v)
+    => (list "type-of(" v ")")]))
 
-(define-rw-context with-rws
+(define-rw-context with-stlc-rws
   #:atomic (['Env "Γ"] ['exp "e"] ['ty "τ"] ['-> "→"] ['integer "n"])
   #:compound (['lambda lambda-rw]
               ['typeof typeof-rw]
@@ -206,18 +202,14 @@ With these tools, we can define the following rewriters and rewriting context:
 
 ```
 
-<br>
-
 This allows us to produce figures looking just the way we want:
 
 ```racket
-(with-rws (render-language STLC #:nts '(v exp ty Env)))
-(with-rws (render-judgment-form typeof))
+(with-stlc-rws (render-language STLC #:nts '(v exp ty Env)))
+(with-stlc-rws (render-judgment-form typeof))
 ```
 
 ![](/img/pltredexstlc.png)
-
-<br>
 
 ## Further Customizations
 
@@ -226,10 +218,11 @@ than seemed necessary:
 
 ```racket
 (define lambda-rw
-  (rw [`(lambda ([,x : ,t]) ,body)
-       => (list "λ" x ":" t ". " body)]
-      [`(lambda ([,x : ,t]) ,body ,bodies ...)
-       => (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
+  (rw-lambda
+   [`(lambda ([,x : ,t]) ,body)
+    => (list "λ" x ":" t ". " body)]
+   [`(lambda ([,x : ,t]) ,body ,bodies ...)
+    => (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
 ```
 
 This was just to show that the `rw` macro is merely a thin layer of
@@ -237,8 +230,6 @@ syntax that expands into Racket's powerful `match` form. Anything
 following an `unquote` (_e.g. a `,`_) in the `quasiquote` pattern
 can be an arbitrary match pattern, and things like elipses---since
 they are supported by `match`---are supported as well.
-
-<br>
 
 ## Installing and using `typeset-rewriter`
 

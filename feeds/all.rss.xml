@@ -42,8 +42,6 @@
 
 &lt;p&gt;Note: In this definition we &lt;em&gt;could&lt;/em&gt; have used unicode characters directly (and then typesetting will use those same characters) but we shouldn&amp;rsquo;t feel obligated to. We can throw in all the greek we want when typesetting.&lt;/p&gt;
 
-&lt;br /&gt;
-
 &lt;p&gt;And maybe we have some judgments and metafunctions:&lt;/p&gt;
 
 &lt;div class="brush: racket"&gt;
@@ -78,8 +76,6 @@
 
 &lt;p&gt;&lt;em&gt;"&amp;hellip;" in this case is not special syntax, but just to stand in for the obvious definitions&lt;/em&gt;&lt;/p&gt;
 
-&lt;br /&gt;
-
 &lt;h2 id="vanilla-typesetting"&gt;Vanilla Typesetting&lt;/h2&gt;
 
 &lt;p&gt;If we were to try and typeset these definitions now, we probably wouldn&amp;rsquo;t be too happy with the result:&lt;/p&gt;
@@ -93,8 +89,6 @@
 &lt;/div&gt;
 
 &lt;p&gt;Sure, the figures will have the expected shape overall, but maybe we wanted the more traditional &lt;code&gt;Γ&lt;/code&gt; for type environments instead of &lt;code&gt;Env&lt;/code&gt;, and we probably want our typing judgments to look like &lt;code&gt;Γ ⊢ e : τ&lt;/code&gt; instead of the default typesetting  &lt;code&gt;typeof〚Γ, e, τ〛&lt;/code&gt;.&lt;/p&gt;
-
-&lt;br /&gt;
 
 &lt;h2 id="advanced-typesetting"&gt;Advanced Typesetting&lt;/h2&gt;
 
@@ -115,13 +109,11 @@
 
 &lt;/div&gt;
 
-&lt;br /&gt;
-
 &lt;p&gt;I&amp;rsquo;m not sure why there isn&amp;rsquo;t a plural version of this form&amp;hellip; so I went ahead and defined one in the &lt;code&gt;typeset-rewriter&lt;/code&gt; package:&lt;/p&gt;
 
 &lt;div class="brush: racket"&gt;
  &lt;div class="source"&gt;
-  &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;with-atomic-rewriters&lt;/span&gt;
+  &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;with-atomic-rws&lt;/span&gt;
  &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;Env&lt;/span&gt; &lt;span class="s2"&gt;"Γ"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;exp&lt;/span&gt; &lt;span class="s2"&gt;"e"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;ty&lt;/span&gt; &lt;span class="s2"&gt;"τ"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"→"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;integer&lt;/span&gt; &lt;span class="s2"&gt;"n"&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;render-language&lt;/span&gt; &lt;span class="n"&gt;STLC&lt;/span&gt; &lt;span class="kd"&gt;#:nts&lt;/span&gt; &lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;v&lt;/span&gt; &lt;span class="ss"&gt;exp&lt;/span&gt; &lt;span class="ss"&gt;ty&lt;/span&gt; &lt;span class="ss"&gt;Env&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
@@ -129,8 +121,6 @@
 &lt;/div&gt;
 
 &lt;p&gt;But if we want to get our typing judgment to look correct, we&amp;rsquo;re going to need just a little more muscle.&lt;/p&gt;
-
-&lt;br /&gt;
 
 &lt;h3 id="compound-rewriters"&gt;Compound Rewriters&lt;/h3&gt;
 
@@ -147,9 +137,7 @@
 
 &lt;p&gt;any term of the form &lt;code&gt;(lambda any ...)&lt;/code&gt; will be passed to our &lt;code&gt;lambda-rw&lt;/code&gt; procedure.&lt;/p&gt;
 
-&lt;br /&gt;
-
-&lt;p&gt;This gives us great power&amp;hellip; but if we look at the signature for these rewriters we see the catch:&lt;/p&gt;
+&lt;p&gt;This gives us great power&amp;hellip; but if we look at the signature for these rewriters we see theirs a subtle catch:&lt;/p&gt;
 
 &lt;div class="brush: racket"&gt;
  &lt;div class="source"&gt;
@@ -160,9 +148,7 @@
 
 &lt;p&gt;We have to work with lists of the &lt;code&gt;lw&lt;/code&gt; structs that redex uses to typeset code if we want to tweak how our figures will look.&lt;/p&gt;
 
-&lt;p&gt;To make this more palatable, I built a macro that abstracts away all the struct details of our redex terms and lets us use the much simpler &lt;code&gt;quasiquote&lt;/code&gt; and &lt;code&gt;unquote&lt;/code&gt; syntax we&amp;rsquo;re used to working with in Racket &lt;a href="http://docs.racket-lang.org/reference/match.html"&gt;pattern matching&lt;/a&gt;.&lt;/p&gt;
-
-&lt;br /&gt;
+&lt;p&gt;To make this more palatable, I built a &lt;code&gt;match-lambda&lt;/code&gt;-like macro that abstracts away all the struct details of our redex terms and lets us use the much simpler &lt;code&gt;quasiquote&lt;/code&gt; and &lt;code&gt;unquote&lt;/code&gt; syntax we&amp;rsquo;re used to working with in Racket &lt;a href="http://docs.racket-lang.org/reference/match.html"&gt;pattern matching&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;With these tools, we can define the following rewriters and rewriting context:&lt;/p&gt;
 
@@ -171,28 +157,33 @@
   &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;require&lt;/span&gt; &lt;span class="n"&gt;typeset-rewriter&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="n"&gt;lambda-rw&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
-      &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="ss"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-      &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list*&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". (begin "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;append&lt;/span&gt; &lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)))]))&lt;/span&gt;
-      
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw-lambda&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="ss"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list*&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". (begin "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;append&lt;/span&gt; &lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)))]))&lt;/span&gt;
+
 &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="n"&gt;typeof-rw&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;typeof&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt; &lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="s2"&gt;" ⊢ "&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="s2"&gt;" : "&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw-lambda&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;typeof&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt; &lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="s2"&gt;" ⊢ "&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="s2"&gt;" : "&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
 
 &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="n"&gt;extend-rw&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;extend&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt; &lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="s2"&gt;", "&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw-lambda&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;extend&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt; &lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="s2"&gt;", "&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
 
 &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="n"&gt;lookup-rw&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lookup&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt; &lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="s2"&gt;"("&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw-lambda&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lookup&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt; &lt;span class="n"&gt;Γ&lt;/span&gt; &lt;span class="s2"&gt;"("&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
 
 &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="n"&gt;val-type-rw&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;val-type&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;"type-of("&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw-lambda&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;val-type&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;"type-of("&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)]))&lt;/span&gt;
 
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define-rw-context&lt;/span&gt; &lt;span class="n"&gt;with-rws&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define-rw-context&lt;/span&gt; &lt;span class="n"&gt;with-stlc-rws&lt;/span&gt;
   &lt;span class="kd"&gt;#:atomic&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;Env&lt;/span&gt; &lt;span class="s2"&gt;"Γ"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;exp&lt;/span&gt; &lt;span class="s2"&gt;"e"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;ty&lt;/span&gt; &lt;span class="s2"&gt;"τ"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;"→"&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;integer&lt;/span&gt; &lt;span class="s2"&gt;"n"&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
   &lt;span class="kd"&gt;#:compound&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;lambda-rw&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
               &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="ss"&gt;typeof&lt;/span&gt; &lt;span class="n"&gt;typeof-rw&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
@@ -203,22 +194,18 @@
 
 &lt;/div&gt;
 
-&lt;br /&gt;
-
 &lt;p&gt;This allows us to produce figures looking just the way we want:&lt;/p&gt;
 
 &lt;div class="brush: racket"&gt;
  &lt;div class="source"&gt;
-  &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;with-rws&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;render-language&lt;/span&gt; &lt;span class="n"&gt;STLC&lt;/span&gt; &lt;span class="kd"&gt;#:nts&lt;/span&gt; &lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;v&lt;/span&gt; &lt;span class="ss"&gt;exp&lt;/span&gt; &lt;span class="ss"&gt;ty&lt;/span&gt; &lt;span class="ss"&gt;Env&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;with-rws&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;render-judgment-form&lt;/span&gt; &lt;span class="n"&gt;typeof&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;with-stlc-rws&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;render-language&lt;/span&gt; &lt;span class="n"&gt;STLC&lt;/span&gt; &lt;span class="kd"&gt;#:nts&lt;/span&gt; &lt;span class="o"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;v&lt;/span&gt; &lt;span class="ss"&gt;exp&lt;/span&gt; &lt;span class="ss"&gt;ty&lt;/span&gt; &lt;span class="ss"&gt;Env&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;with-stlc-rws&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;render-judgment-form&lt;/span&gt; &lt;span class="n"&gt;typeof&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 &lt;/div&gt;
 
 &lt;div class="figure"&gt;&lt;img src="/img/pltredexstlc.png" alt="" /&gt;
  &lt;p class="caption"&gt;&lt;/p&gt;&lt;/div&gt;
-
-&lt;br /&gt;
 
 &lt;h2 id="further-customizations"&gt;Further Customizations&lt;/h2&gt;
 
@@ -227,17 +214,16 @@
 &lt;div class="brush: racket"&gt;
  &lt;div class="source"&gt;
   &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="n"&gt;lambda-rw&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
-      &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="ss"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list*&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". (begin "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;append&lt;/span&gt; &lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)))]))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;rw-lambda&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+   &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ss"&gt;:&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="ss"&gt;...&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list*&lt;/span&gt; &lt;span class="s2"&gt;"λ"&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="s2"&gt;":"&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="s2"&gt;". (begin "&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;append&lt;/span&gt; &lt;span class="n"&gt;bodies&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;list&lt;/span&gt; &lt;span class="s2"&gt;")"&lt;/span&gt;&lt;span class="p"&gt;)))]))&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 &lt;/div&gt;
 
 &lt;p&gt;This was just to show that the &lt;code&gt;rw&lt;/code&gt; macro is merely a thin layer of syntax that expands into Racket&amp;rsquo;s powerful &lt;code&gt;match&lt;/code&gt; form. Anything following an &lt;code&gt;unquote&lt;/code&gt; (&lt;em&gt;e.g. a &lt;code&gt;,&lt;/code&gt;&lt;/em&gt;) in the &lt;code&gt;quasiquote&lt;/code&gt; pattern can be an arbitrary match pattern, and things like elipses&amp;mdash;since they are supported by &lt;code&gt;match&lt;/code&gt;&amp;mdash;are supported as well.&lt;/p&gt;
-
-&lt;br /&gt;
 
 &lt;h2 id="installing-and-using-typeset-rewriter"&gt;Installing and using &lt;code&gt;typeset-rewriter&lt;/code&gt;&lt;/h2&gt;
 
