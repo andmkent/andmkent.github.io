@@ -1230,6 +1230,22 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 
 &lt;p&gt;Suggestions and comments always welcome =)&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>
+   <title>Design and Evaluation of Gradual Typing for Python</title>
+   <link>http://www.andmkent.com/blog/2014/10/20/design-and-evaluation-of-gradual-typing-for-python/?utm_source=all&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-andmkent-com:-blog-2014-10-20-design-and-evaluation-of-gradual-typing-for-python</guid>
+   <pubDate>Mon, 20 Oct 2014 04:00:00 UT</pubDate>
+   <description>&lt;html&gt;
+&lt;p&gt;&lt;a href="http://dl.acm.org/citation.cfm?id=2661101"&gt;ACM link&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;At DLS &amp;rsquo;14 with Michael M. Vitousek and Jeremy G. Siek.&lt;/p&gt;
+&lt;!-- more--&gt;
+
+&lt;h3 id="abstract"&gt;Abstract&lt;/h3&gt;
+
+&lt;p&gt;Combining static and dynamic typing within the same language offers clear benefits to programmers. It provides dynamic typing in situations that require rapid prototyping, heterogeneous data structures, and reflection, while supporting static typing when safety, modularity, and efficiency are primary concerns. Siek and Taha (2006) introduced an approach to combining static and dynamic typing in a fine-grained manner through the notion of type consistency in the static semantics and run-time casts in the dynamic semantics. However, many open questions remain regarding the semantics of gradually typed languages.&lt;/p&gt;
+
+&lt;p&gt;In this paper we present Reticulated Python, a system for experimenting with gradual-typed dialects of Python. The dialects are syntactically identical to Python 3 but give static and dynamic semantics to the type annotations already present in Python 3. Reticulated Python consists of a typechecker and a source-to-source translator from Reticulated Python to Python 3. Using Reticulated Python, we evaluate a gradual type system and three approaches to the dynamic semantics of mutable objects: the traditional semantics based on Siek and Taha (2007) and Herman et al. (2007) and two new designs. We evaluate these designs in the context of several third-party Python programs.&lt;/p&gt;&lt;/html&gt;</description></item>
+  <item>
    <title>C to Racket Examples</title>
    <link>http://www.andmkent.com/blog/2014/03/24/c-to-racket-examples/?utm_source=all&amp;utm_medium=RSS</link>
    <guid>urn:http-www-andmkent-com:-blog-2014-03-24-c-to-racket-examples</guid>
@@ -3272,4 +3288,18 @@ in this case) this isn&amp;rsquo;t these properties aren&amp;rsquo;t too bad to 
 
 &lt;p&gt;Source code related to this post found &lt;a href="https://github.com/sgtamk/sgtamk.github.io/blob/master/snippets/20140206-listbasics-code.v"&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Note: This post is inspired by some of my personal experimenting and some related material from the &amp;ldquo;Subset&amp;rdquo; chapter from &lt;a href="http://adam.chlipala.net/cpdt/"&gt;CPDT&lt;/a&gt; (an excellent Coq resource!).&lt;/p&gt;&lt;/html&gt;</description></item></channel></rss>
+&lt;p&gt;Note: This post is inspired by some of my personal experimenting and some related material from the &amp;ldquo;Subset&amp;rdquo; chapter from &lt;a href="http://adam.chlipala.net/cpdt/"&gt;CPDT&lt;/a&gt; (an excellent Coq resource!).&lt;/p&gt;&lt;/html&gt;</description></item>
+  <item>
+   <title>Linking the Past: Discovering Historical Social Networks from Documents and Linking to a Genealogical Database</title>
+   <link>http://www.andmkent.com/blog/2011/09/16/linking-the-past-discovering-historical-social-networks-from-documents-and-linking-to-a-genealogical-database/?utm_source=all&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-andmkent-com:-blog-2011-09-16-linking-the-past-discovering-historical-social-networks-from-documents-and-linking-to-a-genealogical-database</guid>
+   <pubDate>Fri, 16 Sep 2011 04:00:00 UT</pubDate>
+   <description>&lt;html&gt;
+&lt;p&gt;&lt;a href="http://dl.acm.org/citation.cfm?id=2037351"&gt;ACM link&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;At HIP &amp;rsquo;11 with Douglas J. Kennard and William A. Barret.&lt;/p&gt;
+&lt;!-- more--&gt;
+
+&lt;h3 id="abstract"&gt;Abstract&lt;/h3&gt;
+
+&lt;p&gt;Historical social networks (HSNs) can be used to inform historical research, including family history and genealogy. In some cases, clues about the structure of an HSN can be found in artifacts of family history such as personal diaries or autobiographical sketches. However, manual inference of such networks can require significant time and effort, including pooling and cross-referencing many different data sources. We present our current research into facilitating that process by automatically finding names in document transcriptions, relating those names to the names found on a roster/list of people who may be talked about in the documents, and automatically generating a social network graph from the result. We link individuals in the social network to a global genealogical database so that people researching their own family histories can easily find their ancestors within the HSNs created in this manner. We also provide examples of how the linked HSNs may be used to inform research about people and situations even when direct information is scarce.&lt;/p&gt;&lt;/html&gt;</description></item></channel></rss>

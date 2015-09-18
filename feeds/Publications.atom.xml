@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+ <title type="text">Andrew M. Kent: Posts tagged 'Publications'</title>
+ <link rel="self" href="http://www.andmkent.com/feeds/Publications.atom.xml" />
+ <link href="http://www.andmkent.com/tags/Publications.html" />
+ <id>urn:http-www-andmkent-com:-tags-Publications-html</id>
+ <updated>2014-10-20T04:00:00Z</updated>
+ <entry>
+  <title type="text">Design and Evaluation of Gradual Typing for Python</title>
+  <link rel="alternate" href="http://www.andmkent.com/blog/2014/10/20/design-and-evaluation-of-gradual-typing-for-python/?utm_source=Publications&amp;utm_medium=Atom" />
+  <id>urn:http-www-andmkent-com:-blog-2014-10-20-design-and-evaluation-of-gradual-typing-for-python</id>
+  <published>2014-10-20T04:00:00Z</published>
+  <updated>2014-10-20T04:00:00Z</updated>
+  <author>
+   <name>Andrew M. Kent</name></author>
+  <content type="html">&lt;html&gt;
+&lt;p&gt;&lt;a href="http://dl.acm.org/citation.cfm?id=2661101"&gt;ACM link&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;At DLS &amp;rsquo;14 with Michael M. Vitousek and Jeremy G. Siek.&lt;/p&gt;
+&lt;!-- more--&gt;
+
+&lt;h3 id="abstract"&gt;Abstract&lt;/h3&gt;
+
+&lt;p&gt;Combining static and dynamic typing within the same language offers clear benefits to programmers. It provides dynamic typing in situations that require rapid prototyping, heterogeneous data structures, and reflection, while supporting static typing when safety, modularity, and efficiency are primary concerns. Siek and Taha (2006) introduced an approach to combining static and dynamic typing in a fine-grained manner through the notion of type consistency in the static semantics and run-time casts in the dynamic semantics. However, many open questions remain regarding the semantics of gradually typed languages.&lt;/p&gt;
+
+&lt;p&gt;In this paper we present Reticulated Python, a system for experimenting with gradual-typed dialects of Python. The dialects are syntactically identical to Python 3 but give static and dynamic semantics to the type annotations already present in Python 3. Reticulated Python consists of a typechecker and a source-to-source translator from Reticulated Python to Python 3. Using Reticulated Python, we evaluate a gradual type system and three approaches to the dynamic semantics of mutable objects: the traditional semantics based on Siek and Taha (2007) and Herman et al. (2007) and two new designs. We evaluate these designs in the context of several third-party Python programs.&lt;/p&gt;&lt;/html&gt;</content></entry>
+ <entry>
+  <title type="text">Linking the Past: Discovering Historical Social Networks from Documents and Linking to a Genealogical Database</title>
+  <link rel="alternate" href="http://www.andmkent.com/blog/2011/09/16/linking-the-past-discovering-historical-social-networks-from-documents-and-linking-to-a-genealogical-database/?utm_source=Publications&amp;utm_medium=Atom" />
+  <id>urn:http-www-andmkent-com:-blog-2011-09-16-linking-the-past-discovering-historical-social-networks-from-documents-and-linking-to-a-genealogical-database</id>
+  <published>2011-09-16T04:00:00Z</published>
+  <updated>2011-09-16T04:00:00Z</updated>
+  <author>
+   <name>Andrew M. Kent</name></author>
+  <content type="html">&lt;html&gt;
+&lt;p&gt;&lt;a href="http://dl.acm.org/citation.cfm?id=2037351"&gt;ACM link&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;At HIP &amp;rsquo;11 with Douglas J. Kennard and William A. Barret.&lt;/p&gt;
+&lt;!-- more--&gt;
+
+&lt;h3 id="abstract"&gt;Abstract&lt;/h3&gt;
+
+&lt;p&gt;Historical social networks (HSNs) can be used to inform historical research, including family history and genealogy. In some cases, clues about the structure of an HSN can be found in artifacts of family history such as personal diaries or autobiographical sketches. However, manual inference of such networks can require significant time and effort, including pooling and cross-referencing many different data sources. We present our current research into facilitating that process by automatically finding names in document transcriptions, relating those names to the names found on a roster/list of people who may be talked about in the documents, and automatically generating a social network graph from the result. We link individuals in the social network to a global genealogical database so that people researching their own family histories can easily find their ancestors within the HSNs created in this manner. We also provide examples of how the linked HSNs may be used to inform research about people and situations even when direct information is scarce.&lt;/p&gt;&lt;/html&gt;</content></entry></feed>
