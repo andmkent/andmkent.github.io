@@ -4,7 +4,7 @@
 
     <meta charset="utf-8">
     <title>Total List Functions</title>
-    <meta name="description" content="What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:                     1              (: first (All (X) ((Listof X) -> X)))     This (typed racket syntax) says _first_ is a function ...">
+    <meta name="description" content="What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:   `(: first (All (X) ((Listof X) -> X)))`  This (typed racket syntax) says _first_ is a function from a list of X's to an X (where ...">
     <meta name="author"      content="Andrew M. Kent">
     <meta name="keywords"    content="Coq, Dependent Types">
     <meta name="viewport"    content="width=device-width, initial-scale=1.0">
@@ -75,6 +75,8 @@
 <li><a href="/tags/Talks.html">Talks</a></li>
 
 <li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
+
+<li><a href="/tags/work-in-progress.html">work-in-progress</a></li>
               </ul>
             </li>
             <li><a href="/docs/amkcv.pdf">CV</a></li>
@@ -105,18 +107,7 @@
 <p>What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:</p>
 
 <div class="brush: racket">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="p">(</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/special-forms.html#(form._((lib._typed-racket/base-env/prims..rkt)._~3a))" style="color: inherit">:</a></span> <span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/list..rkt)._first))" style="color: inherit">first</a></span> <span class="p">(</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types-extra..rkt)._.All))" style="color: inherit">All</a></span> <span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="p">((</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types..rkt)._.Listof))" style="color: inherit">Listof</a></span> <span class="n">X</span><span class="p">)</span> <span class="k"><a href="http://docs.racket-lang.org/reference/function-contracts.html#(form._((lib._racket/contract/base..rkt)._-~3e))" style="color: inherit">-&gt;</a></span> <span class="n">X</span><span class="p">)))</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>(: first (All (X) ((Listof X) -&gt; X)))</code></pre></div>
 
 <p>This (typed racket syntax) says <em>first</em> is a function from a list of X&rsquo;s to an X (where X is any type). However, we really know that, although its type is ((Listof X) -&gt; X), if we pass an empty list of X we will not get an X, but a runtime error of some sort (e.g. no values). The type then isn&rsquo;t really giving us a guarantee of what it will do for us&hellip; it&rsquo;s just telling us what it will <em>try</em> to do for us if it doesn&rsquo;t fail.</p>
 
@@ -136,24 +127,10 @@
 <p>In a previous post while examining what a verified version of quicksort might look like, I included the properties I desired <em>in</em> the return type:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="nc">Program</span> <span class="kn">Fixpoint</span> <span class="n">quicksort</span>
-        <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="n">nat</span><span class="o">)</span> <span class="o">{</span><span class="n">measure</span> <span class="o">(</span><span class="n">length</span> <span class="n">l</span><span class="o">)}</span> <span class="o">:</span>
-        <span class="o">{</span><span class="n">sl</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">|</span> <span class="nc">Permutation</span> <span class="n">l</span> <span class="n">sl</span>
-                         <span class="o">/\</span> <span class="nc">StronglySorted</span> <span class="n">le</span> <span class="n">sl</span><span class="o">}</span> <span class="o">:=</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Program Fixpoint quicksort
+        (l:list nat) {measure (length l)} :
+        {sl : list nat | Permutation l sl
+                         /\ StronglySorted le sl} :=</code></pre></div>
 
 <p>That is, the return type of this function is not merely a list, but a list and a proof it is a permutation of the input and strongly sorted. This was done using Coq&rsquo;s Sigma-types:</p>
 
@@ -168,26 +145,11 @@
 <p>Now we can attempt write our total version of first:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4
-5</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Definition</span> <span class="n">strong_first</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kt">Type</span><span class="o">}</span> <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">nil</span><span class="o">):</span> <span class="nc">X</span> <span class="o">:=</span>
-<span class="k">match</span> <span class="n">l</span><span class="o">,</span> <span class="n">pf</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="n">nil</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="k">match</span> <span class="n">reflneq</span> <span class="n">pf</span> <span class="k">with</span> <span class="k">end</span>
-  <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span>  <span class="n">x</span>
-<span class="k">end</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Definition strong_first {X:Type} (l:list X) (pf: l &lt;&gt; nil): X :=
+match l, pf with
+  | nil, _ =&gt; match reflneq pf with end
+  | x :: xs, _ =&gt;  x
+end.</code></pre></div>
 
 <p>strong_first takes a list l and a proof it is not null and returns an X.</p>
 
@@ -196,24 +158,10 @@
 <p><em>nil case</em>: If it is empty, we use the proof that nil &lt;&gt; nil with the following lemma:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Lemma</span> <span class="n">reflneq</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kt">Type</span><span class="o">}</span> <span class="o">:</span> <span class="k">forall</span> <span class="n">x</span> <span class="o">:</span> <span class="nc">X</span><span class="o">,</span> <span class="n">x</span> <span class="o">&lt;&gt;</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nn">False</span><span class="p">.</span>
-<span class="nn">Proof</span><span class="p">.</span>
-  <span class="n">auto</span><span class="o">.</span>
-<span class="kn">Qed</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Lemma reflneq {X:Type} : forall x : X, x &lt;&gt; x -&gt; False.
+Proof.
+  auto.
+Qed.</code></pre></div>
 
 <p>This gives us False within our function, which we use to vacuously satisfy the match statement for the nil case (since False has exactly 0 constructors).</p>
 
@@ -222,22 +170,9 @@
 <p>If we were designing a complex system that used this function, if/when we extracted the code out of Coq into another language (OCaml in this case) we get:</p>
 
 <div class="brush: ocaml">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="k">let</span> <span class="n">strong_first</span> <span class="o">=</span> <span class="k">function</span>
-<span class="o">|</span> <span class="nc">Nil</span> <span class="o">-&gt;</span> <span class="k">assert</span> <span class="bp">false</span> <span class="c">(* absurd case *)</span>
-<span class="o">|</span> <span class="nc">Cons</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">xs</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">x</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>let strong_first = function
+| Nil -&gt; assert false (* absurd case *)
+| Cons (x, xs) -&gt; x</code></pre></div>
 
 <p>And although this function <em>seems</em> to have the problem we originally sought to solve (it errors on some input allowed by the OCaml type system), this case would <em>never</em> be reached by any code also verified and extracted in Coq (since the type checking in Coq would have <em>ensured</em> the list was non-empty). As for whether or not external code calls this function incorrectly (i.e. with an empty list), that is a matter that must be handled separately. One approach would be the way Typed Racket ensures that typed and untyped modules play nicely: it wraps interactions between untyped and typed code in contracts that perform dynamic checks to prevent any such &ldquo;mixed type error.&rdquo;</p>
 
@@ -246,246 +181,99 @@
 <p>We can also, as we did with quicksort, add a specification to the return type via a Sigma-type so our specification is more precise.</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4
-5
-6</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Definition</span> <span class="n">strong_first&#39;</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span> <span class="kt">Type</span><span class="o">}</span> <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">nil</span><span class="o">):</span>
-<span class="o">{</span><span class="n">x</span><span class="o">:</span><span class="nc">X</span><span class="o">|</span> <span class="k">exists</span> <span class="n">xs</span><span class="o">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">}</span> <span class="o">:=</span>
-<span class="k">match</span> <span class="n">l</span><span class="o">,</span> <span class="n">pf</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="n">nil</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="k">match</span> <span class="n">reflneq</span> <span class="n">pf</span> <span class="k">with</span> <span class="k">end</span>
-  <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="n">x</span>
-<span class="k">end</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Definition strong_first' {X: Type} (l:list X) (pf: l &lt;&gt; nil):
+{x:X| exists xs, l = x :: xs} :=
+match l, pf with
+  | nil, _ =&gt; match reflneq pf with end
+  | x :: xs, _ =&gt; x
+end.</code></pre></div>
 
 <p>Unfortunately, as we see when we try to compile this, we are now returning only the element and not the proof of it&rsquo;s first-ness:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="nc">The</span> <span class="n">term</span> <span class="s2">"x"</span> <span class="n">has</span> <span class="n">type</span> <span class="s2">"X"</span> <span class="n">while</span> <span class="n">it</span> <span class="k">is</span> <span class="n">expected</span> <span class="n">to</span> <span class="k">have</span> <span class="n">type</span>
-<span class="o">{</span><span class="n">x0</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="k">exists</span> <span class="n">xs0</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">,</span> <span class="o">?</span><span class="mi">25</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">::</span> <span class="n">xs0</span><span class="o">}</span><span class="s2">"</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>The term "x" has type "X" while it is expected to have type
+{x0 : X | exists xs0 : list X, ?25 = x0 :: xs0}"</code></pre></div>
 
 <p>We will take this as an opportunity to exploit the ability to change perspectives and instead approach this in Coq&rsquo;s interactive proving mode:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Definition</span> <span class="n">strong_first&#39;</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kn">Set</span><span class="o">}</span> <span class="o">:</span>
-<span class="k">forall</span> <span class="o">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span><span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">nil</span><span class="o">),</span>
-  <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="k">exists</span> <span class="n">xs</span><span class="o">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">}.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Definition strong_first' {X:Set} :
+forall (l : list X) (pf:l &lt;&gt; nil),
+  {x : X | exists xs, l = x :: xs}.</code></pre></div>
 
 <p>This creates a proof goal that matches the signature of the function we wish to write:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre> <span class="nc">X</span> <span class="o">:</span> <span class="kn">Set</span>
-<span class="o">============================</span>
- <span class="k">forall</span> <span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">,</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">nil</span> <span class="o">-&gt;</span>
-   <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="k">exists</span> <span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">}</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code> X : Set
+============================
+ forall l : list X, l &lt;&gt; nil -&gt;
+   {x : X | exists xs : list X, l = x :: xs}</code></pre></div>
 
 <p>We can then use the refine tactic:</p>
 
 <p><em>8.2.3 refine term: This tactic applies to any goal. It behaves like exact with a big difference: the user can leave some holes (denoted by</em> or (<em>:type)) in the term. refine will generate as many subgoals as there are holes in the term. The type of holes must be either synthesized by the system or declared by an explicit cast like (</em>:nat-&gt;Prop). This low-level tactic can be useful to advanced users._</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4
-5
-6</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre>  <span class="k">refine</span>
-<span class="o">(</span><span class="k">fun</span> <span class="n">l</span> <span class="n">pf</span> <span class="o">=&gt;</span>
-   <span class="k">match</span> <span class="n">l</span><span class="o">,</span> <span class="n">pf</span> <span class="k">with</span>
-     <span class="o">|</span> <span class="n">nil</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="nc">False_rec</span> <span class="o">_</span> <span class="o">_</span>
-     <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="n">exist</span> <span class="o">_</span> <span class="n">x</span> <span class="o">_</span>
-   <span class="k">end</span><span class="o">).</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>  refine
+(fun l pf =&gt;
+   match l, pf with
+     | nil, _ =&gt; False_rec _ _
+     | x :: xs, _ =&gt; exist _ x _
+   end).</code></pre></div>
 
 <p><em>Note: We used False_rec instead of the empty match cases we did previously. They&rsquo;re really the same thing when you flesh them all the way out.</em></p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="nc">False_rec</span>
-<span class="o">:</span> <span class="k">forall</span> <span class="nc">P</span> <span class="o">:</span> <span class="kn">Set</span><span class="o">,</span> <span class="nc">False</span> <span class="o">-&gt;</span> <span class="nc">P</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>False_rec
+: forall P : Set, False -&gt; P</code></pre></div>
 
 <p>False_rec just hides some of the machinery and the _ wholes allow us to give Coq&rsquo;s automation a chance to fill in the gaps for us.</p>
 
 <p>This is what remains in our goals:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="mi">2</span> <span class="n">subgoals</span><span class="o">,</span> <span class="n">subgoal</span> <span class="mi">1</span> <span class="o">(</span><span class="nc">ID</span> <span class="mi">41</span><span class="o">)</span>
+ <pre><code>2 subgoals, subgoal 1 (ID 41)
 
-  <span class="nc">X</span> <span class="o">:</span> <span class="kn">Set</span>
-  <span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span>
-  <span class="n">pf</span> <span class="o">:</span> <span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">nil</span>
-  <span class="n">pf0</span> <span class="o">:</span> <span class="n">nil</span> <span class="o">&lt;&gt;</span> <span class="n">nil</span>
-  <span class="o">============================</span>
-   <span class="nc">False</span>
+  X : Set
+  l : list X
+  pf : l &lt;&gt; nil
+  pf0 : nil &lt;&gt; nil
+  ============================
+   False
 
-<span class="n">subgoal</span> <span class="mi">2</span> <span class="o">(</span><span class="nc">ID</span> <span class="mi">45</span><span class="o">)</span> <span class="k">is</span><span class="o">:</span>
- <span class="k">exists</span> <span class="n">xs0</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">,</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs0</span>
+subgoal 2 (ID 45) is:
+ exists xs0 : list X, x :: xs = x :: xs0
 
-<span class="nn">Abort</span><span class="p">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Abort.</code></pre></div>
 
 <p>From here we can see the resulting goals are relatively simple, and so we can supplement the refine with a call to eauto. We will also define and use some notation which can be useful if writing numerous functions in this fashion:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Notation</span> <span class="s2">"&gt;&gt;&lt;&lt;"</span> <span class="o">:=</span> <span class="o">(</span><span class="nc">False_rec</span> <span class="o">_</span> <span class="o">_).</span>
-<span class="kn">Notation</span> <span class="s2">"&gt;&gt; x &lt;&lt;"</span> <span class="o">:=</span> <span class="o">(</span><span class="nc">False_rec</span> <span class="o">_</span> <span class="n">x</span><span class="o">).</span>
-<span class="kn">Notation</span> <span class="s2">"[ e ]"</span> <span class="o">:=</span> <span class="o">(</span><span class="n">exist</span> <span class="o">_</span> <span class="n">e</span> <span class="o">_).</span>
+ <pre><code>Notation "&gt;&gt;&lt;&lt;" := (False_rec _ _).
+Notation "&gt;&gt; x &lt;&lt;" := (False_rec _ x).
+Notation "[ e ]" := (exist _ e _).
 
-<span class="kn">Definition</span> <span class="n">strong_first&#39;</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kn">Set</span><span class="o">}</span> <span class="o">:</span>
-  <span class="k">forall</span> <span class="o">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span><span class="n">l</span> <span class="o">&lt;&gt;</span> <span class="n">nil</span><span class="o">),</span>
-    <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="k">exists</span> <span class="n">xs</span><span class="o">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">}.</span>
-  <span class="k">refine</span>
-    <span class="o">(</span><span class="k">fun</span> <span class="n">l</span> <span class="n">pf</span> <span class="o">=&gt;</span>
-       <span class="k">match</span> <span class="n">l</span><span class="o">,</span> <span class="n">pf</span> <span class="k">with</span>
-         <span class="o">|</span> <span class="n">nil</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="o">&gt;&gt;&lt;&lt;</span>
-         <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="n">x</span><span class="o">]</span>
-       <span class="k">end</span><span class="o">);</span> <span class="n">eauto</span><span class="o">.</span>
-<span class="kn">Defined</span><span class="o">.</span>
+Definition strong_first' {X:Set} :
+  forall (l : list X) (pf:l &lt;&gt; nil),
+    {x : X | exists xs, l = x :: xs}.
+  refine
+    (fun l pf =&gt;
+       match l, pf with
+         | nil, _ =&gt; &gt;&gt;&lt;&lt;
+         | x :: xs, _ =&gt; [x]
+       end); eauto.
+Defined.
 
-<span class="nc">Extraction</span> <span class="n">strong_first&#39;</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Extraction strong_first'.</code></pre></div>
 
 <p>It&rsquo;s the same extracted function, and it now has the specified output! Cool.</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4
-5</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="c">(** val strong_first&#39; : &#39;a1 list -&gt; &#39;a1 **)</span>
+ <pre><code>(** val strong_first' : 'a1 list -&gt; 'a1 **)
 
-<span class="k">let</span> <span class="n">strong_first&#39;</span> <span class="o">=</span> <span class="n">function</span>
-  <span class="o">|</span> <span class="nc">Nil</span> <span class="o">-&gt;</span> <span class="k">assert</span> <span class="bp">false</span> <span class="c">(* absurd case *)</span>
-  <span class="o">|</span> <span class="nc">Cons</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">xs</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">x</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+let strong_first' = function
+  | Nil -&gt; assert false (* absurd case *)
+  | Cons (x, xs) -&gt; x</code></pre></div>
 
 <p>Now let&rsquo;s see if we can apply this strategy to devise a verified list-indexing function!</p>
 
@@ -494,208 +282,91 @@
 <p>First we define a lemma or two that will be used in our definition:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Lemma</span> <span class="n">lt_list</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kt">Type</span><span class="o">}</span> <span class="o">:</span> <span class="k">forall</span> <span class="o">(</span><span class="n">x</span><span class="o">:</span><span class="nc">X</span><span class="o">)</span> <span class="n">xs</span> <span class="n">n</span><span class="o">,</span>
-<span class="nc">S</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="o">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">)</span> <span class="o">-&gt;</span>
-<span class="n">n</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">xs</span><span class="o">.</span>
-<span class="kn">Proof</span><span class="o">.</span>
-  <span class="n">crush</span><span class="o">.</span>
-<span class="kn">Qed</span><span class="o">.</span>
+ <pre><code>Lemma lt_list {X:Type} : forall (x:X) xs n,
+S n &lt; length (x :: xs) -&gt;
+n &lt; length xs.
+Proof.
+  crush.
+Qed.
 
-<span class="kn">Lemma</span> <span class="n">ltnil</span> <span class="o">(</span><span class="nc">X</span><span class="o">:</span><span class="kt">Type</span><span class="o">):</span> <span class="k">forall</span> <span class="n">n</span><span class="o">,</span>
-<span class="n">n</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">nil</span> <span class="o">-&gt;</span> <span class="nn">False</span><span class="p">.</span>
-<span class="nn">Proof</span><span class="p">.</span>
-  <span class="n">crush</span><span class="o">.</span>
-<span class="kn">Qed</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Lemma ltnil (X:Type): forall n,
+n &lt; length nil -&gt; False.
+Proof.
+  crush.
+Qed.</code></pre></div>
 
 <p>Note: I wrote these as I saw I needed them, obviously. By &ldquo;first&rdquo;, I mean we need these defined first =)</p>
 
 <p>We also define a notion which can capture the idea we have for what it means to return the correct nth item from a list:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4
-5
-6</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Inductive</span> <span class="nc">ListIndex</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kn">Set</span><span class="o">}</span> <span class="o">:</span> <span class="n">nat</span> <span class="o">-&gt;</span> <span class="nc">X</span> <span class="o">-&gt;</span> <span class="kt">list</span> <span class="nc">X</span> <span class="o">-&gt;</span> <span class="kt">Prop</span> <span class="o">:=</span>
-<span class="o">|</span> <span class="nc">LInil</span> <span class="o">:</span> <span class="k">forall</span> <span class="n">x</span> <span class="n">xs</span><span class="o">,</span> <span class="nc">ListIndex</span> <span class="mi">0</span> <span class="n">x</span> <span class="o">(</span><span class="n">x</span><span class="o">::</span><span class="n">xs</span><span class="o">)</span>
-<span class="o">|</span> <span class="nc">LIcons</span> <span class="o">:</span> <span class="k">forall</span> <span class="n">n</span> <span class="n">x&#39;</span> <span class="n">x</span> <span class="n">xs</span><span class="o">,</span>
-             <span class="nc">ListIndex</span> <span class="n">n</span> <span class="n">x&#39;</span> <span class="n">xs</span> <span class="o">-&gt;</span>
-             <span class="nc">ListIndex</span> <span class="o">(</span><span class="nc">S</span> <span class="n">n</span><span class="o">)</span> <span class="n">x&#39;</span> <span class="o">(</span><span class="n">x</span><span class="o">::</span><span class="n">xs</span><span class="o">).</span>
-<span class="kn">Hint</span> <span class="nc">Constructors</span> <span class="nn">ListIndex</span><span class="p">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Inductive ListIndex {X:Set} : nat -&gt; X -&gt; list X -&gt; Prop :=
+| LInil : forall x xs, ListIndex 0 x (x::xs)
+| LIcons : forall n x' x xs,
+             ListIndex n x' xs -&gt;
+             ListIndex (S n) x' (x::xs).
+Hint Constructors ListIndex.</code></pre></div>
 
 <p>And for convenience&hellip; I define a shorter, more clear name for the function that extracts the item out of a sigma type:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Definition</span> <span class="n">sigX</span> <span class="o">:=</span> <span class="n">proj1_sig</span><span class="o">.</span>
+ <pre><code>Definition sigX := proj1_sig.
 
-<span class="kn">Definition</span> <span class="n">strong_nth</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kn">Set</span><span class="o">}</span> <span class="o">:</span>
-  <span class="k">forall</span> <span class="o">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">i</span> <span class="o">:</span> <span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">),</span>
-    <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="nc">ListIndex</span> <span class="n">i</span> <span class="n">x</span> <span class="n">l</span><span class="o">}.</span>
-  <span class="k">refine</span>
-    <span class="o">(</span><span class="k">fix</span> <span class="n">f</span> <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">i</span><span class="o">:</span><span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">)</span> <span class="o">:</span>
-       <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="nc">ListIndex</span> <span class="n">i</span> <span class="n">x</span> <span class="n">l</span><span class="o">}</span> <span class="o">:=</span>
-       <span class="k">match</span> <span class="n">l</span><span class="o">,</span> <span class="n">i</span><span class="o">,</span> <span class="n">pf</span> <span class="k">with</span>
-         <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="n">x</span><span class="o">]</span>
-         <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span><span class="o">,</span> <span class="nc">S</span> <span class="n">i&#39;</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span>  <span class="o">[</span><span class="n">sigX</span> <span class="o">(</span><span class="n">f</span> <span class="n">xs</span> <span class="n">i&#39;</span> <span class="o">(</span><span class="n">lt_list</span> <span class="n">pf</span><span class="o">))]</span>
-         <span class="o">|</span> <span class="o">_,</span> <span class="o">_,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="o">&gt;&gt;</span><span class="n">ltnil</span> <span class="n">pf</span><span class="o">&lt;&lt;</span>
-       <span class="k">end</span><span class="o">);</span> <span class="n">crush</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Definition strong_nth {X:Set} :
+  forall (l : list X) (i : nat) (pf:i &lt; length l),
+    {x : X | ListIndex i x l}.
+  refine
+    (fix f (l:list X) (i:nat) (pf: i &lt; length l) :
+       {x : X | ListIndex i x l} :=
+       match l, i, pf with
+         | x::xs, 0, _ =&gt; [x]
+         | x::xs, S i', _ =&gt;  [sigX (f xs i' (lt_list pf))]
+         | _, _, _ =&gt; &gt;&gt;ltnil pf&lt;&lt;
+       end); crush.</code></pre></div>
 
 <p>We&rsquo;re almost there. The crush tactic derived everything except the details regarding the fact that our recursive call&rsquo;s type is equivalent to (or implies, perhaps) the type we wish to return from the initial call:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre> <span class="nc">X</span> <span class="o">:</span> <span class="kn">Set</span>
-  <span class="n">f</span> <span class="o">:</span> <span class="k">forall</span> <span class="o">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">i</span> <span class="o">:</span> <span class="n">nat</span><span class="o">),</span>
-      <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="nc">ListIndex</span> <span class="n">i</span> <span class="n">x</span> <span class="n">l</span><span class="o">}</span>
-  <span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span>
-  <span class="n">i</span> <span class="o">:</span> <span class="n">nat</span>
-  <span class="n">pf</span> <span class="o">:</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span>
-  <span class="n">x</span> <span class="o">:</span> <span class="nc">X</span>
-  <span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span>
-  <span class="n">pf0</span> <span class="o">:</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nc">S</span> <span class="o">(</span><span class="n">length</span> <span class="n">xs</span><span class="o">)</span>
-  <span class="n">i&#39;</span> <span class="o">:</span> <span class="n">nat</span>
-  <span class="n">pf1</span> <span class="o">:</span> <span class="nc">S</span> <span class="n">i&#39;</span> <span class="o">&lt;</span> <span class="nc">S</span> <span class="o">(</span><span class="n">length</span> <span class="n">xs</span><span class="o">)</span>
-  <span class="o">============================</span>
-   <span class="nc">ListIndex</span> <span class="o">(</span><span class="nc">S</span> <span class="n">i&#39;</span><span class="o">)</span> <span class="o">(</span><span class="n">sigX</span> <span class="o">(</span><span class="n">f</span> <span class="n">xs</span> <span class="n">i&#39;</span> <span class="o">(</span><span class="n">lt_list</span> <span class="n">pf1</span><span class="o">)))</span> <span class="o">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">xs</span><span class="o">)</span>
+ <pre><code> X : Set
+  f : forall (l : list X) (i : nat),
+      i &lt; length l -&gt; {x : X | ListIndex i x l}
+  l : list X
+  i : nat
+  pf : i &lt; length l
+  x : X
+  xs : list X
+  pf0 : i &lt; S (length xs)
+  i' : nat
+  pf1 : S i' &lt; S (length xs)
+  ============================
+   ListIndex (S i') (sigX (f xs i' (lt_list pf1))) (x :: xs)
 
-<span class="nn">Abort</span><span class="p">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Abort.</code></pre></div>
 
 <p>We simply build a lemma that extends the proof to meet our needs, given what we get from the recursive call and we&rsquo;re good to go:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Lemma</span> <span class="n">nthrec</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span> <span class="kn">Set</span><span class="o">}:</span> <span class="k">forall</span> <span class="n">l</span> <span class="n">i</span> <span class="n">h</span> <span class="o">(</span><span class="n">x</span><span class="o">:</span> <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="nc">ListIndex</span> <span class="n">i</span> <span class="n">x</span> <span class="n">l</span><span class="o">}),</span>
-<span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span> <span class="o">-&gt;</span>
-<span class="nc">ListIndex</span> <span class="o">(</span><span class="nc">S</span> <span class="n">i</span><span class="o">)</span> <span class="o">(</span><span class="n">proj1_sig</span> <span class="n">x</span><span class="o">)</span> <span class="o">(</span><span class="n">h</span><span class="o">::</span><span class="n">l</span><span class="o">).</span>
-<span class="kn">Proof</span><span class="o">.</span>
-  <span class="k">intros</span><span class="o">.</span>
-  <span class="k">destruct</span> <span class="n">x</span><span class="o">.</span> <span class="n">crush</span><span class="o">.</span>
-<span class="kn">Qed</span><span class="o">.</span>
-<span class="kn">Hint</span> <span class="kn">Resolve</span> <span class="n">nthrec</span><span class="o">.</span>
+ <pre><code>Lemma nthrec {X: Set}: forall l i h (x: {x : X | ListIndex i x l}),
+i &lt; length l -&gt;
+ListIndex (S i) (proj1_sig x) (h::l).
+Proof.
+  intros.
+  destruct x. crush.
+Qed.
+Hint Resolve nthrec.
 
-<span class="kn">Definition</span> <span class="n">strong_nth</span> <span class="o">{</span><span class="nc">X</span><span class="o">:</span><span class="kn">Set</span><span class="o">}</span> <span class="o">:</span>
-  <span class="k">forall</span> <span class="o">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">i</span> <span class="o">:</span> <span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">),</span>
-    <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="nc">ListIndex</span> <span class="n">i</span> <span class="n">x</span> <span class="n">l</span><span class="o">}.</span>
-  <span class="k">refine</span>
-    <span class="o">(</span><span class="k">fix</span> <span class="n">f</span> <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="nc">X</span><span class="o">)</span> <span class="o">(</span><span class="n">i</span><span class="o">:</span><span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">pf</span><span class="o">:</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">)</span> <span class="o">:</span>
-       <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="nc">X</span> <span class="o">|</span> <span class="nc">ListIndex</span> <span class="n">i</span> <span class="n">x</span> <span class="n">l</span><span class="o">}</span> <span class="o">:=</span>
-       <span class="k">match</span> <span class="n">l</span><span class="o">,</span> <span class="n">i</span><span class="o">,</span> <span class="n">pf</span> <span class="k">with</span>
-         <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="n">x</span><span class="o">]</span>
-         <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span><span class="o">,</span> <span class="nc">S</span> <span class="n">i&#39;</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span>  <span class="o">[</span><span class="n">sigX</span> <span class="o">(</span><span class="n">f</span> <span class="n">xs</span> <span class="n">i&#39;</span> <span class="o">(</span><span class="n">lt_list</span> <span class="n">pf</span><span class="o">))]</span>
-         <span class="o">|</span> <span class="o">_,</span> <span class="o">_,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="o">&gt;&gt;</span><span class="n">ltnil</span> <span class="n">pf</span><span class="o">&lt;&lt;</span>
-       <span class="k">end</span><span class="o">);</span> <span class="n">crush</span><span class="o">.</span>
-<span class="kn">Defined</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Definition strong_nth {X:Set} :
+  forall (l : list X) (i : nat) (pf:i &lt; length l),
+    {x : X | ListIndex i x l}.
+  refine
+    (fix f (l:list X) (i:nat) (pf: i &lt; length l) :
+       {x : X | ListIndex i x l} :=
+       match l, i, pf with
+         | x::xs, 0, _ =&gt; [x]
+         | x::xs, S i', _ =&gt;  [sigX (f xs i' (lt_list pf))]
+         | _, _, _ =&gt; &gt;&gt;ltnil pf&lt;&lt;
+       end); crush.
+Defined.</code></pre></div>
 
 <p>So how is this different from our first example (first)?</p>
 
@@ -704,34 +375,15 @@
 <p>And here&rsquo;s what she looks like extracted:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="c">(** val strong_nth : &#39;a1 list -&gt; nat -&gt; &#39;a1 **)</span>
+ <pre><code>(** val strong_nth : 'a1 list -&gt; nat -&gt; 'a1 **)
 
-<span class="k">let</span> <span class="n">rec</span> <span class="n">strong_nth</span> <span class="n">l</span> <span class="n">i</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="nc">Nil</span> <span class="o">-&gt;</span> <span class="k">assert</span> <span class="bp">false</span> <span class="c">(* absurd case *)</span>
-  <span class="o">|</span> <span class="nc">Cons</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">xs</span><span class="o">)</span> <span class="o">-&gt;</span>
-    <span class="o">(</span><span class="k">match</span> <span class="n">i</span> <span class="k">with</span>
-     <span class="o">|</span> <span class="nc">O</span> <span class="o">-&gt;</span> <span class="n">x</span>
-     <span class="o">|</span> <span class="nc">S</span> <span class="n">i&#39;</span> <span class="o">-&gt;</span> <span class="n">sigX</span> <span class="o">(</span><span class="n">strong_nth</span> <span class="n">xs</span> <span class="n">i&#39;</span><span class="o">))</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+let rec strong_nth l i =
+  match l with
+  | Nil -&gt; assert false (* absurd case *)
+  | Cons (x, xs) -&gt;
+    (match i with
+     | O -&gt; x
+     | S i' -&gt; sigX (strong_nth xs i'))</code></pre></div>
 
 <p>Beautiful!</p>
 
@@ -773,7 +425,7 @@
       <a href="/blog/2014/03/24/c-to-racket-examples/">&larr; <em>C to Racket Examples</em></a>
     </li>
     <li class="next">
-      <a href="/blog/2011/09/16/linking-the-past-discovering-historical-social-networks-from-documents-and-linking-to-a-genealogical-database/"><em>Linking the Past: Discovering historical Social Networks from Documents and Linking to a Genealogical Database</em> &rarr;</a>
+      <a href="/blog/2011/09/16/linking-the-past-discovering-historical-social-networks-from-documents-and-linking-to-a-genealogical-database/"><em>Linking the Past: Discovering Historical Social Networks from Documents and Linking to a Genealogical Database</em> &rarr;</a>
     </li>
     </ul>
   </footer>

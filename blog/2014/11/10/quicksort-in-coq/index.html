@@ -75,6 +75,8 @@
 <li><a href="/tags/Talks.html">Talks</a></li>
 
 <li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
+
+<li><a href="/tags/work-in-progress.html">work-in-progress</a></li>
               </ul>
             </li>
             <li><a href="/docs/amkcv.pdf">CV</a></li>
@@ -123,67 +125,29 @@ what dependent types can add.</p>
 more complex types):</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2
-3
-4
-5
-6
-7</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Fixpoint</span> <span class="n">quicksort</span> <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="n">nat</span><span class="o">)</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">:=</span>
-<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="n">nil</span> <span class="o">=&gt;</span> <span class="n">nil</span>
-  <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=&gt;</span>
-      <span class="k">let</span> <span class="o">(</span><span class="n">lhs</span><span class="o">,</span> <span class="n">rhs</span><span class="o">)</span> <span class="o">:=</span> <span class="n">partition</span> <span class="o">(</span><span class="n">gtb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">in</span>
-      <span class="o">(</span><span class="n">quicksort</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">++</span> <span class="n">x</span> <span class="o">::</span> <span class="o">(</span><span class="n">quicksort</span> <span class="n">rhs</span><span class="o">)</span>
-<span class="k">end</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Fixpoint quicksort (l:list nat) : list nat :=
+match l with
+  | nil =&gt; nil
+  | x :: xs =&gt;
+      let (lhs, rhs) := partition (gtb x) xs in
+      (quicksort lhs) ++ x :: (quicksort rhs)
+end.</code></pre></div>
 
 <p>Looked pretty good, I thought! It was nice and simple... until I tried
 to compile it:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="nc">Error</span><span class="o">:</span>
-<span class="nc">Recursive</span> <span class="n">definition</span> <span class="k">of</span> <span class="n">quicksort</span> <span class="k">is</span> <span class="n">ill</span><span class="o">-</span><span class="n">formed</span><span class="o">.</span>
-<span class="nc">In</span> <span class="n">environment</span>
-<span class="n">quicksort</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">-&gt;</span> <span class="kt">list</span> <span class="n">nat</span>
-<span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
-<span class="n">x</span> <span class="o">:</span> <span class="n">nat</span>
-<span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
-<span class="n">rhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
-<span class="n">lhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span>
-<span class="nc">Recursive</span> <span class="n">call</span> <span class="n">to</span> <span class="n">quicksort</span> <span class="n">has</span> <span class="n">principal</span> <span class="n">argument</span>
-<span class="n">equal</span> <span class="n">to</span> <span class="s2">"lhs"</span> <span class="n">instead</span> <span class="k">of</span> <span class="s2">"xs"</span><span class="o">...</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Error:
+Recursive definition of quicksort is ill-formed.
+In environment
+quicksort : list nat -&gt; list nat
+l : list nat
+x : nat
+xs : list nat
+rhs : list nat
+lhs : list nat
+Recursive call to quicksort has principal argument
+equal to "lhs" instead of "xs"...</code></pre></div>
 
 <p>Of course - my recursive calls are not structurally recursive
 (i.e. they&rsquo;re not on the structural pieces that make up the input),
@@ -202,38 +166,17 @@ functions which Coq cannot infer termination for is
 using the keywords "Program" and "measure":</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="nc">Program</span> <span class="kn">Fixpoint</span> <span class="n">quicksort</span>
-      <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="n">nat</span><span class="o">)</span>
-      <span class="o">{</span><span class="n">measure</span> <span class="o">(</span><span class="n">length</span> <span class="n">l</span><span class="o">)}</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">:=</span>
-<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-<span class="o">|</span> <span class="n">nil</span> <span class="o">=&gt;</span> <span class="n">nil</span>
-<span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=&gt;</span>
-    <span class="k">match</span> <span class="n">partition</span> <span class="o">(</span><span class="n">leb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">with</span>
-    <span class="o">|</span> <span class="o">(</span><span class="n">rhs</span><span class="o">,</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">=&gt;</span>
-      <span class="o">(</span><span class="n">quicksort</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">++</span> <span class="n">x</span> <span class="o">::</span> <span class="o">(</span><span class="n">quicksort</span> <span class="n">rhs</span><span class="o">)</span>
-    <span class="k">end</span>
-<span class="k">end</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Program Fixpoint quicksort
+      (l:list nat)
+      {measure (length l)} : list nat :=
+match l with
+| nil =&gt; nil
+| x :: xs =&gt;
+    match partition (leb x) xs with
+    | (rhs, lhs) =&gt;
+      (quicksort lhs) ++ x :: (quicksort rhs)
+    end
+end.</code></pre></div>
 
 <p>Now Coq knows that the decreasing argument to be measured is the
 length of the input (from {measure (length l)}), and it knows that I
@@ -244,58 +187,27 @@ Program specifies).</p>
 <p>Okay, so I compiled it and then I got some new messages (woohoo!).</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="n">quicksort</span> <span class="n">has</span> <span class="n">type</span><span class="o">-</span><span class="n">checked</span><span class="o">,</span> <span class="n">generating</span> <span class="mi">3</span> <span class="n">obligation</span><span class="o">(</span><span class="n">s</span><span class="o">)</span>
-<span class="nc">Solving</span> <span class="n">obligations</span> <span class="n">automatically</span><span class="o">...</span>
-<span class="n">quicksort_obligation_3</span> <span class="k">is</span> <span class="n">defined</span>
-<span class="mi">2</span> <span class="n">obligations</span> <span class="n">remaining</span>
-<span class="nc">Obligation</span> <span class="mi">1</span> <span class="k">of</span> <span class="n">quicksort</span><span class="o">:</span>
-<span class="k">forall</span> <span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span>
-<span class="o">(</span><span class="k">forall</span> <span class="n">l0</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="n">length</span> <span class="n">l0</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">)</span> <span class="o">-&gt;</span>
-<span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">),</span>
-<span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">l</span> <span class="o">-&gt;</span>
-<span class="k">let</span> <span class="n">filtered_var</span> <span class="o">:=</span> <span class="n">partition</span> <span class="o">(</span><span class="n">leb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">in</span>
-<span class="k">forall</span> <span class="n">rhs</span> <span class="n">lhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="o">(</span><span class="n">rhs</span><span class="o">,</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">=</span> <span class="n">filtered_var</span> <span class="o">-&gt;</span>
-                 <span class="n">length</span> <span class="n">lhs</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">.</span>
+ <pre><code>quicksort has type-checked, generating 3 obligation(s)
+Solving obligations automatically...
+quicksort_obligation_3 is defined
+2 obligations remaining
+Obligation 1 of quicksort:
+forall l : list nat,
+(forall l0 : list nat, length l0 &lt; length l -&gt; list nat) -&gt;
+forall (x : nat) (xs : list nat),
+x :: xs = l -&gt;
+let filtered_var := partition (leb x) xs in
+forall rhs lhs : list nat, (rhs, lhs) = filtered_var -&gt;
+                 length lhs &lt; length l.
 
-<span class="nc">Obligation</span> <span class="mi">2</span> <span class="k">of</span> <span class="n">quicksort</span><span class="o">:</span>
-<span class="k">forall</span> <span class="n">l</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span>
-<span class="o">(</span><span class="k">forall</span> <span class="n">l0</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="n">length</span> <span class="n">l0</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">)</span> <span class="o">-&gt;</span>
-<span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">xs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">),</span>
-<span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">l</span> <span class="o">-&gt;</span>
-<span class="k">let</span> <span class="n">filtered_var</span> <span class="o">:=</span> <span class="n">partition</span> <span class="o">(</span><span class="n">leb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">in</span>
-<span class="k">forall</span> <span class="n">rhs</span> <span class="n">lhs</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span><span class="o">,</span> <span class="o">(</span><span class="n">rhs</span><span class="o">,</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">=</span> <span class="n">filtered_var</span> <span class="o">-&gt;</span>
-                 <span class="n">length</span> <span class="n">rhs</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">l</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Obligation 2 of quicksort:
+forall l : list nat,
+(forall l0 : list nat, length l0 &lt; length l -&gt; list nat) -&gt;
+forall (x : nat) (xs : list nat),
+x :: xs = l -&gt;
+let filtered_var := partition (leb x) xs in
+forall rhs lhs : list nat, (rhs, lhs) = filtered_var -&gt;
+                 length rhs &lt; length l.</code></pre></div>
 
 <p>Cool - two obligations. To solve these (which just verify the length
 of the inputs to the recursive calls (lhs and rhs) are &lt;= the length
@@ -304,20 +216,8 @@ applying a little theorem proving where needed. After proving both, I
 got:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1
-2</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="nc">No</span> <span class="n">more</span> <span class="n">obligations</span> <span class="n">remaining</span>
-<span class="n">quicksort</span> <span class="k">is</span> <span class="n">defined</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>No more obligations remaining
+quicksort is defined</code></pre></div>
 
 <p>Side note: You may have noticed I swapped out the "let" statement in the
 original attempt for a "match" statement - but why? Well, using the
@@ -341,38 +241,17 @@ given it? How do we know it is correct?</p>
 about its correctness:</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="kn">Example</span> <span class="n">qs_nil</span><span class="o">:</span>
-  <span class="n">quicksort</span> <span class="bp">[]</span> <span class="o">=</span> <span class="bp">[]</span><span class="o">.</span>
-<span class="kn">Proof</span><span class="o">.</span>
-  <span class="k">auto</span><span class="o">.</span>
-<span class="kn">Qed</span><span class="o">.</span>
+ <pre><code>Example qs_nil:
+  quicksort [] = [].
+Proof.
+  auto.
+Qed.
 
-<span class="kn">Example</span> <span class="n">qs_ex1</span><span class="o">:</span>
-  <span class="n">quicksort</span> <span class="o">[</span><span class="mi">3</span> <span class="o">;</span> <span class="mi">2</span> <span class="o">;</span> <span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span><span class="mi">1</span> <span class="o">;</span> <span class="mi">2</span> <span class="o">;</span> <span class="mi">3</span><span class="o">].</span>
-<span class="kn">Proof</span> <span class="k">with</span> <span class="k">auto</span><span class="o">.</span>
-  <span class="k">compute</span><span class="o">...</span>
-<span class="kn">Qed</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+Example qs_ex1:
+  quicksort [3 ; 2 ; 1] = [1 ; 2 ; 3].
+Proof with auto.
+  compute...
+Qed.</code></pre></div>
 
 <p>But we still can&rsquo;t be 100% certain it is correct. In fact, in this case
 a list reverse would have passed these tests! So in general, what
@@ -387,44 +266,20 @@ prove it valid, or you can add the specification to the type
 of quicksort itself. Let&rsquo;s do the latter.</p>
 
 <div class="brush: coq">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="nc">Program</span> <span class="kn">Fixpoint</span> <span class="n">quicksort</span>
-      <span class="o">(</span><span class="n">l</span><span class="o">:</span><span class="kt">list</span> <span class="n">nat</span><span class="o">)</span>
-      <span class="o">{</span><span class="n">measure</span> <span class="o">(</span><span class="n">length</span> <span class="n">l</span><span class="o">)}</span> <span class="o">:</span>
-      <span class="o">{</span><span class="n">sl</span> <span class="o">:</span> <span class="kt">list</span> <span class="n">nat</span> <span class="o">|</span>
-        <span class="nc">Permutation</span> <span class="n">l</span> <span class="n">sl</span>
-        <span class="o">/\</span> <span class="nc">StronglySorted</span> <span class="n">le</span> <span class="n">sl</span><span class="o">}</span> <span class="o">:=</span>
-<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-<span class="o">|</span> <span class="n">nil</span> <span class="o">=&gt;</span> <span class="n">nil</span>
-<span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">=&gt;</span>
-    <span class="k">match</span> <span class="n">partition</span> <span class="o">(</span><span class="n">gtb</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span> <span class="k">with</span>
-    <span class="o">|</span> <span class="o">(</span><span class="n">lhs</span><span class="o">,</span> <span class="n">rhs</span><span class="o">)</span> <span class="o">=&gt;</span>
-      <span class="o">(</span><span class="n">quicksort</span> <span class="n">lhs</span><span class="o">)</span> <span class="o">++</span> <span class="n">x</span> <span class="o">::</span> <span class="o">(</span><span class="n">quicksort</span> <span class="n">rhs</span><span class="o">)</span>
-    <span class="k">end</span>
-<span class="k">end</span><span class="o">.</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>Program Fixpoint quicksort
+      (l:list nat)
+      {measure (length l)} :
+      {sl : list nat |
+        Permutation l sl
+        /\ StronglySorted le sl} :=
+match l with
+| nil =&gt; nil
+| x :: xs =&gt;
+    match partition (gtb x) xs with
+    | (lhs, rhs) =&gt;
+      (quicksort lhs) ++ x :: (quicksort rhs)
+    end
+end.</code></pre></div>
 
 <p>This approach looks like our original version, except that our return
 type is not merely a list of nat, but a list of nat such that it is a
@@ -480,7 +335,7 @@ in this case) this isn&rsquo;t these properties aren&rsquo;t too bad to verify.<
       <a href="/blog/2014/12/20/let-aliasing-in-typed-racket/">&larr; <em>Let-aliasing in Typed Racket</em></a>
     </li>
     <li class="next">
-      <a href="/blog/2014/10/20/design-and-evaluation-of-gradual-typing-for-python/"><em>Design and evaluation of gradual typing for python</em> &rarr;</a>
+      <a href="/blog/2014/10/20/design-and-evaluation-of-gradual-typing-for-python/"><em>Design and Evaluation of Gradual Typing for Python</em> &rarr;</a>
     </li>
     </ul>
   </footer>

@@ -4,7 +4,19 @@
  <link rel="self" href="http://www.andmkent.com/feeds/Publications.atom.xml" />
  <link href="http://www.andmkent.com/tags/Publications.html" />
  <id>urn:http-www-andmkent-com:-tags-Publications-html</id>
- <updated>2014-10-20T04:00:00Z</updated>
+ <updated>2015-11-22T16:29:06Z</updated>
+ <entry>
+  <title type="text">New Draft Paper: Occurrence Typing Modulo Theories</title>
+  <link rel="alternate" href="http://www.andmkent.com/blog/2015/11/22/new-draft-paper-occurrence-typing-modulo-theories/?utm_source=Publications&amp;utm_medium=Atom" />
+  <id>urn:http-www-andmkent-com:-blog-2015-11-22-new-draft-paper-occurrence-typing-modulo-theories</id>
+  <published>2015-11-22T16:29:06Z</published>
+  <updated>2015-11-22T16:29:06Z</updated>
+  <author>
+   <name>Andrew M. Kent</name></author>
+  <content type="html">&lt;html&gt;
+&lt;p&gt;A &lt;a href="http://arxiv.org/abs/1511.07033"&gt;draft paper&lt;/a&gt; describing our approach to extending Typed Racket with dependent refinement types and arbitrary solver-backed theories is now available!&lt;/p&gt;
+
+&lt;p&gt;Looking forward to bringing these ideas to the Typed Racket to our users at large.&lt;/p&gt;&lt;/html&gt;</content></entry>
  <entry>
   <title type="text">Design and Evaluation of Gradual Typing for Python</title>
   <link rel="alternate" href="http://www.andmkent.com/blog/2014/10/20/design-and-evaluation-of-gradual-typing-for-python/?utm_source=Publications&amp;utm_medium=Atom" />

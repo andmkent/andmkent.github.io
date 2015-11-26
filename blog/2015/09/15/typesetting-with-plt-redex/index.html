@@ -11,7 +11,7 @@
     <link rel="icon"      href="/favicon.ico">
     <link rel="canonical" href="http://www.andmkent.com/blog/2015/09/15/typesetting-with-plt-redex/">
     <link rel="next" href="/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/">
-
+    <link rel="prev" href="/blog/2015/11/22/new-draft-paper-occurrence-typing-modulo-theories/">
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/pygments.css">
@@ -68,11 +68,15 @@
 
 <li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
 
+<li><a href="/tags/Publications.html">Publications</a></li>
+
 <li><a href="/tags/Racket.html">Racket</a></li>
 
 <li><a href="/tags/Talks.html">Talks</a></li>
 
 <li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
+
+<li><a href="/tags/work-in-progress.html">work-in-progress</a></li>
               </ul>
             </li>
             <li><a href="/docs/amkcv.pdf">CV</a></li>
@@ -112,54 +116,47 @@
 <p>First we define the language, like the simply typed lambda calculus:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="kn">#lang </span><span class="nn">racket</span>
-<span class="p">(</span><span class="k">require</span> <span class="n">redex</span><span class="p">)</span>
+ <pre><code>#lang racket
+(require redex)
 
-<span class="p">(</span><span class="n">define-language</span> <span class="n">STLC</span>
-  <span class="p">[</span><span class="n">x</span>   <span class="n">::=</span> <span class="n">variable-not-otherwise-mentioned</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">v</span>   <span class="n">::=</span> <span class="n">integer</span> <span class="nb">true</span> <span class="k">false</span> <span class="nb">add1</span> <span class="nb">not</span> <span class="nb">zero?</span><span class="p">]</span>
-  <span class="p">[</span><span class="nb">exp</span> <span class="n">::=</span> <span class="n">x</span> <span class="n">v</span> <span class="p">(</span><span class="k">if</span> <span class="n">exp_1</span> <span class="n">exp_2</span> <span class="n">exp_3</span><span class="p">)</span>
-           <span class="p">(</span><span class="k">lambda</span> <span class="p">[</span><span class="n">x</span> <span class="n">:</span> <span class="n">ty</span><span class="p">]</span> <span class="nb">exp</span><span class="p">)</span> <span class="p">(</span><span class="n">exp_1</span> <span class="n">exp_2</span><span class="p">)]</span>
-  <span class="p">[</span><span class="n">ty</span>  <span class="n">::=</span> <span class="n">int</span> <span class="n">bool</span> <span class="p">(</span><span class="n">ty_1</span> <span class="k">-&gt;</span> <span class="n">ty_2</span><span class="p">)]</span>
-  <span class="p">[</span><span class="n">Env</span> <span class="n">::=</span> <span class="p">([</span><span class="n">x</span> <span class="n">ty</span><span class="p">]</span> <span class="k">...</span><span class="p">)])</span>
-</pre></div>
-
-</div>
+(define-language STLC
+  [x   ::= variable-not-otherwise-mentioned]
+  [v   ::= integer true false add1 not zero?]
+  [exp ::= x v (if exp_1 exp_2 exp_3)
+           (lambda [x : ty] exp) (exp_1 exp_2)]
+  [ty  ::= int bool (ty_1 -&gt; ty_2)]
+  [Env ::= ([x ty] ...)])</code></pre></div>
 
 <p>Note: In this definition we <em>could</em> have used unicode characters directly (and then typesetting will use those same characters) but we shouldn&rsquo;t feel obligated to. We can throw in all the greek we want when typesetting.</p>
 
 <p>And maybe we have some judgments and metafunctions:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">define-judgment-form</span> <span class="n">STLC</span>
-  <span class="kd">#:mode</span> <span class="p">(</span><span class="n">typeof</span> <span class="n">I</span> <span class="n">I</span> <span class="n">O</span><span class="p">)</span>
-  <span class="kd">#:contract</span> <span class="p">(</span><span class="n">typeof</span> <span class="n">Env</span> <span class="nb">exp</span> <span class="n">ty</span><span class="p">)</span>
+ <pre><code>
+(define-judgment-form STLC
+  #:mode (typeof I I O)
+  #:contract (typeof Env exp ty)
 
-  <span class="p">[</span><span class="n">-----------------</span> <span class="s2">"T-Val"</span>
-   <span class="p">(</span><span class="n">typeof</span> <span class="n">Env</span> <span class="n">v</span> <span class="p">(</span><span class="n">val-type</span> <span class="n">v</span><span class="p">))]</span>
+  [----------------- "T-Val"
+   (typeof Env v (val-type v))]
 
-  <span class="p">[(</span><span class="n">where</span> <span class="n">ty</span> <span class="p">(</span><span class="n">lookup</span> <span class="n">Env</span> <span class="n">x</span><span class="p">))</span>
-   <span class="n">----------</span> <span class="s2">"T-Var"</span>
-   <span class="p">(</span><span class="n">typeof</span> <span class="n">Env</span> <span class="n">x</span> <span class="n">ty</span><span class="p">)]</span>
+  [(where ty (lookup Env x))
+   ---------- "T-Var"
+   (typeof Env x ty)]
 
-  <span class="n">....</span><span class="p">)</span>
+  ....)
 
-<span class="p">(</span><span class="n">define-metafunction</span> <span class="n">STLC</span>
-  <span class="n">val-type</span> <span class="n">:</span> <span class="n">v</span> <span class="k">-&gt;</span> <span class="n">ty</span>
-  <span class="n">....</span><span class="p">)</span>
+(define-metafunction STLC
+  val-type : v -&gt; ty
+  ....)
 
-<span class="p">(</span><span class="n">define-metafunction</span> <span class="n">STLC</span>
-  <span class="n">extend</span> <span class="n">:</span> <span class="n">Env</span> <span class="n">x</span> <span class="n">ty</span> <span class="k">-&gt;</span> <span class="n">Env</span>
-  <span class="n">....</span><span class="p">)</span>
+(define-metafunction STLC
+  extend : Env x ty -&gt; Env
+  ....)
 
-<span class="p">(</span><span class="n">define-metafunction</span> <span class="n">STLC</span>
-  <span class="n">lookup</span> <span class="n">:</span> <span class="n">Env</span> <span class="n">x</span> <span class="k">-&gt;</span> <span class="n">ty</span>
-  <span class="n">....</span><span class="p">)</span>
-</pre></div>
-
-</div>
+(define-metafunction STLC
+  lookup : Env x -&gt; ty
+  ....)</code></pre></div>
 
 <p><em>"&hellip;" in this case is not special syntax, but just to stand in for the obvious definitions</em></p>
 
@@ -168,12 +165,8 @@
 <p>If we were to try and typeset these definitions now, we probably wouldn&rsquo;t be too happy with the result:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">render-judgment-form</span> <span class="n">typeof</span><span class="p">)</span>
-<span class="p">(</span><span class="n">with-rws</span> <span class="p">(</span><span class="n">render-language</span> <span class="n">STLC</span> <span class="kd">#:nts</span> <span class="o">&#39;</span><span class="p">(</span><span class="ss">v</span> <span class="ss">exp</span> <span class="ss">ty</span> <span class="ss">Env</span><span class="p">)))</span>
-</pre></div>
-
-</div>
+ <pre><code>(render-judgment-form typeof)
+(with-rws (render-language STLC #:nts '(v exp ty Env)))</code></pre></div>
 
 <p>Sure, the figures will have the expected shape overall, but maybe we wanted the more traditional <code>Γ</code> for type environments instead of <code>Env</code>, and we probably want our typing judgments to look like <code>Γ ⊢ e : τ</code> instead of the default typesetting  <code>typeof〚Γ, e, τ〛</code>.</p>
 
@@ -186,26 +179,18 @@
 <p><a href="http://docs.racket-lang.org/search/index.html?q=with-atomic-rewriter">Atomic rewriters</a> will get us part of the way there. They allow us to rewrite symbols with provided strings (or thunks returning picts), and things like subscripts are preserved just the way we would hope:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">with-atomic-rewriter</span>
- <span class="o">&#39;</span><span class="ss">Env</span> <span class="s2">"Γ"</span>
- <span class="p">(</span><span class="n">with-atomic-rewriter</span>
-  <span class="o">&#39;</span><span class="ss">t</span> <span class="o">&#39;</span><span class="ss">τ</span>
-  <span class="p">(</span><span class="n">render-language</span> <span class="n">STLC</span> <span class="kd">#:nts</span> <span class="o">&#39;</span><span class="p">(</span><span class="ss">v</span> <span class="ss">exp</span> <span class="ss">ty</span> <span class="ss">Env</span><span class="p">))))</span>
-</pre></div>
-
-</div>
+ <pre><code>(with-atomic-rewriter
+ 'Env "Γ"
+ (with-atomic-rewriter
+  't 'τ
+  (render-language STLC #:nts '(v exp ty Env))))</code></pre></div>
 
 <p>I&rsquo;m not sure why there isn&rsquo;t a plural version of this form&hellip; so I went ahead and defined one in the <code>typeset-rewriter</code> package:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">with-atomic-rws</span>
- <span class="p">([</span><span class="o">&#39;</span><span class="ss">Env</span> <span class="s2">"Γ"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">exp</span> <span class="s2">"e"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">ty</span> <span class="s2">"τ"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">-&gt;</span> <span class="s2">"→"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">integer</span> <span class="s2">"n"</span><span class="p">])</span>
- <span class="p">(</span><span class="n">render-language</span> <span class="n">STLC</span> <span class="kd">#:nts</span> <span class="o">&#39;</span><span class="p">(</span><span class="ss">v</span> <span class="ss">exp</span> <span class="ss">ty</span> <span class="ss">Env</span><span class="p">)))</span>
-</pre></div>
-
-</div>
+ <pre><code>(with-atomic-rws
+ (['Env "Γ"] ['exp "e"] ['ty "τ"] ['-&gt; "→"] ['integer "n"])
+ (render-language STLC #:nts '(v exp ty Env)))</code></pre></div>
 
 <p>But if we want to get our typing judgment to look correct, we&rsquo;re going to need just a little more muscle.</p>
 
@@ -214,24 +199,16 @@
 <p>The hooks for <a href="http://docs.racket-lang.org/search/index.html?q=with-compound-rewriter">compound rewriters</a> are pretty powerful. They allow us to transform arbitrary redex terms by letting us specify <em>compound rewriters</em> to be applied to parenthesized terms with a particular symbol at the head. So if we install a rewriter <code>lambda-rw</code> before typesetting</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">with-compound-rewriter</span>
- <span class="o">&#39;</span><span class="ss">lambda</span> <span class="n">lambda-rw</span>
- <span class="p">(</span><span class="n">render-language</span> <span class="n">STLC</span> <span class="kd">#:nts</span> <span class="o">&#39;</span><span class="p">(</span><span class="ss">v</span> <span class="ss">exp</span> <span class="ss">ty</span> <span class="ss">Env</span><span class="p">)))</span>
-</pre></div>
-
-</div>
+ <pre><code>(with-compound-rewriter
+ 'lambda lambda-rw
+ (render-language STLC #:nts '(v exp ty Env)))</code></pre></div>
 
 <p>any term of the form <code>(lambda any ...)</code> will be passed to our <code>lambda-rw</code> procedure.</p>
 
 <p>This gives us great power&hellip; but if we look at the signature for these rewriters we see theirs a subtle catch:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="nb">listof</span> <span class="n">lw</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="p">(</span><span class="nb">listof</span> <span class="p">(</span><span class="nb">or/c</span> <span class="n">lw?</span> <span class="nb">string?</span> <span class="n">pict?</span><span class="p">))</span>
-</pre></div>
-
-</div>
+ <pre><code>(listof lw) -&gt; (listof (or/c lw? string? pict?))</code></pre></div>
 
 <p>We have to work with lists of the <code>lw</code> structs that redex uses to typeset code if we want to tweak how our figures will look.</p>
 
@@ -240,56 +217,50 @@
 <p>With these tools, we can define the following rewriters and rewriting context:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="k">require</span> <span class="n">typeset-rewriter</span><span class="p">)</span>
+ <pre><code>
+(require typeset-rewriter)
 
-<span class="p">(</span><span class="k">define</span> <span class="n">lambda-rw</span>
-  <span class="p">(</span><span class="n">rw-lambda</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">lambda</span> <span class="p">([</span><span class="o">,</span><span class="n">x</span> <span class="ss">:</span> <span class="o">,</span><span class="n">t</span><span class="p">])</span> <span class="o">,</span><span class="n">body</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">"λ"</span> <span class="n">x</span> <span class="s2">":"</span> <span class="n">t</span> <span class="s2">". "</span> <span class="n">body</span><span class="p">)]</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">lambda</span> <span class="p">([</span><span class="o">,</span><span class="n">x</span> <span class="ss">:</span> <span class="o">,</span><span class="n">t</span><span class="p">])</span> <span class="o">,</span><span class="n">body</span> <span class="o">,</span><span class="n">bodies</span> <span class="ss">...</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list*</span> <span class="s2">"λ"</span> <span class="n">x</span> <span class="s2">":"</span> <span class="n">t</span> <span class="s2">". (begin "</span> <span class="n">body</span> <span class="p">(</span><span class="nb">append</span> <span class="n">bodies</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">")"</span><span class="p">)))]))</span>
+(define lambda-rw
+  (rw-lambda
+   [`(lambda ([,x : ,t]) ,body)
+    =&gt; (list "λ" x ":" t ". " body)]
+   [`(lambda ([,x : ,t]) ,body ,bodies ...)
+    =&gt; (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))
 
-<span class="p">(</span><span class="k">define</span> <span class="n">typeof-rw</span>
-  <span class="p">(</span><span class="n">rw-lambda</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">typeof</span> <span class="o">,</span><span class="n">Γ</span> <span class="o">,</span><span class="n">e</span> <span class="o">,</span><span class="n">t</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">""</span> <span class="n">Γ</span> <span class="s2">" ⊢ "</span> <span class="n">e</span> <span class="s2">" : "</span> <span class="n">t</span><span class="p">)]))</span>
+(define typeof-rw
+  (rw-lambda
+   [`(typeof ,Γ ,e ,t)
+    =&gt; (list "" Γ " ⊢ " e " : " t)]))
 
-<span class="p">(</span><span class="k">define</span> <span class="n">extend-rw</span>
-  <span class="p">(</span><span class="n">rw-lambda</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">extend</span> <span class="o">,</span><span class="n">Γ</span> <span class="o">,</span><span class="n">x</span> <span class="o">,</span><span class="n">t</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">""</span> <span class="n">Γ</span> <span class="s2">", "</span> <span class="n">x</span> <span class="s2">":"</span> <span class="n">t</span><span class="p">)]))</span>
+(define extend-rw
+  (rw-lambda
+   [`(extend ,Γ ,x ,t)
+    =&gt; (list "" Γ ", " x ":" t)]))
 
-<span class="p">(</span><span class="k">define</span> <span class="n">lookup-rw</span>
-  <span class="p">(</span><span class="n">rw-lambda</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">lookup</span> <span class="o">,</span><span class="n">Γ</span> <span class="o">,</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">""</span> <span class="n">Γ</span> <span class="s2">"("</span> <span class="n">x</span> <span class="s2">")"</span><span class="p">)]))</span>
+(define lookup-rw
+  (rw-lambda
+   [`(lookup ,Γ ,x)
+    =&gt; (list "" Γ "(" x ")")]))
 
-<span class="p">(</span><span class="k">define</span> <span class="n">val-type-rw</span>
-  <span class="p">(</span><span class="n">rw-lambda</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">val-type</span> <span class="o">,</span><span class="n">v</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">"type-of("</span> <span class="n">v</span> <span class="s2">")"</span><span class="p">)]))</span>
+(define val-type-rw
+  (rw-lambda
+   [`(val-type ,v)
+    =&gt; (list "type-of(" v ")")]))
 
-<span class="p">(</span><span class="n">define-rw-context</span> <span class="n">with-stlc-rws</span>
-  <span class="kd">#:atomic</span> <span class="p">([</span><span class="o">&#39;</span><span class="ss">Env</span> <span class="s2">"Γ"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">exp</span> <span class="s2">"e"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">ty</span> <span class="s2">"τ"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">-&gt;</span> <span class="s2">"→"</span><span class="p">]</span> <span class="p">[</span><span class="o">&#39;</span><span class="ss">integer</span> <span class="s2">"n"</span><span class="p">])</span>
-  <span class="kd">#:compound</span> <span class="p">([</span><span class="o">&#39;</span><span class="ss">lambda</span> <span class="n">lambda-rw</span><span class="p">]</span>
-              <span class="p">[</span><span class="o">&#39;</span><span class="ss">typeof</span> <span class="n">typeof-rw</span><span class="p">]</span>
-              <span class="p">[</span><span class="o">&#39;</span><span class="ss">extend</span> <span class="n">extend-rw</span><span class="p">]</span>
-              <span class="p">[</span><span class="o">&#39;</span><span class="ss">lookup</span> <span class="n">lookup-rw</span><span class="p">]</span>
-              <span class="p">[</span><span class="o">&#39;</span><span class="ss">val-type</span> <span class="n">val-type-rw</span><span class="p">]))</span>
-</pre></div>
-
-</div>
+(define-rw-context with-stlc-rws
+  #:atomic (['Env "Γ"] ['exp "e"] ['ty "τ"] ['-&gt; "→"] ['integer "n"])
+  #:compound (['lambda lambda-rw]
+              ['typeof typeof-rw]
+              ['extend extend-rw]
+              ['lookup lookup-rw]
+              ['val-type val-type-rw]))
+</code></pre></div>
 
 <p>This allows us to produce figures looking just the way we want:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">with-stlc-rws</span> <span class="p">(</span><span class="n">render-language</span> <span class="n">STLC</span> <span class="kd">#:nts</span> <span class="o">&#39;</span><span class="p">(</span><span class="ss">v</span> <span class="ss">exp</span> <span class="ss">ty</span> <span class="ss">Env</span><span class="p">)))</span>
-<span class="p">(</span><span class="n">with-stlc-rws</span> <span class="p">(</span><span class="n">render-judgment-form</span> <span class="n">typeof</span><span class="p">))</span>
-</pre></div>
-
-</div>
+ <pre><code>(with-stlc-rws (render-language STLC #:nts '(v exp ty Env)))
+(with-stlc-rws (render-judgment-form typeof))</code></pre></div>
 
 <div class="figure"><img src="/img/pltredexstlc.png" alt="" />
  <p class="caption"></p></div>
@@ -299,16 +270,12 @@
 <p>You may have noticed I used a more complex definition for <code>lambda-rw</code> than seemed necessary:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="k">define</span> <span class="n">lambda-rw</span>
-  <span class="p">(</span><span class="n">rw-lambda</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">lambda</span> <span class="p">([</span><span class="o">,</span><span class="n">x</span> <span class="ss">:</span> <span class="o">,</span><span class="n">t</span><span class="p">])</span> <span class="o">,</span><span class="n">body</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">"λ"</span> <span class="n">x</span> <span class="s2">":"</span> <span class="n">t</span> <span class="s2">". "</span> <span class="n">body</span><span class="p">)]</span>
-   <span class="p">[</span><span class="o">`</span><span class="p">(</span><span class="ss">lambda</span> <span class="p">([</span><span class="o">,</span><span class="n">x</span> <span class="ss">:</span> <span class="o">,</span><span class="n">t</span><span class="p">])</span> <span class="o">,</span><span class="n">body</span> <span class="o">,</span><span class="n">bodies</span> <span class="ss">...</span><span class="p">)</span>
-    <span class="k">=&gt;</span> <span class="p">(</span><span class="nb">list*</span> <span class="s2">"λ"</span> <span class="n">x</span> <span class="s2">":"</span> <span class="n">t</span> <span class="s2">". (begin "</span> <span class="n">body</span> <span class="p">(</span><span class="nb">append</span> <span class="n">bodies</span> <span class="p">(</span><span class="nb">list</span> <span class="s2">")"</span><span class="p">)))]))</span>
-</pre></div>
-
-</div>
+ <pre><code>(define lambda-rw
+  (rw-lambda
+   [`(lambda ([,x : ,t]) ,body)
+    =&gt; (list "λ" x ":" t ". " body)]
+   [`(lambda ([,x : ,t]) ,body ,bodies ...)
+    =&gt; (list* "λ" x ":" t ". (begin " body (append bodies (list ")")))]))</code></pre></div>
 
 <p>This was just to show that the <code>rw</code> macro is merely a thin layer of syntax that expands into Racket&rsquo;s powerful <code>match</code> form. Anything following an <code>unquote</code> (<em>e.g. a <code>,</code></em>) in the <code>quasiquote</code> pattern can be an arbitrary match pattern, and things like elipses&mdash;since they are supported by <code>match</code>&mdash;are supported as well.</p>
 
@@ -355,7 +322,9 @@ typeset-rewriter)</code>.</p>
     </script>
     <div id="disqus_thread"></div>
     <ul class="pager">
-
+    <li class="previous">
+      <a href="/blog/2015/11/22/new-draft-paper-occurrence-typing-modulo-theories/">&larr; <em>New Draft Paper: Occurrence Typing Modulo Theories</em></a>
+    </li>
     <li class="next">
       <a href="/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/"><em>STOP 2015 Talk: Adding Practical Dependent Types to Typed Racket</em> &rarr;</a>
     </li>

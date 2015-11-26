@@ -68,11 +68,15 @@
 
 <li><a href="/tags/Dependent-Types.html">Dependent Types</a></li>
 
+<li><a href="/tags/Publications.html">Publications</a></li>
+
 <li><a href="/tags/Racket.html">Racket</a></li>
 
 <li><a href="/tags/Talks.html">Talks</a></li>
 
 <li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
+
+<li><a href="/tags/work-in-progress.html">work-in-progress</a></li>
               </ul>
             </li>
             <li><a href="/docs/amkcv.pdf">CV</a></li>
@@ -114,11 +118,7 @@
 <p>First, we need to add a type which can express dependencies within it. We do this with refinement types:</p>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">x</span> <span class="n">:</span> <span class="n">T</span><span class="p">]</span> <span class="n">P</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-</pre></div>
-
-</div>
+ <pre><code>(Refine [x : T] P(x))</code></pre></div>
 
 <p>This intuitively describes all values <code>x</code> of type <code>T</code> where proposition <code>P(x)</code> holds.</p>
 
@@ -150,51 +150,46 @@
 <h3 id="vector-dot-product">Vector Dot Product</h3>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="n">:</span> <span class="n">dot-prod</span> <span class="p">(</span><span class="n">~&gt;</span> <span class="p">[</span><span class="n">A</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vecof</span> <span class="n">Int</span><span class="p">)]</span>
-                <span class="p">[</span><span class="n">B</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">v</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vecof</span> <span class="n">Int</span><span class="p">)]</span>
-                             <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="n">len</span> <span class="n">v</span><span class="p">)</span> <span class="p">(</span><span class="n">len</span> <span class="n">A</span><span class="p">)))]</span>
-                <span class="n">Int</span><span class="p">))</span>
-<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="n">dot-prod</span> <span class="n">A</span> <span class="n">B</span><span class="p">)</span>
-  <span class="p">(</span><span class="k">for/sum</span> <span class="p">([</span><span class="n">i</span> <span class="p">(</span><span class="nb">in-range</span> <span class="p">(</span><span class="n">len</span> <span class="n">A</span><span class="p">))])</span>
-    <span class="p">(</span><span class="nb">*</span> <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">A</span> <span class="n">i</span><span class="p">)</span>
-       <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">B</span> <span class="n">i</span><span class="p">))))</span>
-</pre></div>
-
-</div>
+ <pre><code>
+(: dot-prod (~&gt; [A : (Vecof Int)]
+                [B : (Refine [v : (Vecof Int)]
+                             (= (len v) (len A)))]
+                Int))
+(define (dot-prod A B)
+  (for/sum ([i (in-range (len A))])
+    (* (safe-vector-ref A i)
+       (safe-vector-ref B i))))
+</code></pre></div>
 
 <h3 id="matrix-multiplication">Matrix Multiplication</h3>
 
 <div class="brush: racket">
- <div class="source">
-  <pre><span class="p">(</span><span class="k">define-syntax-rule</span> <span class="p">(</span><span class="n">Mref</span> <span class="n">M</span> <span class="n">r</span> <span class="n">c</span><span class="p">)</span>
-  <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">M</span> <span class="n">r</span><span class="p">)</span> <span class="n">c</span><span class="p">))</span>
+ <pre><code>
+(define-syntax-rule (Mref M r c)
+  (safe-vector-ref (safe-vector-ref M r) c))
 
-<span class="p">(</span><span class="k">define-syntax-rule</span> <span class="p">(</span><span class="n">Mset!</span> <span class="n">M</span> <span class="n">r</span> <span class="n">c</span> <span class="n">val</span><span class="p">)</span>
-  <span class="p">(</span><span class="n">safe-vector-set!</span> <span class="p">(</span><span class="n">safe-vector-ref</span> <span class="n">M</span> <span class="n">r</span><span class="p">)</span> <span class="n">c</span> <span class="n">val</span><span class="p">))</span>
+(define-syntax-rule (Mset! M r c val)
+  (safe-vector-set! (safe-vector-ref M r) c val))
 
-<span class="c1">;; A[m×n] * B[n×p] = C[m×p]) </span>
-<span class="p">(</span><span class="n">:</span> <span class="n">matrix*</span>
-   <span class="p">(</span><span class="n">~&gt;</span> <span class="p">[</span><span class="n">A</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">a</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="n">Int</span><span class="p">)]</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="n">len</span> <span class="n">a</span><span class="p">)</span> <span class="n">n</span><span class="p">)))]</span>
-       <span class="p">[</span><span class="n">B</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">b</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="n">Int</span><span class="p">)]</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="n">len</span> <span class="n">b</span><span class="p">)</span> <span class="n">p</span><span class="p">)))]</span>
-       <span class="p">[</span><span class="n">C</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">c</span> <span class="n">:</span> <span class="p">(</span><span class="n">Vec</span> <span class="n">Int</span><span class="p">)]</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="n">len</span> <span class="n">c</span><span class="p">)</span> <span class="n">p</span><span class="p">)))]</span>
-       <span class="p">[</span><span class="n">m</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">x</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">=</span> <span class="n">x</span> <span class="p">(</span><span class="n">len</span> <span class="n">A</span><span class="p">)</span> <span class="p">(</span><span class="n">len</span> <span class="n">C</span><span class="p">)))]</span>
-       <span class="p">[</span><span class="n">n</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">y</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">=</span> <span class="n">y</span> <span class="p">(</span><span class="n">len</span> <span class="n">B</span><span class="p">)))]</span>
-       <span class="p">[</span><span class="n">p</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span>
-       <span class="n">Void</span><span class="p">))</span>
-<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="n">matrix*</span> <span class="n">A</span> <span class="n">B</span> <span class="n">C</span> <span class="n">m</span> <span class="n">n</span> <span class="n">p</span><span class="p">)</span>
-  <span class="p">(</span><span class="k">for*</span> <span class="p">([</span><span class="n">i</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">x</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">&lt;</span> <span class="n">x</span> <span class="n">m</span><span class="p">))</span>
-            <span class="p">(</span><span class="nb">in-range</span> <span class="n">m</span><span class="p">)]</span>
-         <span class="p">[</span><span class="n">j</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">y</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">&lt;</span> <span class="n">y</span> <span class="n">p</span><span class="p">))</span>
-            <span class="p">(</span><span class="nb">in-range</span> <span class="n">p</span><span class="p">)])</span>
-    <span class="p">(</span><span class="k">define</span> <span class="n">Cij-val</span> <span class="n">:</span> <span class="n">Int</span>
-      <span class="p">(</span><span class="k">for/sum</span> <span class="p">([</span><span class="n">k</span> <span class="n">:</span> <span class="p">(</span><span class="n">Refine</span> <span class="p">[</span><span class="n">z</span> <span class="n">:</span> <span class="n">Nat</span><span class="p">]</span> <span class="p">(</span><span class="nb">&lt;</span> <span class="n">z</span> <span class="n">n</span><span class="p">))</span>
-                   <span class="p">(</span><span class="nb">in-range</span> <span class="n">n</span><span class="p">)])</span>
-        <span class="p">(</span><span class="nb">+</span> <span class="p">(</span><span class="n">Mref</span> <span class="n">A</span> <span class="n">i</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="n">Mref</span> <span class="n">B</span> <span class="n">k</span> <span class="n">j</span><span class="p">))))</span>
-    <span class="p">(</span><span class="n">Mset!</span> <span class="n">C</span> <span class="n">i</span> <span class="n">j</span> <span class="n">Cij-val</span><span class="p">)))</span>
-</pre></div>
-
-</div>
+;; A[m×n] * B[n×p] = C[m×p]) 
+(: matrix*
+   (~&gt; [A : (Vec (Refine [a : (Vec Int)] (= (len a) n)))]
+       [B : (Vec (Refine [b : (Vec Int)] (= (len b) p)))]
+       [C : (Vec (Refine [c : (Vec Int)] (= (len c) p)))]
+       [m : (Refine [x : Nat] (= x (len A) (len C)))]
+       [n : (Refine [y : Nat] (= y (len B)))]
+       [p : Nat]
+       Void))
+(define (matrix* A B C m n p)
+  (for* ([i : (Refine [x : Nat] (&lt; x m))
+            (in-range m)]
+         [j : (Refine [y : Nat] (&lt; y p))
+            (in-range p)])
+    (define Cij-val : Int
+      (for/sum ([k : (Refine [z : Nat] (&lt; z n))
+                   (in-range n)])
+        (+ (Mref A i k) (Mref B k j))))
+    (Mset! C i j Cij-val)))</code></pre></div>
 
 <h2 id="vector-bounds-case-study">Vector Bounds Case Study</h2>
 

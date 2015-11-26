@@ -6,7 +6,7 @@
     <title>Andrew M. Kent</title>
     <meta name="description" content="Andrew M. Kent">
     <meta name="author"      content="Andrew M. Kent">
-    <meta name="keywords"    content="Coq, Publications, all, Dependent Types, Talks, C, Typed Racket, Racket">
+    <meta name="keywords"    content="Talks, Coq, C, work-in-progress, Publications, Typed Racket, Dependent Types, Racket, all">
     <meta name="viewport"    content="width=device-width, initial-scale=1.0">
     <link rel="icon"      href="/favicon.ico">
     <link rel="canonical" href="http://www.andmkent.com/index.html">
@@ -75,6 +75,8 @@
 <li><a href="/tags/Talks.html">Talks</a></li>
 
 <li><a href="/tags/Typed-Racket.html">Typed Racket</a></li>
+
+<li><a href="/tags/work-in-progress.html">work-in-progress</a></li>
               </ul>
             </li>
             <li><a href="/docs/amkcv.pdf">CV</a></li>
@@ -117,6 +119,18 @@
 
 
           <article>
+  <header>
+    <h2><a href='/blog/2015/11/22/new-draft-paper-occurrence-typing-modulo-theories/'>New Draft Paper: Occurrence Typing Modulo Theories</a></h2>
+    <p class='date-and-tags'>
+<time datetime="2015-11-22" pubdate="true">2015-11-22</time> :: <span class="tags"><a href="/tags/Typed-Racket.html">Typed Racket</a>, <a href="/tags/work-in-progress.html">work-in-progress</a>, <a href="/tags/Publications.html">Publications</a></span></p>
+  </header>
+
+<p>A <a href="http://arxiv.org/abs/1511.07033">draft paper</a> describing our approach to extending Typed Racket with dependent refinement types and arbitrary solver-backed theories is now available!</p>
+
+<p>Looking forward to bringing these ideas to the Typed Racket to our users at large.</p>
+
+</article>
+<article>
   <header>
     <h2><a href='/blog/2015/09/15/typesetting-with-plt-redex/'>Typesetting with PLT Redex</a></h2>
     <p class='date-and-tags'>
@@ -213,18 +227,7 @@ specify its behavior), and it was!</p>
 <p>What is the type of a function which returns the first element of a list? One possible (and likely common) answer would be:</p>
 
 <div class="brush: racket">
- <table class="sourcetable">
-  <tbody>
-   <tr>
-    <td class="linenos">
-     <div class="linenodiv">
-      <pre>1</pre></div></td>
-    <td class="code">
-     <div class="source">
-      <pre><span class="p">(</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/special-forms.html#(form._((lib._typed-racket/base-env/prims..rkt)._~3a))" style="color: inherit">:</a></span> <span class="nb"><a href="http://docs.racket-lang.org/reference/pairs.html#(def._((lib._racket/list..rkt)._first))" style="color: inherit">first</a></span> <span class="p">(</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types-extra..rkt)._.All))" style="color: inherit">All</a></span> <span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="p">((</span><span class="n"><a href="http://docs.racket-lang.org/ts-reference/type-ref.html#(form._((lib._typed-racket/base-env/base-types..rkt)._.Listof))" style="color: inherit">Listof</a></span> <span class="n">X</span><span class="p">)</span> <span class="k"><a href="http://docs.racket-lang.org/reference/function-contracts.html#(form._((lib._racket/contract/base..rkt)._-~3e))" style="color: inherit">-&gt;</a></span> <span class="n">X</span><span class="p">)))</span>
-</pre></div>
-</td></tr></tbody></table>
-</div>
+ <pre><code>(: first (All (X) ((Listof X) -&gt; X)))</code></pre></div>
 
 <p>This (typed racket syntax) says <em>first</em> is a function from a list of X&rsquo;s to an X (where X is any type). However, we really know that, although its type is ((Listof X) -&gt; X), if we pass an empty list of X we will not get an X, but a runtime error of some sort (e.g. no values). The type then isn&rsquo;t really giving us a guarantee of what it will do for us&hellip; it&rsquo;s just telling us what it will <em>try</em> to do for us if it doesn&rsquo;t fail.</p>
 

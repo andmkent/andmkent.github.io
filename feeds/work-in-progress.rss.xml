@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<rss version="2.0">
+ <channel>
+  <title>Andrew M. Kent: Posts tagged 'work-in-progress'</title>
+  <description>Andrew M. Kent: Posts tagged 'work-in-progress'</description>
+  <link>http://www.andmkent.com/tags/work-in-progress.html</link>
+  <lastBuildDate>Sun, 22 Nov 2015 16:29:06 UT</lastBuildDate>
+  <pubDate>Sun, 22 Nov 2015 16:29:06 UT</pubDate>
+  <ttl>1800</ttl>
+  <item>
+   <title>New Draft Paper: Occurrence Typing Modulo Theories</title>
+   <link>http://www.andmkent.com/blog/2015/11/22/new-draft-paper-occurrence-typing-modulo-theories/?utm_source=work-in-progress&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-andmkent-com:-blog-2015-11-22-new-draft-paper-occurrence-typing-modulo-theories</guid>
+   <pubDate>Sun, 22 Nov 2015 16:29:06 UT</pubDate>
+   <description>&lt;html&gt;
+&lt;p&gt;A &lt;a href="http://arxiv.org/abs/1511.07033"&gt;draft paper&lt;/a&gt; describing our approach to extending Typed Racket with dependent refinement types and arbitrary solver-backed theories is now available!&lt;/p&gt;
+
+&lt;p&gt;Looking forward to bringing these ideas to the Typed Racket to our users at large.&lt;/p&gt;&lt;/html&gt;</description></item></channel></rss>

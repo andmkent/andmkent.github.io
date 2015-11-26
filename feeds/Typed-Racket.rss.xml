@@ -4,9 +4,18 @@
   <title>Andrew M. Kent: Posts tagged 'Typed Racket'</title>
   <description>Andrew M. Kent: Posts tagged 'Typed Racket'</description>
   <link>http://www.andmkent.com/tags/Typed-Racket.html</link>
-  <lastBuildDate>Mon, 06 Jul 2015 13:16:07 UT</lastBuildDate>
-  <pubDate>Mon, 06 Jul 2015 13:16:07 UT</pubDate>
+  <lastBuildDate>Sun, 22 Nov 2015 16:29:06 UT</lastBuildDate>
+  <pubDate>Sun, 22 Nov 2015 16:29:06 UT</pubDate>
   <ttl>1800</ttl>
+  <item>
+   <title>New Draft Paper: Occurrence Typing Modulo Theories</title>
+   <link>http://www.andmkent.com/blog/2015/11/22/new-draft-paper-occurrence-typing-modulo-theories/?utm_source=Typed-Racket&amp;utm_medium=RSS</link>
+   <guid>urn:http-www-andmkent-com:-blog-2015-11-22-new-draft-paper-occurrence-typing-modulo-theories</guid>
+   <pubDate>Sun, 22 Nov 2015 16:29:06 UT</pubDate>
+   <description>&lt;html&gt;
+&lt;p&gt;A &lt;a href="http://arxiv.org/abs/1511.07033"&gt;draft paper&lt;/a&gt; describing our approach to extending Typed Racket with dependent refinement types and arbitrary solver-backed theories is now available!&lt;/p&gt;
+
+&lt;p&gt;Looking forward to bringing these ideas to the Typed Racket to our users at large.&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>
    <title>STOP 2015 Talk: Adding Practical Dependent Types to Typed Racket</title>
    <link>http://www.andmkent.com/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=RSS</link>
@@ -27,11 +36,7 @@
 &lt;p&gt;First, we need to add a type which can express dependencies within it. We do this with refinement types:&lt;/p&gt;
 
 &lt;div class="brush: racket"&gt;
- &lt;div class="source"&gt;
-  &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;P&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;/div&gt;
+ &lt;pre&gt;&lt;code&gt;(Refine [x : T] P(x))&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;This intuitively describes all values &lt;code&gt;x&lt;/code&gt; of type &lt;code&gt;T&lt;/code&gt; where proposition &lt;code&gt;P(x)&lt;/code&gt; holds.&lt;/p&gt;
 
@@ -63,51 +68,46 @@
 &lt;h3 id="vector-dot-product"&gt;Vector Dot Product&lt;/h3&gt;
 
 &lt;div class="brush: racket"&gt;
- &lt;div class="source"&gt;
-  &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;dot-prod&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;~&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vecof&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
-                &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vecof&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
-                             &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;)))]&lt;/span&gt;
-                &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dot-prod&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;for/sum&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;in-range&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;))])&lt;/span&gt;
-    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;safe-vector-ref&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-       &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;safe-vector-ref&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;/div&gt;
+ &lt;pre&gt;&lt;code&gt;
+(: dot-prod (~&amp;gt; [A : (Vecof Int)]
+                [B : (Refine [v : (Vecof Int)]
+                             (= (len v) (len A)))]
+                Int))
+(define (dot-prod A B)
+  (for/sum ([i (in-range (len A))])
+    (* (safe-vector-ref A i)
+       (safe-vector-ref B i))))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3 id="matrix-multiplication"&gt;Matrix Multiplication&lt;/h3&gt;
 
 &lt;div class="brush: racket"&gt;
- &lt;div class="source"&gt;
-  &lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define-syntax-rule&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Mref&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;safe-vector-ref&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;safe-vector-ref&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+ &lt;pre&gt;&lt;code&gt;
+(define-syntax-rule (Mref M r c)
+  (safe-vector-ref (safe-vector-ref M r) c))
 
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define-syntax-rule&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Mset!&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;safe-vector-set!&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;safe-vector-ref&lt;/span&gt; &lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+(define-syntax-rule (Mset! M r c val)
+  (safe-vector-set! (safe-vector-ref M r) c val))
 
-&lt;span class="c1"&gt;;; A[m×n] * B[n×p] = C[m×p]) &lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;matrix*&lt;/span&gt;
-   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;~&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)))]&lt;/span&gt;
-       &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)))]&lt;/span&gt;
-       &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)))]&lt;/span&gt;
-       &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Nat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;)))]&lt;/span&gt;
-       &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Nat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;=&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;len&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;)))]&lt;/span&gt;
-       &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Nat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-       &lt;span class="n"&gt;Void&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;matrix*&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;for*&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Nat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-            &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;in-range&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
-         &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Nat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-            &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;in-range&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)])&lt;/span&gt;
-    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define&lt;/span&gt; &lt;span class="n"&gt;Cij-val&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;
-      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;for/sum&lt;/span&gt; &lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Refine&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="n"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Nat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-                   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;in-range&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)])&lt;/span&gt;
-        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Mref&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Mref&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
-    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Mset!&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="n"&gt;Cij-val&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-&lt;/div&gt;
+;; A[m×n] * B[n×p] = C[m×p]) 
+(: matrix*
+   (~&amp;gt; [A : (Vec (Refine [a : (Vec Int)] (= (len a) n)))]
+       [B : (Vec (Refine [b : (Vec Int)] (= (len b) p)))]
+       [C : (Vec (Refine [c : (Vec Int)] (= (len c) p)))]
+       [m : (Refine [x : Nat] (= x (len A) (len C)))]
+       [n : (Refine [y : Nat] (= y (len B)))]
+       [p : Nat]
+       Void))
+(define (matrix* A B C m n p)
+  (for* ([i : (Refine [x : Nat] (&amp;lt; x m))
+            (in-range m)]
+         [j : (Refine [y : Nat] (&amp;lt; y p))
+            (in-range p)])
+    (define Cij-val : Int
+      (for/sum ([k : (Refine [z : Nat] (&amp;lt; z n))
+                   (in-range n)])
+        (+ (Mref A i k) (Mref B k j))))
+    (Mset! C i j Cij-val)))&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2 id="vector-bounds-case-study"&gt;Vector Bounds Case Study&lt;/h2&gt;
 
