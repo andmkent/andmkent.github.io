@@ -13,11 +13,11 @@
    <guid>urn:http-www-andmkent-com:-blog-2015-11-22-new-draft-paper-occurrence-typing-modulo-theories</guid>
    <pubDate>Sun, 22 Nov 2015 16:29:06 UT</pubDate>
    <description>&lt;html&gt;
-&lt;p&gt;Update: (conditionally) accepted to &lt;a href="http://conf.researchr.org/home/pldi-2016"&gt;PLDI 2016&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Update: (conditionally) accepted to &lt;a href="http://conf.researchr.org/home/pldi-2016"&gt;PLDI 2016&lt;/a&gt;!&lt;/p&gt;
 
-&lt;p&gt;A &lt;a href="http://arxiv.org/abs/1511.07033"&gt;draft paper&lt;/a&gt; describing our approach to extending Typed Racket with dependent refinement types and arbitrary solver-backed theories is now available!&lt;/p&gt;
+&lt;p&gt;A &lt;a href="http://conf.researchr.org/event/pldi-2016/pldi-2016-papers-occurrence-typing-modulo-theories"&gt;preprint paper&lt;/a&gt; describing our approach to extending Typed Racket with dependent refinement types and arbitrary solver-backed theories is available!&lt;/p&gt;
 
-&lt;p&gt;Looking forward to bringing these ideas to the Typed Racket to our users at large.&lt;/p&gt;&lt;/html&gt;</description></item>
+&lt;p&gt;I am looking forward to bringing these features to the Typed Racket user base.&lt;/p&gt;&lt;/html&gt;</description></item>
   <item>
    <title>STOP 2015 Talk: Adding Practical Dependent Types to Typed Racket</title>
    <link>http://www.andmkent.com/blog/2015/07/06/stop-2015-talk-adding-practical-dependent-types-to-typed-racket/?utm_source=Typed-Racket&amp;utm_medium=RSS</link>
