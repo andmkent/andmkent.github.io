@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Artifact: Occurrence Typing Modulo Theories</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-style.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x">Artifact:<span class="mywbr"> &nbsp;</span> Occurrence Typing Modulo Theories</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.R.T.R_.Implementation%29" class="tocviewlink" data-pltdoc="x">RTR Implementation</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part.__.R.T.R_.P.L.T_.Redex_.Models%29" class="tocviewlink" data-pltdoc="x">&#955;<span style="vertical-align: sub; font-size: 80%">RTR</span> PLT Redex Models</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Case_.Study%29" class="tocviewlink" data-pltdoc="x">Case Study</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Miscellaneous%29" class="tocviewlink" data-pltdoc="x">Miscellaneous</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._.Artifact__.Occurrence_.Typing_.Modulo_.Theories%29" class="tocsubseclink" data-pltdoc="x">Artifact:<span class="mywbr"> &nbsp;</span> Occurrence Typing Modulo Theories</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.R.T.R_.Implementation%29" class="tocsubseclink" data-pltdoc="x">RTR Implementation</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part.__.R.T.R_.P.L.T_.Redex_.Models%29" class="tocsubseclink" data-pltdoc="x">&#955;<span style="vertical-align: sub; font-size: 80%">RTR</span> PLT Redex Models</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._.Base__.R.T.R_.Model%29" class="tocsubseclink" data-pltdoc="x">Base &#955;<span style="vertical-align: sub; font-size: 80%">RTR</span> Model</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part.__.R.T.R_.Bitvector_.Theory_.Model%29" class="tocsubseclink" data-pltdoc="x">&#955;<span style="vertical-align: sub; font-size: 80%">RTR</span>+<span class="mywbr"> &nbsp;</span>Bitvector Theory Model</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Case_.Study%29" class="tocsubseclink" data-pltdoc="x">Case Study</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Case_.Study_.Part_1__.Generating_the_.Initial_.Data%29" class="tocsubseclink" data-pltdoc="x">Case Study Part 1:<span class="mywbr"> &nbsp;</span> Generating the Initial Data</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Case_.Study_.Part_2__.Math_.Libary_.Modifications%29" class="tocsubseclink" data-pltdoc="x">Case Study Part 2:<span class="mywbr"> &nbsp;</span> Math Libary Modifications</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Miscellaneous%29" class="tocsubseclink" data-pltdoc="x">Miscellaneous</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">6.4</span></div><h2><a name="(part._.Artifact__.Occurrence_.Typing_.Modulo_.Theories)"></a>Artifact: Occurrence Typing Modulo Theories</h2><div class="SAuthorListBox"><span class="SAuthorList"><p class="author">Andrew M. Kent, David Kempe, and Sam Tobin-Hochstadt</p></span></div><p>This is the README for the artifact accompanying the
+conditionally accepted paper "Occurrence Typing Modulo
+Theories" (PLDI 2016).</p><p><span style="font-weight: bold">VirtualBox Virtual Machine Details</span></p><p>The artifact can be downloaded in a .zip at this URL:</p><p>TODO</p><p>The archive contains a .vmdk and .ovf file.</p><p>To run the artifact image, open the given .ovf file using
+the File-&gt;Import Appliance menu item in VirtualBox. This will create a new
+VM that can be launched after import.</p><p>The username is <span class="stt">dave</span> and the password is <span class="stt">artifact</span>.</p><p><span style="font-weight: bold">Overview</span></p><p>This artifact is composed of three key components:</p><ol><li><p>We have implemented Refined Typed Racket
+(RTR) with the theory of linear arithmetic atop
+Racket v6.2.1, allowing us to typecheck all the
+examples from the paper.</p></li><li><p>Our PLT Redex model of the &#955;<span style="vertical-align: sub; font-size: 80%">RTR</span>
+formalism from the paper and a Redex model
+illustrating how bitvector theory is added (as
+discussed in sections 2.2 and 3.4) shows our
+approach is indeed agnostic of theory details and
+easily extended.</p></li><li><p>Our case study examining vector accesses in
+three large Typed Racket libraries is
+reproducable. We include a script which generates
+the initial data for each of the libraries as
+well as our detailed analysis of the math library
+which allowed us to show almost 70% of vector
+accesses can be made provably safe with
+additional annotations and some relatively minor
+modifications.</p></li></ol><p>The desktop of the virtual machine contains <span style="font-weight: bold">icons</span> which
+will launch all of the key components of the artifact.</p><h3>1<tt>&nbsp;</tt><a name="(part._.R.T.R_.Implementation)"></a>RTR Implementation</h3><p>Our extension of Typed Racket v6.2.1 to implement RTR with
+the theory of linear arithmetic is installed at the
+following location:</p><p><span class="stt">/home/dave/racket-rtr</span></p><p><img src="rtrexamples.png" alt="" width="72" height="101"/></p><p><span style="font-weight: bold">RTR Examples</span> will launch a version of DrRacket using
+the RTR back end and open all of the examples found in the
+paper.</p><h3>2<tt>&nbsp;</tt><a name="(part.__.R.T.R_.P.L.T_.Redex_.Models)"></a>&#955;<span style="vertical-align: sub; font-size: 80%">RTR</span> PLT Redex Models</h3><blockquote class="refpara"><blockquote class="refcolumn"><blockquote class="refcontent"><p>PLT Redex is a domain specific language for
+specifying and debugging formal systems. More information
+can be found here: https://redex.racket-lang.org/</p></blockquote></blockquote></blockquote><p>The PLT Redex models for the &#955; <span style="vertical-align: sub; font-size: 80%">RTR</span> formalism
+described in our paper and its extension with bitvector
+theory (described in sections 2.2 and 3.4) are found here:</p><p><span class="stt">/home/dave/pldi16-artifact-misc/base-redex-model</span></p><p><span class="stt">/home/dave/pldi16-artifact-misc/bitvector-redex-model</span></p><p>These are meant to be almost identical to the formal &#955;
+<span style="vertical-align: sub; font-size: 80%">RTR</span> described in our paper. Some small
+modifications, like imposing an ordering on the logical
+proves relation or using helper functions to keep things in
+normal forms, are necessary if typechecking is to occur in a
+reasonable amount of time.</p><h4>2.1<tt>&nbsp;</tt><a name="(part._.Base__.R.T.R_.Model)"></a>Base &#955;<span style="vertical-align: sub; font-size: 80%">RTR</span> Model</h4><p><img src="basemodel.png" alt="" width="95" height="100"/></p><p><span style="font-weight: bold">RTR Base Redex Model</span> will launch DrRacket v6.4 and
+open the primary files for the &#955; <span style="vertical-align: sub; font-size: 80%">RTR</span> base redex
+model:</p><ul><li><p><span class="stt">base-lang.rkt</span> contains the redex
+language definition for &#955;<span style="vertical-align: sub; font-size: 80%">RTR</span></p></li><li><p><span class="stt">subtype.rkt</span> contains the subtype and
+logical proves relations which are described in
+the paper in figures 4 and 5. The file also
+contains a number of tests which execute when the
+"Run" button at the top right of DrRacket is
+pressed.</p></li><li><p><span class="stt">well-typed.rkt</span> contains the typing
+judgment for &#955;<span style="vertical-align: sub; font-size: 80%">RTR</span> that is found in
+figure 3 of the paper. This file also contains a
+number of tests which can be executed using
+DrRacket&rsquo;s "Run" button.</p></li></ul><blockquote class="refpara"><blockquote class="refcolumn"><blockquote class="refcontent"><p>DrRacket 6.4 is used to run our PLT Redex
+models and a few scripts, it will <span style="font-weight: bold">not</span> run examples
+from the paper using refinement types, etc.</p></blockquote></blockquote></blockquote><h4>2.2<tt>&nbsp;</tt><a name="(part.__.R.T.R_.Bitvector_.Theory_.Model)"></a>&#955;<span style="vertical-align: sub; font-size: 80%">RTR</span>+Bitvector Theory Model</h4><p><img src="bitvectormodel.png" alt="" width="98" height="97"/></p><p><span style="font-weight: bold">RTR Bitvector Redex Model</span> will launch DrRacket v6.4
+and open the primary files for the &#955;
+<span style="vertical-align: sub; font-size: 80%">RTR</span>+bitvector theory model. These files are
+almost identical to those listed for the base
+<span style="vertical-align: sub; font-size: 80%">RTR</span>, except they contain the additional forms
+required for bitvector theory, as described in section 3.4
+of the paper.</p><p><img src="bitvectordiff.png" alt="" width="100" height="96"/></p><p><span style="font-weight: bold">View Bitvector Model Diff</span> will open the Meld diff
+viewing program and make it easy to see the small number of
+additions required to add bitvector theory to
+&#955;<span style="vertical-align: sub; font-size: 80%">RTR</span>.</p><p><img src="modeldiffexample.png" alt="" width="543" height="363"/></p><h3>3<tt>&nbsp;</tt><a name="(part._.Case_.Study)"></a>Case Study</h3><p>Our case study involved two phases:</p><ol><li><p>We used RTR with the theory of linear
+arithmetic to typecheck the math, plot, and
+pict3d libraries while checking if vector
+operations are verifiable without any additional
+annotations.</p></li><li><p>We performed a detailed analysis on the math
+library results, assessing why various vector
+operations were not verifiable and investigating
+what reasonable changes could be made to make
+more operations provable safe.</p></li></ol><h4>3.1<tt>&nbsp;</tt><a name="(part._.Case_.Study_.Part_1__.Generating_the_.Initial_.Data)"></a>Case Study Part 1: Generating the Initial Data</h4><p><img src="runcasestudy.png" alt="" width="76" height="98"/></p><p>The first step for our case study can be replicated with
+the <span style="font-weight: bold">Run Case Study</span> launcher. This runs our typechecker
+on the unannotated math, plot, and pict3d libraries.</p><p>The raw data from this case study is written to files this
+desktop folder:</p><p><span class="stt">/home/dave/Desktop/case-study-output</span></p><p>A summary png is also generated in that location:</p><p><img src="casestudyresults.png" alt="" width="585" height="364"/></p><p>The examined libraries can all be found in the following
+directory:</p><p><span class="stt">/home/dave/racket-rtr/extra-pkgs</span></p><h4>3.2<tt>&nbsp;</tt><a name="(part._.Case_.Study_.Part_2__.Math_.Libary_.Modifications)"></a>Case Study Part 2: Math Libary Modifications</h4><p>The second half of our case study focused on examining the
+output for the math library and seeing what annotations and
+minor modifications could be made to make more vector
+operations provably safe.</p><p>The modified version of the math library is found in here:</p><p><span class="stt">/home/dave/racket-rtr-annotated-math/extra-pkgs/math</span></p><p><img src="mathdiff.png" alt="" width="97" height="99"/></p><p><span style="font-weight: bold">View Math Lib Diff</span> launches Meld to display the diff
+between the original math library and the version after we
+made our changes:</p><p><img src="mathdiffexample.png" alt="" width="594" height="353"/></p><p><span style="font-weight: bold">Run Math Tests</span> will run the math library tests, showing
+our changes did not break or change the library&rsquo;s behavior.</p><p><img src="runmathtests.png" alt="" width="84" height="104"/></p><p>During this effort, we performed a detailed examination of
+all of the raw vector data generated in the first half of
+the case study. As we made modifications and converted more
+vector operations to their safe counterparts, we recorded
+our updates and analysis in the following spreadsheet:</p><p><span class="stt">/home/dave/Desktop/math-analysis.pdf</span></p><p>We found 72.7% of all unique vector operations in the math
+library could be made provably safe with modest effort using
+our system.</p><h3>4<tt>&nbsp;</tt><a name="(part._.Miscellaneous)"></a>Miscellaneous</h3><p>All of the desktop launchers in the VM simply point to
+scripts contained here:</p><p><span class="stt">/home/dave/pldi16-artifact-misc/scripts</span></p><p>the scripts they use are the following:</p><p><div class="SIntrapara">DrRacket launching scripts:
+</div><div class="SIntrapara"><ul><li><p><span class="stt">open-drracket-base-redex.sh</span></p></li><li><p><span class="stt">open-drracket-bitvector-redex.sh</span></p></li><li><p><span class="stt">open-drracket-rtr-examples.sh</span></p></li></ul></div></p><p><div class="SIntrapara">Meld launching scripts:
+</div><div class="SIntrapara"><ul><li><p><span class="stt">view-math-libary-diff.sh</span></p></li><li><p><span class="stt">view-redex-bitvector-diff.sh</span></p></li></ul></div></p><p><div class="SIntrapara">Terminal launching scripts:
+</div><div class="SIntrapara"><ul><li><p><span class="stt">run-case-study.sh</span></p></li><li><p><span class="stt">run-math-tests.sh</span></p></li></ul></div></p><p>These next scripts add the various Racket installs&rsquo; racket/bin to
+the current terminals path if sourced:</p><ul><li><p><span class="stt">add-racket-6.4-to-path.sh</span></p></li><li><p><span class="stt">add-racket-rtr-annotated-math-to-path.sh</span></p></li><li><p><span class="stt">add-racket-rtr-to-path.sh</span></p></li></ul><p>For example, running <span class="stt">source
+/home/dave/pldi16-artifact-misc/add-racket-rtr-to-path.sh</span>
+in a terminal would add the RTR installation (the one
+without the modifications to the math lib) to the current
+terminal&rsquo;s PATH.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
